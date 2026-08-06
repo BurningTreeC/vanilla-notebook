@@ -1,4 +1,4 @@
 title: $:/themes/BurningTreeC/vanilla-notebook/classfilter
 tags: $:/tags/ClassFilters/PageTemplate
 
-[{$:/state/sidebar}match[no]then[nb-sidebar-closed]else[nb-sidebar-open]] [[nb-layout-]addsuffix{$:/themes/BurningTreeC/vanilla-notebook/options/sidebarlayout}] [{$:/themes/BurningTreeC/vanilla-notebook/options/marginrule}match[yes]then[nb-margin-rule]] [{$:/themes/BurningTreeC/vanilla-notebook/options/ruleseditor}match[yes]then[nb-ruled-editor]] [{$:/themes/BurningTreeC/vanilla-notebook/options/fullwidth}match[yes]then[nb-fullwidth]] [[nb-theme]]
+[{$:/state/sidebar}match[no]then[nb-sidebar-closed]else[nb-sidebar-open]] [[nb-layout-]addsuffix{$:/themes/BurningTreeC/vanilla-notebook/options/sidebarlayout}] [{$:/themes/BurningTreeC/vanilla-notebook/options/marginrule}match[yes]then[nb-margin-rule]] [{$:/themes/BurningTreeC/vanilla-notebook/options/ruleseditor}match[yes]then[nb-ruled-editor]] [{$:/themes/BurningTreeC/vanilla-notebook/options/fullwidth}match[yes]then[nb-fullwidth]] [{$:/config/ViewToolbarButtons/Visibility/$:/core/ui/Buttons/fold-bar}match[show]then[nb-fold-bar]] [[nb-theme]]

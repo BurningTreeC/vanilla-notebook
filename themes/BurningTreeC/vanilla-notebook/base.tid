@@ -97,6 +97,10 @@ code-body: yes
 	   centre; larger raises it toward the cap line. */
 	--nb-title-icon-nudge: 0.08em;
 
+	/* Width of the sheet's inline-start gutter on a phone, sized as a tap
+	   target for the fold banner that lives in it. */
+	--nb-fold-gutter: 28px;
+
 	/* Ink, mixed in OKLCH so the steps stay perceptually even on any palette */
 	--nb-ink-soft: color-mix(in oklch, var(--tpc-foreground) 72%, var(--tpc-background));
 	--nb-ink-faint: color-mix(in oklch, var(--tpc-foreground) 45%, var(--tpc-background));
@@ -258,9 +262,19 @@ body.tc-body {
 
 .tc-tiddler-frame {
 	position: relative;
+
+	/*
+	** Published so descendants can track the sheet instead of re-deriving its
+	** geometry and drifting out of step with it. The unfold banner is the
+	** consumer: it is pinned to the sheet's inner bottom edge, so it needs the
+	** sheet's corner radius, and both change at narrow widths.
+	*/
+	--nb-sheet-radius: var(--nb-radius);
+	--nb-sheet-pad-start: calc(var(--nb-margin) + var(--nb-space-lg));
+
 	margin-block-end: var(--nb-space-lg);
 	padding: var(--nb-space-lg);
-	padding-inline-start: calc(var(--nb-margin) + var(--nb-space-lg));
+	padding-inline-start: var(--nb-sheet-pad-start);
 	background-color: var(--tpc-tiddler-background);
 	border: 1px solid var(--nb-paper-edge);
 	border-radius: var(--nb-radius);
@@ -291,15 +305,46 @@ body.tc-body {
 	border-color: var(--nb-accent-edge);
 }
 
-/* Narrow river: the margin rule costs more than it gives, so it goes */
+/*
+** Narrow river: the margin rule costs more than it gives, so it goes - and the
+** sheet's gutter goes with it, because `padding` here is a SHORTHAND that
+** resets the inline-start padding reserving that gutter.
+**
+** That matters beyond the stripe. The fold banner is absolutely positioned at
+** the padding edge, so the moment the gutter collapses it has nowhere to sit
+** and lands on the text. The fix therefore has to fire at exactly this width,
+** not at some separate viewport breakpoint - the two are the same event.
+**
+** So when the fold bar is enabled the sheet slides to the inline start by the
+** story river's own padding and takes that width with it. The sheet's width is
+** auto, so moving the start edge grows it by exactly that amount and the end
+** edge stays put; the reclaimed space pays for a gutter sized as a tap target.
+** Content ends up slightly WIDER than before, not narrower.
+**
+** Gated on .nb-fold-bar: with the fold/unfold bars switched off there is
+** nothing to reserve room for, and the sheet should keep its plain padding.
+*/
 @container river (max-width: 34rem) {
 
 	.tc-tiddler-frame {
+		--nb-sheet-pad-start: var(--nb-space-md);
 		padding: var(--nb-space-md);
+		padding-inline-start: var(--nb-sheet-pad-start);
 	}
 
 	.nb-margin-rule .tc-tiddler-frame::before {
 		display: none;
+	}
+
+	/*
+	** Only the token is restated. `padding-inline-start` above reads it with
+	** var(), and var() resolves against the element's OWN computed value, so
+	** overriding the token here moves the padding with it - one source of
+	** truth for the gutter rather than two that can drift.
+	*/
+	.nb-fold-bar .tc-tiddler-frame {
+		--nb-sheet-pad-start: var(--nb-fold-gutter);
+		margin-inline-start: calc(-0.5 * var(--nb-gutter));
 	}
 }
 
@@ -1953,8 +1998,11 @@ nav.tc-menubar .tc-form-inline {
 
 @media (max-width: 480px) {
 
+	/* Edge to edge on a phone. The gutter and the inline-start shift are NOT
+	   here: they belong to the container query that drops the margin rule, so
+	   they stay in step with it. */
 	.tc-tiddler-frame {
-		padding: var(--nb-space-md);
+		--nb-sheet-radius: 0px;
 		border-radius: 0;
 		border-inline: none;
 	}
@@ -3235,15 +3283,37 @@ span.tc-translink > a:first-child {
 	transition: background-color 120ms var(--nb-ease-out);
 }
 
+/*
+** A band across the foot of the folded sheet.
+**
+** The core puts this button near the TOP of the flow - right after the title,
+** before the body (core/ui/ViewTemplate/unfold.tid) - so reaching the bottom
+** means positioning, not margins. `inset-block-end: 0` against the frame,
+** which is the nearest positioned ancestor, does it at every width.
+**
+** `inline-size: auto` with both inline insets pinned, rather than a 100% width
+** on top of them. Setting start, end AND width over-constrains the box, so one
+** of the three is discarded; letting the width resolve from the two insets is
+** what actually spans the sheet, gutter included. Those insets resolve against
+** the frame's PADDING box, so `0` already reaches the inside of its border -
+** no negative margins needed to escape the sheet's own padding.
+**
+** The corners are the sheet's, less its 1px border, because that is the radius
+** of the padding box the band is sitting in. --nb-sheet-radius is 0 on a phone
+** where the sheet goes square; calc clamps the negative result back to 0.
+*/
 .tc-unfold-banner {
 	position: absolute;
 	inset-inline: 0;
-	padding: 0;
+	inset-block-end: 0;
+	inline-size: auto;
+	padding: var(--nb-space-2xs) 0;
 	margin: 0;
-	inline-size: 100%;
 	background: none;
 	border: none;
 	border-block-start: 1px solid var(--nb-rule);
+	border-end-start-radius: calc(var(--nb-sheet-radius) - 1px);
+	border-end-end-radius: calc(var(--nb-sheet-radius) - 1px);
 	text-align: center;
 	transition: background-color 120ms var(--nb-ease-out);
 }
@@ -3251,6 +3321,24 @@ span.tc-translink > a:first-child {
 .tc-fold-banner:hover,
 .tc-unfold-banner:hover {
 	background-color: var(--nb-accent-wash);
+}
+
+/*
+** Narrow-river override for the fold handle.
+**
+** This must come AFTER the base rule above, not inside the earlier mobile
+** block: a conditional group rule adds no specificity, so between two
+** single-class rules it is source order that decides. Sitting earlier in the
+** file it silently lost to the default and the handle kept its desktop width.
+*/
+@container river (max-width: 34rem) {
+
+	/* Exactly the sheet's narrow gutter, so the banner and the text abut
+	   instead of overlapping. */
+	.nb-fold-bar .tc-fold-banner {
+		inline-size: var(--nb-fold-gutter);
+	}
+
 }
 
 .tc-fold-banner svg,
