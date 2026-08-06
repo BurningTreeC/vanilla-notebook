@@ -30,6 +30,6 @@ This is deliberate, and it is a workaround rather than a design choice. The core
 
 These shadow tiddlers only exist while Notebook is the active theme, so they cannot affect a wiki that has switched back to Vanilla.
 
-<<.warning "The shim holds static copies of Notebook's own defaults. Changing a metric in Notebook's Control Panel tab does //not// update the Vanilla-namespace copy. If you change the sidebar breakpoint and use the menubar plugin, update `$:/themes/tiddlywiki/vanilla/metrics/sidebarbreakpoint` to match.">>
+> ''Note:'' The shim holds static copies of Notebook's own defaults. Changing a metric in Notebook's Control Panel tab does //not// update the Vanilla-namespace copy. If you change the sidebar breakpoint and use the menubar plugin, update `$:/themes/tiddlywiki/vanilla/metrics/sidebarbreakpoint` to match.
 
 The real fix belongs in the core: those lookups should resolve against the active theme rather than a hard-coded one.

@@ -12,11 +12,11 @@ Settings for the Notebook theme.
 
 <$radio tiddler="$:/themes/BurningTreeC/vanilla-notebook/options/sidebarlayout" value="fixed-fluid"> Fixed story river, fluid sidebar</$radio>
 
-<<.tip "In ''fixed-fluid'' the story river keeps its width, so hiding the sidebar is composited entirely on the GPU — nothing reflows. In ''fluid-fixed'' the river reclaims the freed space, which is a layout change by definition; it is interpolated rather than snapped, so it glides, but it is not GPU work.">>
+> In ''fixed-fluid'' the story river keeps its width, so hiding the sidebar is composited entirely on the GPU — nothing reflows. In ''fluid-fixed'' the river reclaims the freed space, which is a layout change by definition; it is interpolated rather than snapped, so it glides, but it is not GPU work.
 
 <$checkbox tiddler="$:/themes/BurningTreeC/vanilla-notebook/options/fullwidth" field="text" checked="yes" unchecked="no" default="no"> Full width — story river and tiddlers take all the space the sidebar is not using</$checkbox>
 
-<<.tip "Full width lifts the cap on tiddler width and the 68-character measure on tiddler text, so tiddlers fill the story river. The sidebar keeps the sizing its layout mode gives it. In ''fluid-fixed'' the river takes the viewport minus the fixed sidebar. In ''fixed-fluid'' the sidebar is fluid and owns the space beside the river while it is visible, so the river only expands to the full viewport once the sidebar is hidden. On a wide display full width means lines longer than is comfortable to read, which is why it is off by default.">>
+> Full width lifts the cap on tiddler width and the 68-character measure on tiddler text, so tiddlers fill the story river. The sidebar keeps the sizing its layout mode gives it. In ''fluid-fixed'' the river takes the viewport minus the fixed sidebar. In ''fixed-fluid'' the sidebar is fluid and owns the space beside the river while it is visible, so the river only expands to the full viewport once the sidebar is hidden. On a wide display full width means lines longer than is comfortable to read, which is why it is off by default.
 
 !! Paper
 
