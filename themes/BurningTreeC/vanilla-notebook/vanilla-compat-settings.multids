@@ -1,0 +1,7 @@
+title: $:/themes/tiddlywiki/vanilla/settings/
+
+fontfamily: ui-serif, Charter, "Bitstream Charter", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Noto Serif", serif
+codefontfamily: ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Consolas, "Liberation Mono", monospace
+editorfontfamily: ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Consolas, "Liberation Mono", monospace
+backgroundimageattachment: fixed
+backgroundimagesize: auto

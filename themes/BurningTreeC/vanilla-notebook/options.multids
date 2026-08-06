@@ -1,0 +1,8 @@
+title: $:/themes/BurningTreeC/vanilla-notebook/options/
+
+sidebarlayout: fluid-fixed
+stickytitles: no
+codewrapping: pre-wrap
+ruleseditor: yes
+marginrule: yes
+fullwidth: no

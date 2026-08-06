@@ -1,0 +1,525 @@
+title: $:/themes/BurningTreeC/vanilla-notebook/layout
+tags: [[$:/tags/Stylesheet]]
+list-before:
+code-body: yes
+
+\rules only filteredtranscludeinline transcludeinline macrodef macrocallinline
+
+/* Hallmark · macrostructure: n/a (application chrome, not a page) · tone: editorial · anchor hue: warm-neutral
+ * theme: Notebook · genre: editorial
+ * pre-emit critique: P5 H5 E5 S5 R4 V5
+ *
+ * ============================================================================
+ * NOTEBOOK — LAYOUT ENGINE
+ * ============================================================================
+ *
+ * The problem this file solves
+ * ----------------------------
+ * Vanilla changes the sidebar/story layout by SWAPPING CSS RULES. The macros
+ * `if-no-sidebar` and `if-fluid-fixed` (core/wiki/macros/CSS.tid) wrap CSS text
+ * in a reveal widget, so toggling $:/state/sidebar rewrites the stylesheet
+ * A stylesheet edit is applied in a single frame — there is no start value to
+ * interpolate from, so the layout JUMPS.
+ *
+ * How Notebook does it instead
+ * ----------------------------
+ * Every rule below is emitted UNCONDITIONALLY. Nothing is wrapped in a reveal.
+ * State arrives as a class on .tc-page-container, contributed by
+ * $:/themes/BurningTreeC/vanilla-notebook/classfilter through the core's
+ * $:/tags/ClassFilters/PageTemplate hook:
+ *
+ *     nb-sidebar-open | nb-sidebar-closed
+ *     nb-layout-fluid-fixed | nb-layout-fixed-fluid
+ *
+ * Those classes set ONE registered custom property, `--nb-open` (1 = open,
+ * 0 = closed). Because it is registered via @property with an actual
+ * `<number>` syntax, the browser can INTERPOLATE it, and a single transition
+ * on the page container drives every derived measurement at once. One scalar,
+ * one transition, both layouts, both text directions.
+ *
+ * What is actually GPU-accelerated — an honest accounting
+ * ------------------------------------------------------
+ * A reflow cannot be composited. Where the story river genuinely has to change
+ * width, that is layout work by definition, and no amount of `translate3d`
+ * changes it. So:
+ *
+ *   fixed-fluid  the river's width is FIXED. Nothing reflows. The sidebar
+ *                slides on `translate` and the river glides to centre on
+ *                `translate`. Both are compositor-only. Fully GPU.
+ *
+ *   fluid-fixed  the river is fluid and MUST reclaim the freed space, so its
+ *                `margin-inline-end` is interpolated. That is layout each
+ *                frame — smooth and jump-free, but not GPU. Cost is bounded
+ *                with `content-visibility` on off-screen tiddlers.
+ *
+ * In both cases the per-frame work is style recalc on one custom property plus
+ * a composited transform; in fluid-fixed, plus one margin relayout.
+ *
+ * Direction handling
+ * ------------------
+ * Box geometry uses logical properties (inset-inline, margin-inline), so RTL
+ * is correct for free. The one thing that is NOT direction-aware is the
+ * `translate` property — its percentages are physical. `--nb-dir` (+1 for ltr,
+ * -1 for rtl) flips the sign, so the sidebar always leaves toward the inline
+ * end whichever way that points.
+ * ============================================================================
+ */
+
+/*
+** The animated scalar. Registering it is what makes the whole thing work:
+** an unregistered custom property has no type, so it can only flip
+** discretely — which is exactly the jump we are removing.
+*/
+
+@property --nb-open {
+	syntax: "<number>";
+	inherits: true;
+	initial-value: 1;
+}
+
+:root {
+
+	/* Direction multiplier for the physical `translate` axis */
+	--nb-dir: 1;
+
+	/* Metrics, lifted from the theme's metrics tiddlers */
+	--nb-sidebar-w: {{$:/themes/BurningTreeC/vanilla-notebook/metrics/sidebarwidth}};
+	--nb-story-w: {{$:/themes/BurningTreeC/vanilla-notebook/metrics/storywidth}};
+	--nb-story-left: {{$:/themes/BurningTreeC/vanilla-notebook/metrics/storyleft}};
+
+	/*
+	** The story's top offset is composed of two independent parts:
+	**   --nb-story-top-base  what the user asked for in the metrics
+	**   --nb-menubar-h       what a pinned menubar takes, if one is present
+	** --nb-story-top is their sum. Keeping them separate is what lets a
+	** non-zero storytop survive the menubar detection below.
+	*/
+	--nb-story-top-base: {{$:/themes/BurningTreeC/vanilla-notebook/metrics/storytop}};
+	--nb-menubar-h: 0px;
+	--nb-story-top: var(--nb-story-top-base);
+	--nb-story-right: {{$:/themes/BurningTreeC/vanilla-notebook/metrics/storyright}};
+	--nb-tiddler-w: {{$:/themes/BurningTreeC/vanilla-notebook/metrics/tiddlerwidth}};
+	--nb-gutter: {{$:/themes/BurningTreeC/vanilla-notebook/metrics/storygutter}};
+
+	/* Motion — tied to the user's own TiddlyWiki animation setting */
+	--nb-dur: {{$:/config/AnimationDuration}}ms;
+	--nb-ease: cubic-bezier(0.32, 0.72, 0, 1);
+	--nb-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html[dir="rtl"] {
+	--nb-dir: -1;
+}
+
+/* Prefer the real selector where it exists — it also catches dir set on a
+   subtree rather than on <html>. */
+@supports selector(:dir(rtl)) {
+	:root:dir(rtl) {
+		--nb-dir: -1;
+	}
+}
+
+/*
+** The state machine. Two classes, one scalar, one transition.
+*/
+
+.tc-page-container {
+	--nb-open: 1;
+	transition: --nb-open var(--nb-dur) var(--nb-ease);
+}
+
+/*
+** Menubar plugin support.
+**
+** The plugin renders a `position: fixed` bar at the top of the page and
+** reserves no room for it, so without this the sidebar header and the first
+** tiddler slide underneath it. The plugin's own answer is to tell the user to
+** set the storytop metric by hand.
+**
+** The height is MEASURED, not guessed. $:/themes/BurningTreeC/vanilla-notebook/trackers/
+** menubar asks the dimension tracker to watch `nav.tc-menubar` and publish its
+** geometry to $:/info/browser/menubar; the height field is read straight into
+** the variable below. An earlier version detected the bar with :has() and
+** assumed 2em, which measured 30px against a real 31px bar and left a 1px
+** sliver of title behind it — CSS can tell you an element exists but not how
+** tall it is.
+**
+** `else[0]` matters: with no tracker installed, or before the first
+** measurement lands, the transclusion is empty and `--nb-menubar-h: px` would
+** be invalid at computed-value time, taking --nb-story-top down with it.
+**
+** The bar's height is ADDED to the configured storytop rather than replacing
+** it. Overwriting --nb-story-top directly would silently discard a storytop
+** the user had set — the two are independent reasons to push the story down
+** and both have to apply at once.
+**
+** The sum is recomputed here on .tc-page-container, not on :root, and that
+** placement is load-bearing: a custom property's var() references are resolved
+** on the element where the property is DECLARED. A calc() sitting on :root
+** would bake in the :root value of --nb-menubar-h and inherit that result
+** downward, so a later override would never reach it.
+*/
+.tc-page-container {
+	--nb-menubar-h: 0px;
+	--nb-story-top: calc(var(--nb-story-top-base) + var(--nb-menubar-h));
+}
+
+/*
+** Two questions, two mechanisms, and both are needed.
+**
+**   :has()   is there a menubar in THIS document?
+**   tracker  how tall is it?
+**
+** The tracker alone is not enough, because one stylesheet serves more than one
+** document. $:/core/modules/startup/windows.js renders this very sheet into
+** every window opened with tm-open-window, and that window's template also
+** emits a .tc-page-container (core/templates/single.tiddler.window.tid) — but
+** it has no menubar. Applying the measured height unconditionally would offset
+** sticky titles in those windows by the height of a bar that is not there.
+**
+** :has() alone is not enough either — that was the earlier version, and it had
+** to guess 2em against a real 31.41px bar.
+**
+** Gating the measured value behind :has() gives a per-document answer with a
+** measured magnitude, and degrades to 0 in any document without a bar.
+**
+** The measurement is read per WINDOW. The tracker keys its info tiddlers by
+** window the same way $:/core/modules/info/windowdimensions.js does —
+** `system/main` for the main window, `user/<windowID>` for one opened with
+** tm-open-window — and windows.js hands each window's stylesheet a
+** tv-window-id variable, so the filter below picks the row belonging to the
+** document it is being rendered into. `~[[0]]` covers both a missing tracker
+** and the frames before the first measurement lands; without it the
+** declaration would be `--nb-menubar-h: px`, invalid at computed-value time,
+** which would take --nb-story-top down with it.
+*/
+.tc-page-container:has(nav.tc-menubar) {
+	--nb-menubar-h: {{{ [<tv-window-id>!is[blank]addprefix[user/]] ~[[system/main]] +[addprefix[$:/info/browser/menubar/]get[height]] ~[[0]] +[addsuffix[px]] }}};
+}
+
+.tc-page-container.nb-sidebar-closed {
+	--nb-open: 0;
+}
+
+/*
+** Sidebar — slides out along the inline axis on a composited transform.
+**
+** `visibility` is stepped (0s duration, delayed until the slide finishes on
+** the way out, immediate on the way in) so a hidden sidebar leaves the tab
+** order instead of staying focusable off-screen. Doing this in CSS rather
+** than with an `inert` attribute keeps the markup override minimal.
+*/
+
+.tc-sidebar-scrollable {
+	translate: calc(var(--nb-dir) * (1 - var(--nb-open)) * 100%) 0;
+	will-change: translate;
+	overscroll-behavior: contain;
+	scrollbar-gutter: stable;
+
+	/*
+	** The `transition` shorthand is declared HERE and nowhere else.
+	**
+	** Putting it in the state rules instead would be a trap: those rules are
+	** `.nb-sidebar-open .tc-sidebar-scrollable` (specificity 0,2,0), which
+	** outranks anything the mobile media block can say with a single class
+	** (0,1,0) — so a compound transition set on the state rule silently wins
+	** and the mobile collapse stops animating. Keeping the shorthand on the
+	** single-class rule lets the media block extend it, and lets the state
+	** rules vary only the delay through a custom property.
+	*/
+	--nb-vis-delay: 0s;
+	transition: visibility 0s linear var(--nb-vis-delay);
+}
+
+.nb-sidebar-open .tc-sidebar-scrollable {
+	visibility: visible;
+	--nb-vis-delay: 0s;
+}
+
+/* Hidden only after the slide has finished, so it leaves the tab order
+   without the panel vanishing mid-transition. */
+.nb-sidebar-closed .tc-sidebar-scrollable {
+	visibility: hidden;
+	--nb-vis-delay: var(--nb-dur);
+}
+
+/* ==========================================================================
+** Desktop — at and above the sidebar breakpoint
+** ========================================================================== */
+
+@media (min-width: {{$:/themes/BurningTreeC/vanilla-notebook/metrics/sidebarbreakpoint}}) {
+
+	.tc-sidebar-scrollable {
+		position: fixed;
+		inset-block: var(--nb-story-top) 0;
+		overflow-y: auto;
+		overflow-x: hidden;
+		-webkit-overflow-scrolling: touch;
+	}
+
+	.tc-story-river {
+		position: relative;
+		inset-block-start: var(--nb-story-top);
+		padding: var(--nb-gutter);
+	}
+
+	/* ---- fluid-fixed: fixed-width sidebar, fluid river ------------------- */
+
+	.nb-layout-fluid-fixed .tc-sidebar-scrollable {
+		inset-inline-end: 0;
+		inline-size: var(--nb-sidebar-w);
+	}
+
+	/* The river is fluid, so it genuinely reflows. Interpolating the margin
+	   is what makes that a glide rather than a jump. */
+	.nb-layout-fluid-fixed .tc-story-river {
+		inline-size: auto;
+		margin-inline: var(--nb-story-left) calc(var(--nb-open) * var(--nb-sidebar-w));
+	}
+
+	.nb-layout-fluid-fixed .tc-tiddler-frame {
+		inline-size: 100%;
+		max-inline-size: var(--nb-tiddler-w);
+		margin-inline: auto;
+	}
+
+	/* ---- fixed-fluid: fixed-width river, fluid sidebar ------------------- */
+
+	.nb-layout-fixed-fluid .tc-sidebar-scrollable {
+		inset-inline: var(--nb-story-right) 0;
+		inline-size: auto;
+	}
+
+	/*
+	** Nothing here reflows. The river keeps its width and simply glides to the
+	** centre of the viewport as the sidebar leaves — a composited transform,
+	** so this layout is GPU-only end to end.
+	**
+	** The offset is "where the centre of the viewport is" minus "where the
+	** river already starts", scaled by how closed the sidebar is.
+	*/
+	.nb-layout-fixed-fluid .tc-story-river {
+		inline-size: var(--nb-story-w);
+		margin-inline: var(--nb-story-left) 0;
+		translate: calc(
+			var(--nb-dir) * (1 - var(--nb-open)) *
+			((100vw - var(--nb-story-w)) / 2 - var(--nb-story-left))
+		) 0;
+		will-change: translate;
+	}
+
+	.nb-layout-fixed-fluid .tc-tiddler-frame {
+		inline-size: 100%;
+	}
+
+	/* ---- Full-width option ----------------------------------------------
+	**
+	** The river takes every pixel the sidebar is not currently using. The
+	** arithmetic is per-layout, because what the sidebar occupies differs —
+	** and, importantly, the sidebar keeps the sizing behaviour its layout mode
+	** promises. Full width is about the RIVER; it does not repossess the
+	** sidebar.
+	**
+	**   fluid-fixed  the sidebar is a fixed --nb-sidebar-w column, so the
+	**                river takes the viewport minus that, and grows by that
+	**                same amount as the sidebar leaves.
+	**
+	**   fixed-fluid  the sidebar is FLUID and legitimately owns everything
+	**                past --nb-story-right for as long as it is visible. So
+	**                while it is open the river stays at its normal width and
+	**                full width changes nothing but the tiddler cap — that is
+	**                correct, not a no-op bug. Once the sidebar is hidden,
+	**                that whole region frees up and the river takes the lot,
+	**                instead of keeping its fixed width and gliding to centre.
+	**
+	** Both are scaled by --nb-open, so the expansion rides the same single
+	** transition as the slide rather than snapping at the end of it.
+	*/
+
+	.nb-fullwidth .tc-story-river {
+		inline-size: auto;
+		translate: none;
+	}
+
+	.nb-fullwidth.nb-layout-fluid-fixed .tc-story-river {
+		margin-inline: var(--nb-story-left) calc(var(--nb-open) * var(--nb-sidebar-w));
+	}
+
+	.nb-fullwidth.nb-layout-fixed-fluid .tc-story-river {
+		margin-inline: var(--nb-story-left)
+			calc(var(--nb-open) * max(0px, 100vw - var(--nb-story-right)));
+	}
+
+	/* Zoomin storyview sizes its frames against the river, not the viewport.
+	   The position/display pair lives outside this media query — it is what
+	   makes the view overlay rather than stack, at every width. */
+	.tc-page-view-zoomin .tc-tiddler-frame {
+		inline-size: calc(100% - var(--nb-gutter));
+	}
+
+	.tc-story-river.tc-static-story-river {
+		margin-inline-end: 0;
+		translate: none;
+	}
+}
+
+/* ==========================================================================
+** Mobile — below the sidebar breakpoint
+**
+** The sidebar returns to normal document flow above the story river, which is
+** TiddlyWiki's own mobile convention. It is deliberately NOT an overlay
+** drawer: $:/state/sidebar defaults to OPEN, and that default is correct for
+** a desktop column but would mean a drawer covering the whole page on first
+** load on a phone. State is global, so it cannot mean "open" on desktop and
+** "closed" on mobile.
+**
+** The collapse still slides. `grid-template-rows: 1fr -> 0fr` is animatable —
+** it is the modern replacement for animating height to auto, and it is what
+** the core reveal was doing in JavaScript. Same duration, same easing, same
+** state class, so the behaviour stays continuous across the breakpoint.
+** ========================================================================== */
+
+@media (max-width: {{{ [{$:/themes/BurningTreeC/vanilla-notebook/metrics/sidebarbreakpoint}removesuffix[px]subtract[1]addsuffix[px]] ~[{$:/themes/BurningTreeC/vanilla-notebook/metrics/sidebarbreakpoint}] }}}) {
+
+	.tc-story-river {
+		position: relative;
+		inline-size: auto;
+		margin-inline: 0;
+		padding: calc(var(--nb-gutter) * 0.5);
+		translate: none;
+	}
+
+	.tc-sidebar-scrollable {
+		position: static;
+		inline-size: auto;
+		display: grid;
+		grid-template-rows: 1fr;
+		transition:
+			grid-template-rows var(--nb-dur) var(--nb-ease),
+			visibility 0s linear var(--nb-vis-delay);
+		translate: none;
+		will-change: auto;
+		border-block-end: 1px solid var(--nb-rule);
+
+		/* The scrollable widget writes overflow-x/overflow-y as INLINE styles
+		   on this node, so plain declarations lose to them. In flow the panel
+		   must not be its own scroll container. */
+		overflow: visible !important;
+	}
+
+	.nb-sidebar-closed .tc-sidebar-scrollable {
+		grid-template-rows: 0fr;
+		border-block-end-color: transparent;
+	}
+
+	/* The grid child does the clipping. min-block-size:0 is what lets a grid
+	   track actually reach zero. */
+	.tc-sidebar-scrollable > * {
+		min-block-size: 0;
+		overflow: hidden;
+	}
+}
+
+/* ==========================================================================
+** Full-width option — the tiddlers
+**
+** Deliberately OUTSIDE the media queries: once the option is on, tiddlers
+** should fill the river at every width, not just on desktop.
+**
+** Placed after the desktop block on purpose. `.nb-layout-fluid-fixed
+** .tc-tiddler-frame` and `.nb-fullwidth .tc-tiddler-frame` have identical
+** specificity (0,2,0), and a media query adds none — so source order is what
+** decides, and this has to come second to lift the cap.
+**
+** Note this also lifts the 68ch measure on the body. That is the honest
+** meaning of "full width", but it is a real typographic trade: at very wide
+** viewports the line length goes past comfortable reading. The option
+** defaults to off for that reason.
+** ========================================================================== */
+
+.nb-fullwidth .tc-tiddler-frame {
+	inline-size: 100%;
+	max-inline-size: none;
+	margin-inline: 0;
+}
+
+.nb-fullwidth .tc-tiddler-body {
+	max-inline-size: none;
+}
+
+/* ==========================================================================
+** Cost control
+**
+** In fluid-fixed the river relayouts each frame of the transition. Letting the
+** browser skip rendering for tiddlers that are scrolled out of view keeps that
+** bounded on long story rivers.
+**
+** :has() carves out the exceptions — a tiddler holding an open popup or an
+** active editor must stay fully rendered, because containment would clip the
+** dropdown and disturb the popup positioning in
+** core/modules/utils/dom/popup.js.
+** ========================================================================== */
+
+.tc-story-river .tc-tiddler-frame {
+	content-visibility: auto;
+	contain-intrinsic-size: auto 480px;
+}
+
+.tc-story-river .tc-tiddler-frame:has(.tc-drop-down),
+.tc-story-river .tc-tiddler-frame:has(.tc-block-dropdown),
+.tc-story-river .tc-tiddler-frame:has(.tc-popup),
+.tc-story-river .tc-tiddler-frame:has(.tc-tiddler-editor),
+.tc-story-river .tc-tiddler-frame:has(:focus-within) {
+	content-visibility: visible;
+	contain-intrinsic-size: none;
+}
+
+/* ==========================================================================
+** Reduced motion
+**
+** The slide collapses to an instant change. Note this keeps the layout
+** CORRECT — it only removes the interpolation — because every rule above is
+** written against --nb-open rather than against a swapped stylesheet.
+** ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+	.tc-page-container,
+	.tc-page-container-inner::after {
+		transition-duration: 1ms;
+	}
+
+	.tc-sidebar-scrollable,
+	.tc-story-river {
+		will-change: auto;
+	}
+}
+
+/* ==========================================================================
+** Print — chrome off, river unconstrained
+** ========================================================================== */
+
+@media print {
+
+	.tc-sidebar-scrollable,
+	.tc-topbar,
+	.tc-page-controls,
+	.tc-tiddler-controls {
+		display: none !important;
+	}
+
+	.tc-story-river {
+		position: static;
+		inline-size: auto;
+		margin: 0;
+		padding: 0;
+		translate: none;
+	}
+
+	.tc-story-river .tc-tiddler-frame {
+		content-visibility: visible;
+		break-inside: avoid;
+		box-shadow: none;
+		margin: 0 0 1.5em 0;
+	}
+}

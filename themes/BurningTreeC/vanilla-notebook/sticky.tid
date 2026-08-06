@@ -1,0 +1,106 @@
+title: $:/themes/BurningTreeC/vanilla-notebook/sticky
+tags: [[$:/tags/Stylesheet]]
+code-body: yes
+
+<!--
+Sticky tiddler titles.
+
+This lives in its own stylesheet tiddler rather than in base.tid because it
+needs widgets: a reveal to honour the option, and a list to generate the
+z-index ladder. base.tid restricts wikitext parsing with `\rules only` and so
+cannot contain either.
+
+The ladder is the non-obvious part. Once titles are sticky, a title scrolling
+inside its own frame will pass UNDER the frame that follows it in the DOM,
+because later siblings paint on top by default. Counting z-index downwards per
+position reverses that, so each title stays above the tiddlers below it. 100
+steps is the practical ceiling that Vanilla settled on.
+
+The offset is --nb-menubar-h, NOT --nb-story-top.
+
+Those two differ in kind. --nb-story-top is a layout offset: it pushes the
+story river down inside the document, and scrolling consumes it — by the time
+a title is sticking, the storytop gap has already scrolled off the screen.
+Adding it here would hold the title that much too low forever, leaving a band
+of dead space above every stuck title.
+
+--nb-menubar-h is the part that is pinned to the VIEWPORT. That is the only
+thing a sticky element has to clear, because it is the only thing still there
+after scrolling. With no menubar the value is 0 and titles stick to the top of
+the page, whatever storytop happens to be.
+
+The negative inline margins let the title's background span the sheet's full
+padding, so body text scrolls under an opaque strip instead of appearing in
+the gutter beside it.
+-->
+
+<$reveal state="$:/themes/BurningTreeC/vanilla-notebook/options/stickytitles" type="match" text="yes">
+``
+.tc-tiddler-title {
+	position: sticky;
+	inset-block-start: var(--nb-menubar-h, 0px);
+	z-index: 500;
+	background-color: ``<<colour tiddler-background>>``;
+
+	/*
+	Widen the strip from the sheet's content box out to its padding box, so
+	body text scrolls under an opaque band rather than appearing beside it.
+
+	These must mirror .tc-tiddler-frame's padding EXACTLY. The frame's extra
+	inline-start padding is unconditional — it reserves the margin gutter
+	whether or not the rule is drawn in it — so this compensation has to be
+	unconditional too. Scoping it to .nb-margin-rule left the strip 34px short
+	on the inline start whenever the rule was switched off.
+
+	Negative margins only widen a box whose inline-size is auto. Anything here
+	that sets an explicit width silently turns this back into a shift.
+	*/
+	margin-inline: calc(-1 * (var(--nb-margin) + var(--nb-space-lg))) calc(-1 * var(--nb-space-lg));
+	padding-inline: calc(var(--nb-margin) + var(--nb-space-lg)) var(--nb-space-lg);
+	padding-block: 2px;
+}
+
+/*
+A narrow river collapses the sheet to an even --nb-space-md padding and drops
+the margin rule (see the `@container river` block in base.tid). The strip has
+to follow that, or it overhangs the sheet by the gutter it no longer has.
+*/
+@container river (max-width: 34rem) {
+
+	.tc-tiddler-title {
+		margin-inline: calc(-1 * var(--nb-space-md));
+		padding-inline: var(--nb-space-md);
+	}
+}
+
+/*
+The sheet's margin rule is drawn by .tc-tiddler-frame::before, which sits
+BEHIND the title. Once the title is sticky it carries an opaque background
+across the full width of the sheet — including the gutter — so it erases the
+rule wherever it comes to rest, leaving a gap in the line.
+
+The title therefore draws its own segment. Because the title is pulled back to
+the sheet's padding edge by the negative margin above, an offset of
+--nb-margin from its own box lands on exactly the same column as the frame's
+rule, and the two read as one continuous line.
+
+`position: sticky` is itself a positioned value, so the title is already a
+containing block for this pseudo-element.
+*/
+.nb-margin-rule .tc-tiddler-title::before {
+	content: "";
+	position: absolute;
+	inset-block: 0;
+	inset-inline-start: var(--nb-margin);
+	inline-size: 1px;
+	background-color: var(--nb-margin-rule);
+	pointer-events: none;
+}
+``
+<$list filter="[range[100]]">
+`.tc-story-river .tc-tiddler-frame:nth-child(100n+`<$text text=<<currentTiddler>>/>`) {
+	z-index: `<$text text={{{ [[200]subtract<currentTiddler>] }}}/>`;
+}
+`
+</$list>
+</$reveal>

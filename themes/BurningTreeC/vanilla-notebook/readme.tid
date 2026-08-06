@@ -1,0 +1,35 @@
+title: $:/themes/BurningTreeC/vanilla-notebook/readme
+
+! Notebook
+
+An editorial theme for TiddlyWiki. Cream paper, warm ink, a red margin rule.
+
+It is a //standalone// theme: it does not depend on Vanilla and inherits no rule from it.
+
+!! The sliding layout
+
+Vanilla changes the sidebar and story-river layout by swapping CSS rules — the `if-no-sidebar` and `if-fluid-fixed` macros wrap CSS text in a reveal widget, so toggling `$:/state/sidebar` rewrites the stylesheet. A stylesheet edit applies in a single frame with no start value to interpolate from, which is why the layout jumps.
+
+Notebook emits every rule unconditionally and animates one registered custom property instead:
+
+```
+@property --nb-open { syntax: "<number>"; inherits: true; initial-value: 1; }
+```
+
+State reaches CSS as classes on the page container, contributed through the core's `$:/tags/ClassFilters/PageTemplate` hook. One scalar, one transition, both layouts, both text directions.
+
+!! Compatibility shim
+
+Notebook ships three tiddlers under Vanilla's namespace:
+
+* `$:/themes/tiddlywiki/vanilla/metrics/`
+* `$:/themes/tiddlywiki/vanilla/settings/`
+* `$:/themes/tiddlywiki/vanilla/options/`
+
+This is deliberate, and it is a workaround rather than a design choice. The core and several bundled plugins read Vanilla's metric and setting paths directly regardless of which theme is active — `$:/core/stylesheets/custom-properties` builds every `--tp-*` property from them, and the menubar plugin computes its media-query breakpoints from `$:/themes/tiddlywiki/vanilla/metrics/sidebarbreakpoint`. With no Vanilla installed those lookups return empty, which produces invalid CSS such as `@media (max-width: )` and silently drops the affected rules.
+
+These shadow tiddlers only exist while Notebook is the active theme, so they cannot affect a wiki that has switched back to Vanilla.
+
+<<.warning "The shim holds static copies of Notebook's own defaults. Changing a metric in Notebook's Control Panel tab does //not// update the Vanilla-namespace copy. If you change the sidebar breakpoint and use the menubar plugin, update `$:/themes/tiddlywiki/vanilla/metrics/sidebarbreakpoint` to match.">>
+
+The real fix belongs in the core: those lookups should resolve against the active theme rather than a hard-coded one.

@@ -1,0 +1,53 @@
+title: $:/themes/BurningTreeC/vanilla-notebook/ThemeTweaks
+tags: $:/tags/ControlPanel/Appearance
+caption: Notebook
+
+! Notebook
+
+Settings for the Notebook theme.
+
+!! Layout
+
+<$radio tiddler="$:/themes/BurningTreeC/vanilla-notebook/options/sidebarlayout" value="fluid-fixed"> Fluid story river, fixed sidebar</$radio>
+
+<$radio tiddler="$:/themes/BurningTreeC/vanilla-notebook/options/sidebarlayout" value="fixed-fluid"> Fixed story river, fluid sidebar</$radio>
+
+<<.tip "In ''fixed-fluid'' the story river keeps its width, so hiding the sidebar is composited entirely on the GPU — nothing reflows. In ''fluid-fixed'' the river reclaims the freed space, which is a layout change by definition; it is interpolated rather than snapped, so it glides, but it is not GPU work.">>
+
+<$checkbox tiddler="$:/themes/BurningTreeC/vanilla-notebook/options/fullwidth" field="text" checked="yes" unchecked="no" default="no"> Full width — story river and tiddlers take all the space the sidebar is not using</$checkbox>
+
+<<.tip "Full width lifts the cap on tiddler width and the 68-character measure on tiddler text, so tiddlers fill the story river. The sidebar keeps the sizing its layout mode gives it. In ''fluid-fixed'' the river takes the viewport minus the fixed sidebar. In ''fixed-fluid'' the sidebar is fluid and owns the space beside the river while it is visible, so the river only expands to the full viewport once the sidebar is hidden. On a wide display full width means lines longer than is comfortable to read, which is why it is off by default.">>
+
+!! Paper
+
+<$checkbox tiddler="$:/themes/BurningTreeC/vanilla-notebook/options/marginrule" field="text" checked="yes" unchecked="no" default="yes"> Draw the margin rule down each tiddler</$checkbox>
+
+<$checkbox tiddler="$:/themes/BurningTreeC/vanilla-notebook/options/ruleseditor" field="text" checked="yes" unchecked="no" default="yes"> Rule the editor like notebook paper</$checkbox>
+
+<$checkbox tiddler="$:/themes/BurningTreeC/vanilla-notebook/options/stickytitles" field="text" checked="yes" unchecked="no" default="no"> Keep tiddler titles visible while scrolling</$checkbox>
+
+!! Metrics
+
+|!Setting |!Value |
+|Font size |<$edit-text tiddler="$:/themes/BurningTreeC/vanilla-notebook/metrics/fontsize" default="" tag="input"/> |
+|Line height |<$edit-text tiddler="$:/themes/BurningTreeC/vanilla-notebook/metrics/lineheight" default="" tag="input"/> |
+|Body font size |<$edit-text tiddler="$:/themes/BurningTreeC/vanilla-notebook/metrics/bodyfontsize" default="" tag="input"/> |
+|Body line height |<$edit-text tiddler="$:/themes/BurningTreeC/vanilla-notebook/metrics/bodylineheight" default="" tag="input"/> |
+|Story width |<$edit-text tiddler="$:/themes/BurningTreeC/vanilla-notebook/metrics/storywidth" default="" tag="input"/> |
+|Story right |<$edit-text tiddler="$:/themes/BurningTreeC/vanilla-notebook/metrics/storyright" default="" tag="input"/> |
+|Tiddler width |<$edit-text tiddler="$:/themes/BurningTreeC/vanilla-notebook/metrics/tiddlerwidth" default="" tag="input"/> |
+|Sidebar width |<$edit-text tiddler="$:/themes/BurningTreeC/vanilla-notebook/metrics/sidebarwidth" default="" tag="input"/> |
+|Sidebar breakpoint |<$edit-text tiddler="$:/themes/BurningTreeC/vanilla-notebook/metrics/sidebarbreakpoint" default="" tag="input"/> |
+|Story gutter |<$edit-text tiddler="$:/themes/BurningTreeC/vanilla-notebook/metrics/storygutter" default="" tag="input"/> |
+|Margin rule offset |<$edit-text tiddler="$:/themes/BurningTreeC/vanilla-notebook/metrics/marginrule" default="" tag="input"/> |
+
+!! Fonts
+
+|!Role |!Stack |
+|Body (serif) |<$edit-text tiddler="$:/themes/BurningTreeC/vanilla-notebook/settings/fontfamily" default="" tag="input"/> |
+|Interface (sans) |<$edit-text tiddler="$:/themes/BurningTreeC/vanilla-notebook/settings/uifontfamily" default="" tag="input"/> |
+|Code (mono) |<$edit-text tiddler="$:/themes/BurningTreeC/vanilla-notebook/settings/codefontfamily" default="" tag="input"/> |
+
+!! Motion
+
+The slide duration follows your global <$link to="$:/config/AnimationDuration">animation duration</$link> setting, currently <$text text={{$:/config/AnimationDuration}}/>ms. Setting it to `0` disables the slide without breaking the layout.
