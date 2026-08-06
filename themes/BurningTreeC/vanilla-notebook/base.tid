@@ -1462,19 +1462,14 @@ textarea:disabled {
 }
 
 .tc-alert {
+	position: relative;
 	padding: var(--nb-space-md);
-	margin-block-end: var(--nb-space-sm);
+	margin: var(--nb-space-md);
 	background-color: var(--tpc-alert-background);
 	border: 1px solid var(--tpc-alert-border);
 	border-inline-start: 3px solid var(--tpc-alert-highlight);
 	border-radius: var(--nb-radius);
 	box-shadow: 0 8px 24px -12px var(--nb-shadow);
-}
-
-.tc-alert-toolbar {
-	display: flex;
-	justify-content: flex-end;
-	gap: var(--nb-space-2xs);
 }
 
 .tc-alert-highlight {
@@ -1502,8 +1497,13 @@ textarea:disabled {
 	font-size: 0.875rem;
 }
 
+/*
+** .tc-static-alert-inner is absolutely positioned, so its parent has to be the
+** containing block. Without `position: relative` here it anchors to whatever
+** positioned ancestor it happens to find and lands somewhere unrelated.
+*/
 .tc-static-alert {
-	color: var(--tpc-static-alert-foreground);
+	position: relative;
 }
 
 .tc-error {
@@ -2056,16 +2056,23 @@ nav.tc-menubar .tc-form-inline {
 	overflow: hidden;
 }
 
+/*
+** The alert stack is capped at half the viewport. Without a cap it spans the
+** full width, and a one-line alert becomes a banner across the whole screen.
+*/
 .tc-alerts {
 	position: fixed;
 	inset-block-start: 28px;
 	inset-inline: 0;
+	max-inline-size: 50%;
 	z-index: 20000;
 }
 
 .tc-static-alert-inner {
 	position: absolute;
 	z-index: 100;
+	padding: 0 2px 2px 42px;
+	color: var(--tpc-static-alert-foreground);
 }
 
 .tc-drafts-list {
@@ -3182,11 +3189,6 @@ span.tc-translink > a:first-child {
 	inset-inline-end: 42px;
 	z-index: 1300;
 	max-inline-size: 280px;
-}
-
-/* Anchor for the alert's absolutely-placed toolbar */
-.tc-alert {
-	position: relative;
 }
 
 .tc-alert-toolbar {
