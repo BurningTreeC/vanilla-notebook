@@ -1,0 +1,67 @@
+title: $:/themes/BurningTreeC/vanilla-notebook/plugins/twitter-archivist
+tags: [[$:/tags/Stylesheet]]
+code-body: yes
+
+\rules only filteredtranscludeinline transcludeinline macrodef macrocallinline html
+
+<$list filter="[[$:/plugins/tiddlywiki/twitter-archivist]is[tiddler]]" variable="ignore">
+
+/* ==========================================================================
+** Twitter archivist
+**
+** An archived thread is a quoted conversation, so Notebook sets it the way a
+** book sets one: an indent rule down the side of each reply rather than a
+** rounded box around every tweet. Nesting is the whole structure of a thread,
+** and a rule shows depth at any level where a border only shows a box.
+**
+** The plugin's #536471 on the date is Twitter's own grey, fixed, and unreadable
+** on a dark palette.
+** ========================================================================== */
+
+.tc-twitter-tweet {
+	border: none;
+	border-radius: 0;
+	border-inline-start: 2px solid var(--nb-rule);
+	padding-inline-start: var(--nb-space-sm);
+	margin-block: var(--nb-space-sm);
+}
+
+.tc-twitter-tweet-reply {
+	margin-inline-start: var(--nb-space-sm);
+}
+
+.tc-twitter-tweet-reply .tc-twitter-tweet {
+	border-inline-start-color: var(--nb-rule-faint);
+}
+
+.tc-twitter-tweet-header-displayname {
+	font-family: var(--nb-font-ui);
+	font-size: 0.8125rem;
+	font-weight: 600;
+	color: var(--tpc-foreground);
+}
+
+.tc-twitter-tweet-header-date,
+.tc-twitter-tweet-reply-to {
+	font-family: var(--nb-font-ui);
+	font-size: 0.75rem;
+	color: var(--nb-ink-faint);
+}
+
+/* The tweet itself is prose, so it gets the body face at a readable size
+   rather than 0.8em of whatever it happens to be nested in - which, in a deep
+   thread, compounds until the text is unreadable. */
+.tc-twitter-tweet-body,
+.tc-twitter-tweet-reply .tc-twitter-tweet-body {
+	font-family: var(--nb-font-body);
+	font-size: 0.9375rem;
+	line-height: 1.55;
+}
+
+.tc-twitter-tweet-footer {
+	font-family: var(--nb-font-ui);
+	font-size: 0.75rem;
+	color: var(--nb-ink-faint);
+}
+
+</$list>

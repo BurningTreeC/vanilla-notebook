@@ -1,0 +1,147 @@
+title: $:/themes/BurningTreeC/vanilla-notebook/plugins/geospatial
+tags: [[$:/tags/Stylesheet]]
+code-body: yes
+
+\rules only filteredtranscludeinline transcludeinline macrodef macrocallinline html
+
+<$list filter="[[$:/plugins/tiddlywiki/geospatial]is[tiddler]]" variable="ignore">
+
+/* ==========================================================================
+** Geospatial (Leaflet)
+**
+** The map tiles are photographs of the world and nothing here touches them -
+** re-tinting a map would make it wrong, not themed. What this does is the
+** chrome Leaflet draws ON TOP of the tiles: zoom buttons, attribution, layer
+** switcher, popups. Leaflet ships those as white boxes with #ccc borders and
+** hard black shadows, which is a different design language sitting inside a
+** Notebook page.
+**
+** Everything is scoped under .leaflet-container so it cannot reach any other
+** map a different plugin might render.
+** ========================================================================== */
+
+/* The map itself is a picture, so it is framed like one. */
+.leaflet-container {
+	border: 1px solid var(--nb-paper-edge);
+	border-radius: var(--nb-radius);
+	font-family: var(--nb-font-ui);
+}
+
+/* ---- Controls ---- */
+
+.leaflet-container .leaflet-bar,
+.leaflet-container .leaflet-control-layers {
+	background: var(--tpc-tiddler-background);
+	border: 1px solid var(--nb-paper-edge);
+	border-radius: var(--nb-radius);
+	box-shadow: 0 1px 2px var(--nb-shadow-soft), 0 6px 16px -10px var(--nb-shadow);
+}
+
+.leaflet-container .leaflet-bar a,
+.leaflet-container .leaflet-bar a:hover {
+	background-color: var(--tpc-tiddler-background);
+	color: var(--tpc-foreground);
+	border-block-end: 1px solid var(--nb-rule-faint);
+}
+
+.leaflet-container .leaflet-bar a:hover {
+	background-color: color-mix(in oklch, var(--tpc-primary) 10%, var(--tpc-tiddler-background));
+}
+
+.leaflet-container .leaflet-bar a:focus-visible {
+	outline: 2px solid var(--nb-focus);
+	outline-offset: -2px;
+}
+
+/* Leaflet greys out a disabled zoom button with a fixed #bbb on #f4f4f4. */
+.leaflet-container .leaflet-bar a.leaflet-disabled {
+	background-color: var(--tpc-tiddler-background);
+	color: var(--nb-ink-faint);
+	opacity: 0.5;
+}
+
+/* ---- Attribution ----
+** Required by the tile providers, so it must stay readable - this makes it
+** quieter, never invisible. */
+
+.leaflet-container .leaflet-control-attribution {
+	background: color-mix(in oklch, var(--tpc-tiddler-background) 82%, transparent);
+	color: var(--nb-ink-soft);
+	font-family: var(--nb-font-ui);
+	font-size: 0.6875rem;
+}
+
+.leaflet-container .leaflet-control-attribution a {
+	color: var(--tpc-tiddler-link-foreground);
+}
+
+/* ---- Popups and tooltips ----
+** These are notes pinned to the map, so they get the theme's card treatment.
+** The little arrow is a rotated square that Leaflet fills white; it has to be
+** filled with the same paper as the popup or it reads as a white chip. */
+
+.leaflet-container .leaflet-popup-content-wrapper,
+.leaflet-container .leaflet-popup-tip {
+	background: var(--tpc-tiddler-background);
+	color: var(--tpc-foreground);
+	border-radius: var(--nb-radius);
+	box-shadow: 0 1px 2px var(--nb-shadow-soft), 0 10px 26px -12px var(--nb-shadow);
+}
+
+.leaflet-container .leaflet-popup-content {
+	font-family: var(--nb-font-body);
+	line-height: 1.5;
+}
+
+.leaflet-container .leaflet-popup-close-button {
+	color: var(--tpc-tiddler-controls-foreground);
+}
+
+.leaflet-container .leaflet-tooltip {
+	background: var(--tpc-tiddler-background);
+	color: var(--tpc-foreground);
+	border: 1px solid var(--nb-paper-edge);
+	border-radius: var(--nb-radius);
+	box-shadow: 0 4px 12px -8px var(--nb-shadow);
+	font-family: var(--nb-font-ui);
+	font-size: 0.8125rem;
+}
+
+/* ---- Marker clusters ----
+** The plugin's default cluster styling is three fixed lime-to-orange discs.
+** They become one accent-derived disc that gets more solid as the cluster gets
+** bigger, so size still reads at a glance without three unrelated hues. */
+
+.leaflet-container .marker-cluster-small div,
+.leaflet-container .marker-cluster-medium div,
+.leaflet-container .marker-cluster-large div {
+	color: var(--tpc-background);
+	font-family: var(--nb-font-ui);
+	font-weight: 600;
+}
+
+.leaflet-container .marker-cluster-small {
+	background-color: color-mix(in oklch, var(--tpc-primary) 30%, transparent);
+}
+
+.leaflet-container .marker-cluster-small div {
+	background-color: color-mix(in oklch, var(--tpc-primary) 70%, transparent);
+}
+
+.leaflet-container .marker-cluster-medium {
+	background-color: color-mix(in oklch, var(--tpc-primary) 40%, transparent);
+}
+
+.leaflet-container .marker-cluster-medium div {
+	background-color: color-mix(in oklch, var(--tpc-primary) 85%, transparent);
+}
+
+.leaflet-container .marker-cluster-large {
+	background-color: color-mix(in oklch, var(--tpc-primary) 50%, transparent);
+}
+
+.leaflet-container .marker-cluster-large div {
+	background-color: var(--tpc-primary);
+}
+
+</$list>

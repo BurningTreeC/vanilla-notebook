@@ -1,0 +1,60 @@
+title: $:/themes/BurningTreeC/vanilla-notebook/plugins/tiddlyweb
+tags: [[$:/tags/Stylesheet]]
+code-body: yes
+
+\rules only filteredtranscludeinline transcludeinline macrodef macrocallinline html
+
+<$list filter="[[$:/plugins/tiddlywiki/tiddlyweb]is[tiddler]]" variable="ignore">
+
+/* ==========================================================================
+** TiddlyWeb (client-server sync)
+**
+** The plugin swaps a cloud icon between idle and syncing states and fills both
+** with <<colour background>> - the PAGE background - on the assumption that
+** the icon sits on a coloured toolbar. In this theme the sidebar controls sit
+** on the page itself, so filling them with the page colour makes them
+** invisible until they move.
+**
+** They are given the sidebar's own control colour instead, and the syncing
+** state gets the accent so that "something is happening" is legible without
+** having to notice that a shape is rotating.
+** ========================================================================== */
+
+body .tc-image-cloud-idle {
+	fill: var(--tpc-sidebar-controls-foreground);
+}
+
+body .tc-image-cloud-progress {
+	fill: var(--tpc-primary);
+}
+
+body.tc-dirty span.tc-dirty-indicator svg {
+	fill: var(--tpc-dirty-indicator);
+}
+
+/*
+** The plugin animates the syncing cloud with a 2s infinite rotation. Anyone
+** who has asked for reduced motion should not have a permanently spinning icon
+** in the corner of the page - so the spin stops and the icon simply stays
+** visible in the accent colour, which still says "syncing".
+**
+** Note the keyframe name is the plugin's own (animation-rotate-slow); this
+** only turns it off, it does not redefine it.
+*/
+@media (prefers-reduced-motion: reduce) {
+	body .tc-image-cloud-progress {
+		animation: none;
+		transform: none;
+	}
+}
+
+/* ---- Read-only mode ----
+** The readonly stylesheet hides the editing buttons outright. Nothing to
+** re-colour, but the sidebar it leaves behind has gaps where the buttons were,
+** so the remaining controls are allowed to close up. */
+
+.tc-page-controls {
+	flex-wrap: wrap;
+}
+
+</$list>

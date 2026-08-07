@@ -133,7 +133,7 @@ code-body: yes
 	*/
 	--nb-drop: var(--tpc-dropzone-background);
 
-	color-scheme: light dark;
+	color-scheme: {{{ [{$:/palette}get[color-scheme]] }}};
 	accent-color: var(--tpc-primary);
 }
 
@@ -637,19 +637,36 @@ button.tc-btn-invisible {
 	gap: var(--nb-space-2xs);
 	align-items: center;
 	float: inline-end;
+}
+
+/*
+** Controls stay hidden until the sheet is engaged — but never hidden from
+** keyboards, which is why :focus-within is in the selector.
+**
+** The hide is scoped to controls INSIDE a tiddler frame, and it has to be.
+** .tc-tiddler-controls is not private to the story river: the core reuses it
+** in TiddlerInfo, and plugins reuse it for their own panels — the tour's close
+** button (plugins/tiddlywiki/tour/tour-panel.tid) and the help panel
+** (plugins/tiddlywiki/help/HelpPanel.tid) among them. Hiding it unscoped meant
+** every one of those was set to opacity 0 with nothing that could ever bring
+** it back, because the reveal below needs a .tc-tiddler-frame ancestor that
+** those panels do not have. The tour's only way out became invisible.
+*/
+.tc-tiddler-frame .tc-tiddler-controls {
 	opacity: 0;
 	transition: opacity 140ms var(--nb-ease-out);
 }
 
-/* Controls stay hidden until the sheet is engaged — but never hidden from
-   keyboards, which is why :focus-within is in the selector. */
 .tc-tiddler-frame:hover .tc-tiddler-controls,
 .tc-tiddler-frame:focus-within .tc-tiddler-controls {
 	opacity: 1;
 }
 
+/* Scoped to match the rule above. A media query adds no specificity of its
+   own, so a bare .tc-tiddler-controls here would lose to the two-class
+   selector and touch devices would keep the hidden controls. */
 @media (hover: none) {
-	.tc-tiddler-controls {
+	.tc-tiddler-frame .tc-tiddler-controls {
 		opacity: 1;
 	}
 }

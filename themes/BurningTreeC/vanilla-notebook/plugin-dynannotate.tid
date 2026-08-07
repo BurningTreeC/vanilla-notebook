@@ -1,0 +1,116 @@
+title: $:/themes/BurningTreeC/vanilla-notebook/plugins/dynannotate
+tags: [[$:/tags/Stylesheet]]
+code-body: yes
+
+\rules only filteredtranscludeinline transcludeinline macrodef macrocallinline html
+
+<$list filter="[[$:/plugins/tiddlywiki/dynannotate]is[tiddler]]" variable="ignore">
+
+/* ==========================================================================
+** Dynannotate
+**
+** Every colour in this plugin is a literal: rgba(255,255,0,0.3) for
+** annotations, rgba(255,0,0,0.3) for search hits, #efef53 for snippets, #ffa
+** for the example panel, and `border: 1px solid black` on the demo frame. On
+** a dark palette a 30% yellow over dark paper is a muddy smear, and the
+** `mix-blend-mode: multiply` those overlays rely on only behaves as intended
+** over a light background - over dark paper multiply drives everything toward
+** black and the highlight disappears entirely.
+**
+** Notebook keeps the idea - a translucent wash laid over the text, the way a
+** highlighter works on paper - but derives the colour from the palette and
+** swaps the blend mode for one that survives both directions.
+** ========================================================================== */
+
+.tc-dynannotation-wrapper {
+	position: relative;
+}
+
+/*
+** The blend mode follows THE PALETTE, not the operating system.
+**
+** `multiply` is not symmetric - it always moves a colour toward black - so on
+** dark paper it dims the page instead of marking it, and the highlight
+** vanishes. `screen` is its mirror and is what dark paper needs.
+**
+** The obvious way to switch is @media (prefers-color-scheme: dark), and that
+** is wrong here: it reports what the OS is set to, while what matters is which
+** palette is loaded, and the two are independent - Vanilla Notebook Night on a
+** light-preference machine would get multiply and lose its highlights. Every
+** palette carries a `color-scheme` FIELD instead, which the core itself reads
+** (core/modules/editor/engines/framed.js), so that is what is asked. Palettes
+** that omit the field fall back to the light-paper behaviour.
+*/
+.tc-dynannotation-annotation-overlay {
+	position: absolute;
+	background: color-mix(in oklch, var(--tpc-primary) 28%, transparent);
+	mix-blend-mode: {{{ [{$:/palette}get[color-scheme]match[dark]then[screen]] ~[[multiply]] }}};
+	border-radius: 2px;
+}
+
+.tc-dynannotation-search-overlay {
+	position: absolute;
+	pointer-events: none;
+	background: color-mix(in oklch, var(--tpc-alert-highlight) 30%, transparent);
+	border-radius: 2px;
+}
+
+.tc-dynannotation-search-overlay-blurred {
+	background: color-mix(in oklch, var(--tpc-alert-highlight) 30%, transparent);
+	mix-blend-mode: {{{ [{$:/palette}get[color-scheme]match[dark]then[screen]] ~[[multiply]] }}};
+	border-radius: var(--nb-radius);
+	filter: blur(2px);
+}
+
+/* The animated barber-pole. Two washes of the accent rather than the plugin's
+   fixed #ff8/#dd8, so it re-tints with the palette. */
+.tc-dynannotation-search-overlay-animated {
+	mix-blend-mode: {{{ [{$:/palette}get[color-scheme]match[dark]then[screen]] ~[[multiply]] }}};
+	background: repeating-linear-gradient(
+		-45deg,
+		color-mix(in oklch, var(--tpc-primary) 34%, transparent) 0,
+		color-mix(in oklch, var(--tpc-primary) 18%, transparent) 25%,
+		transparent 0,
+		transparent 50%
+	) 0 / 0.6em 0.6em;
+}
+
+/* The plugin animates `background-position` forever. Anyone who has asked for
+   less motion should not get a permanently crawling highlight. */
+@media (prefers-reduced-motion: reduce) {
+	.tc-dynannotation-search-overlay-animated {
+		animation: none;
+	}
+}
+
+/* ---- Documentation surfaces ----
+** These appear in the plugin's own demo tiddlers. They are still part of the
+** wiki, so they get paper rather than fixed yellows and a black hairline. */
+
+.tc-dynannotate-example-frame {
+	border: 1px solid var(--nb-paper-edge);
+	border-radius: var(--nb-radius-lg);
+	padding: var(--nb-space-md);
+	background-color: var(--tpc-tiddler-background);
+}
+
+.tc-dynannotate-snippet-highlight {
+	background: color-mix(in oklch, var(--tpc-primary) 22%, transparent);
+	border-radius: 2px;
+	padding: 0 2px;
+}
+
+.tc-dynannotation-example-info {
+	background: var(--tpc-message-background);
+	color: var(--tpc-foreground);
+	border: 1px solid var(--tpc-message-border);
+	border-radius: var(--nb-radius);
+	padding: var(--nb-space-md);
+}
+
+.tc-control-panel table.tc-dynannotate-search-parameters,
+.tc-control-panel table.tc-dynannotate-search-parameters input {
+	inline-size: initial;
+}
+
+</$list>

@@ -1,0 +1,95 @@
+title: $:/themes/BurningTreeC/vanilla-notebook/plugins/codemirror-6-keymap-vim
+tags: [[$:/tags/Stylesheet]]
+code-body: yes
+
+\rules only filteredtranscludeinline transcludeinline macrodef macrocallinline html
+
+<$list filter="[[$:/plugins/tiddlywiki/codemirror-6-keymap-vim]is[tiddler]]" variable="ignore">
+
+/* ==========================================================================
+** CodeMirror 6 - vim keymap
+**
+** Two surfaces: the block cursor, and the `:` command line at the foot of the
+** editor.
+**
+** The block cursor is the one thing here that must not simply be tinted. It
+** sits ON TOP of a character, so whatever colour it takes has to contrast with
+** the text underneath or the character under the cursor becomes unreadable -
+** and in normal mode that character is where you are. Rather than pick a fill
+** and hope, it is drawn as the palette's accent with the glyph knocked out in
+** the page background, which is a pair the palette guarantees.
+** ========================================================================== */
+
+.tc-editor-codemirror6 .cm-cursor-primary.cm-fat-cursor,
+.tc-editor-codemirror6-simple .cm-cursor-primary.cm-fat-cursor {
+	background: var(--tpc-primary);
+	color: var(--tpc-background);
+	border: none;
+	outline: none;
+}
+
+/* Unfocused: an outline instead of a fill, so the editor that does not have
+   the keyboard is obviously not the one receiving commands. */
+.tc-editor-codemirror6 .cm-editor:not(.cm-focused) .cm-fat-cursor,
+.tc-editor-codemirror6-simple .cm-editor:not(.cm-focused) .cm-fat-cursor {
+	background: transparent;
+	outline: 1px solid var(--nb-accent-edge);
+	color: inherit;
+}
+
+.tc-editor-codemirror6 .cm-vimCursorLayer,
+.tc-editor-codemirror6-simple .cm-vimCursorLayer {
+	mix-blend-mode: normal;
+}
+
+/* ---- The command line ----
+** Docked at the foot of the editor. It is a place you type into, so it is set
+** in the code face on the editor's own paper, with a hairline separating it
+** from the text above. */
+
+.tc-editor-codemirror6 .cm-vim-panel,
+.tc-editor-codemirror6-simple .cm-vim-panel {
+	background: var(--tpc-tiddler-background);
+	color: var(--tpc-foreground);
+	border-block-start: 1px solid var(--nb-rule);
+	font-family: var(--nb-font-code);
+	font-size: 0.875rem;
+	padding: var(--nb-space-2xs) var(--nb-space-sm);
+}
+
+.tc-editor-codemirror6 .cm-vim-panel input,
+.tc-editor-codemirror6-simple .cm-vim-panel input {
+	background: transparent;
+	color: var(--tpc-foreground);
+	border: none;
+	font-family: var(--nb-font-code);
+	font-size: inherit;
+	caret-color: var(--tpc-primary);
+}
+
+/* The plugin removes the outline on focus. This panel IS the focused thing
+   whenever it is open, so it gets a ring on the panel rather than the input -
+   a border on a bare command line reads as a text box, which it is not. */
+.tc-editor-codemirror6 .cm-vim-panel:focus-within,
+.tc-editor-codemirror6-simple .cm-vim-panel:focus-within {
+	box-shadow: inset 0 2px 0 -1px var(--tpc-primary);
+}
+
+.tc-editor-codemirror6 .cm-vim-panel input:focus,
+.tc-editor-codemirror6-simple .cm-vim-panel input:focus {
+	outline: none;
+}
+
+/* Messages and errors from ex commands. */
+.tc-editor-codemirror6 .cm-vim-message,
+.tc-editor-codemirror6-simple .cm-vim-message {
+	color: var(--nb-ink-soft);
+	font-family: var(--nb-font-code);
+}
+
+.tc-editor-codemirror6 .cm-selectionBackground,
+.tc-editor-codemirror6-simple .cm-selectionBackground {
+	background: color-mix(in oklch, var(--tpc-primary) 26%, transparent);
+}
+
+</$list>

@@ -1,0 +1,38 @@
+title: $:/themes/BurningTreeC/vanilla-notebook/plugins/qrcode
+tags: [[$:/tags/Stylesheet]]
+code-body: yes
+
+\rules only filteredtranscludeinline transcludeinline macrodef macrocallinline html
+
+<$list filter="[[$:/plugins/tiddlywiki/qrcode]is[tiddler]]" variable="ignore">
+
+/* ==========================================================================
+** QR code
+**
+** A QR code is not decoration and must not be re-tinted: the contrast between
+** its modules is what makes it scannable, and a camera reading it at an angle
+** in poor light needs all of that contrast. So the code itself is left exactly
+** as generated.
+**
+** What it does need is quiet space. A QR code has a required white margin
+** around it - the "quiet zone" - and dropping it straight onto cream or dark
+** paper eats into that. The dropdown gives it a white bed to sit on, with the
+** theme's radius so it still belongs to the page.
+** ========================================================================== */
+
+.tc-drop-down .tc-qrcode-drop-down {
+	padding: var(--nb-space-sm);
+	background: #ffffff;
+	border-radius: var(--nb-radius);
+	line-height: 0;
+}
+
+.tc-drop-down .tc-qrcode-drop-down img {
+	inline-size: 100%;
+	block-size: 100%;
+	/* Scanning relies on hard edges between modules; smoothing an upscaled QR
+	   code is the one place where a blurry image is a functional failure. */
+	image-rendering: pixelated;
+}
+
+</$list>

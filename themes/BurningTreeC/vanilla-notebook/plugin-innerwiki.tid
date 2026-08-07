@@ -1,0 +1,38 @@
+title: $:/themes/BurningTreeC/vanilla-notebook/plugins/innerwiki
+tags: [[$:/tags/Stylesheet]]
+code-body: yes
+
+\rules only filteredtranscludeinline transcludeinline macrodef macrocallinline html
+
+<$list filter="[[$:/plugins/tiddlywiki/innerwiki]is[tiddler]]" variable="ignore">
+
+/* ==========================================================================
+** Innerwiki
+**
+** A whole wiki rendered inside a tiddler. The plugin frames it with
+** `1px solid #666` and a hard black drop shadow, both fixed.
+**
+** The frame matters more here than it does elsewhere: what is inside it is a
+** different document with its own palette, so the edge is the only thing
+** telling the reader where this wiki stops and that one starts. It should be
+** clearly drawn, and it should not pretend the inner wiki is part of the page.
+** So: the theme's paper edge, its radius, and a soft shadow built from the
+** palette's own ink - enough to read as a separate surface resting on the
+** page, without the fixed black that only works on white.
+** ========================================================================== */
+
+.tc-innerwiki-wrapper {
+	border: 1px solid var(--nb-paper-edge);
+	border-radius: var(--nb-radius);
+	box-shadow: 0 1px 2px var(--nb-shadow-soft), 0 8px 22px -12px var(--nb-shadow);
+	max-inline-size: 100%;
+
+	/* The iframe inside is a fixed pixel size, set by the macro that renders
+	   it. On a narrow screen that is wider than the sheet and starts the whole
+	   page scrolling sideways, so the wrapper scrolls on its own instead. */
+	overflow-x: auto;
+	overflow-y: hidden;
+	scrollbar-width: thin;
+}
+
+</$list>

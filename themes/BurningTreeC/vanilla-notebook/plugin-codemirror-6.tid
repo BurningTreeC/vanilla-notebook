@@ -1,0 +1,321 @@
+title: $:/themes/BurningTreeC/vanilla-notebook/plugins/codemirror-6
+tags: [[$:/tags/Stylesheet]]
+code-body: yes
+
+\rules only filteredtranscludeinline transcludeinline macrodef macrocallinline html
+
+<$list filter="[[$:/plugins/tiddlywiki/codemirror-6]is[tiddler]]" variable="ignore">
+
+/* ==========================================================================
+** CodeMirror 6
+**
+** This plugin is built to be themed, which changes what this sheet should do.
+** $:/plugins/tiddlywiki/codemirror-6/wikitext-styles declares a full set of
+** --wt-* custom properties on :root and says in its own comments that theme
+** plugins are meant to override them. So the syntax scheme here is thirty
+** variable declarations rather than a hundred rules fighting the plugin.
+**
+** WHERE they are declared matters. They go on :root, which is where the
+** plugin puts its own defaults, so this simply replaces them. It deliberately
+** does NOT reach further: the codemirror-6-themes plugin sets --wt-* on the
+** editor element itself via [data-cm6-theme="..."], which is closer in the
+** inheritance chain than :root, so a theme the user has actually chosen still
+** wins over everything here. Notebook supplies the default, not the ceiling.
+**
+** The colours are derived the same way as the CodeMirror 5 sheet: lightness
+** from the palette's own foreground, so every token reads with the contrast of
+** body text on whatever paper is behind it, and hue carries the role. See
+** $:/themes/BurningTreeC/vanilla-notebook/plugins/codemirror for why lightness
+** cannot come from the accent.
+** ========================================================================== */
+
+:root {
+	--nb-cm6-c: 0.11;
+
+	/* Surfaces - straight from the palette, no interpretation needed */
+	--wt-bg: var(--tpc-tiddler-editor-background);
+	--wt-bg-subtle: color-mix(in oklch, var(--tpc-foreground) 5%, var(--tpc-tiddler-editor-background));
+	--wt-fg: var(--tpc-foreground);
+	--wt-fg-muted: color-mix(in oklch, var(--tpc-foreground) 78%, var(--tpc-tiddler-editor-background));
+	/* 68%, not the 55% this started at. Faint is meant to be faint - it marks
+	   invisibles and inactive syntax - but at 55% it measured 1.92:1 on
+	   SolarFlare, which is not faint, it is gone. It is still well clear of
+	   fg-muted at 78%, so the three inks stay distinguishable. */
+	--wt-fg-faint: color-mix(in oklch, var(--tpc-foreground) 68%, var(--tpc-tiddler-editor-background));
+	--wt-border: var(--tpc-tiddler-editor-border);
+	--wt-selection: color-mix(in oklch, var(--tpc-primary) 26%, transparent);
+	--wt-line-highlight: color-mix(in oklch, var(--tpc-primary) 7%, transparent);
+
+	/* Roles. Same hue angles as the CodeMirror 5 sheet, so a snippet looks the
+	   same whichever editor is installed. */
+	--wt-blue: oklch(from var(--tpc-foreground) l var(--nb-cm6-c) 264);
+	--wt-green: oklch(from var(--tpc-foreground) l var(--nb-cm6-c) 150);
+	--wt-red: oklch(from var(--tpc-foreground) l 0.19 25);
+	--wt-orange: oklch(from var(--tpc-foreground) l var(--nb-cm6-c) 55);
+	--wt-amber: oklch(from var(--tpc-foreground) l var(--nb-cm6-c) 85);
+	--wt-violet: oklch(from var(--tpc-foreground) l var(--nb-cm6-c) 310);
+	--wt-purple: oklch(from var(--tpc-foreground) l var(--nb-cm6-c) 310);
+	--wt-rose: oklch(from var(--tpc-foreground) l var(--nb-cm6-c) 350);
+	--wt-teal: oklch(from var(--tpc-foreground) l var(--nb-cm6-c) 195);
+	--wt-teal-dim: oklch(from var(--tpc-foreground) l calc(var(--nb-cm6-c) * 0.6) 195);
+	--wt-cyan: oklch(from var(--tpc-foreground) l var(--nb-cm6-c) 220);
+	--wt-slate: color-mix(in oklch, var(--tpc-foreground) 80%, var(--tpc-tiddler-editor-background));
+
+	/* Code spans inside the editor take the theme's own code surface */
+	--wt-code-bg: var(--tpc-pre-background);
+	--wt-code-fg: var(--tpc-code-foreground);
+	--wt-comment: color-mix(in oklch, var(--tpc-foreground) 80%, var(--tpc-tiddler-editor-background));
+
+	/* Formatting. Emphasis is carried by weight and slope, so these stay ink
+	   rather than becoming a fourth and fifth hue. */
+	--wt-bold: var(--tpc-foreground);
+	--wt-italic: var(--tpc-foreground);
+	--wt-strike: color-mix(in oklch, var(--tpc-foreground) 50%, var(--tpc-tiddler-editor-background));
+	--wt-underline: var(--tpc-foreground);
+	--wt-heading: var(--tpc-foreground);
+	--wt-highlight-bg: color-mix(in oklch, var(--tpc-primary) 18%, transparent);
+	--wt-highlight-fg: var(--tpc-foreground);
+}
+
+@supports not (color: oklch(from red l c h)) {
+	:root {
+		--wt-blue: var(--tpc-tiddler-link-foreground);
+		--wt-green: var(--tpc-external-link-foreground);
+		--wt-red: var(--tpc-alert-highlight);
+		--wt-orange: var(--tpc-primary);
+		--wt-amber: var(--tpc-primary);
+		--wt-violet: var(--tpc-primary);
+		--wt-purple: var(--tpc-primary);
+		--wt-rose: var(--tpc-alert-highlight);
+		--wt-teal: var(--tpc-primary);
+		--wt-teal-dim: var(--tpc-primary);
+		--wt-cyan: var(--tpc-primary);
+	}
+}
+
+/* ==========================================================================
+** The editor frame
+** ========================================================================== */
+
+.tc-editor-codemirror6 {
+	border: 1px solid var(--tpc-tiddler-editor-border);
+	border-radius: var(--nb-radius);
+	background: var(--tpc-tiddler-editor-background);
+}
+
+/*
+** The plugin reads $:/themes/tiddlywiki/vanilla/settings/editorfontfamily and
+** .../metrics/bodyfontsize. This theme ships those only as a compatibility
+** shim holding fixed defaults, so they resolve but never follow what a user
+** changes in Theme Tweaks. Pointed back at the theme's own tokens.
+*/
+.tc-editor-codemirror6 .cm-editor {
+	font-family: var(--nb-font-code);
+	font-size: var(--nb-body-size);
+}
+
+.tc-editor-codemirror6 .cm-content {
+	padding: var(--nb-space-sm);
+}
+
+/* The gutter is the sheet's margin, so it takes the editor's own paper rather
+   than the PAGE background the plugin gives it - which on this theme is a
+   different colour and makes the gutter read as a separate panel. */
+.tc-editor-codemirror6 .cm-gutters {
+	background: var(--tpc-tiddler-editor-background);
+	border-inline-end: 1px solid var(--nb-rule-faint);
+	color: var(--nb-ink-faint);
+}
+
+.tc-editor-codemirror6 .cm-lineNumbers .cm-gutterElement {
+	font-variant-numeric: tabular-nums;
+}
+
+/* The plugin uses flat greys at 8% and 12%. A wash of the accent reads as
+   paper catching the light instead of a band laid over it, and it re-tints. */
+.tc-editor-codemirror6 .cm-activeLine {
+	background: color-mix(in oklch, var(--tpc-primary) 6%, transparent);
+}
+
+.tc-editor-codemirror6 .cm-activeLineGutter {
+	background: color-mix(in oklch, var(--tpc-primary) 10%, transparent);
+}
+
+/* `Highlight` is the system selection colour and has nothing to do with the
+   palette; on cream paper it is a hard blue block. */
+.tc-editor-codemirror6 .cm-selectionBackground,
+.tc-editor-codemirror6 .cm-selectionBackground *,
+.tc-editor-codemirror6 .cm-content ::selection {
+	background: color-mix(in oklch, var(--tpc-primary) 26%, transparent);
+}
+
+.tc-editor-codemirror6 .cm-cursor,
+.tc-editor-codemirror6 .cm-cursor-primary {
+	border-inline-start-color: var(--tpc-primary);
+}
+
+/* The plugin marks trailing whitespace with a fixed rgba(255,0,0,0.3). Red at
+   30% is a warning colour in a theme that has one of its own. */
+.tc-editor-codemirror6 .cm-trailingSpace {
+	background-color: color-mix(in oklch, var(--tpc-alert-highlight) 26%, transparent);
+	border-radius: 2px;
+}
+
+/* ---- Panels: search, replace, the command line ----
+** These dock inside the editor, so they are paper with a hairline rather than
+** floating cards. */
+
+.tc-editor-codemirror6 .cm-panels {
+	background: var(--tpc-tiddler-background);
+	color: var(--tpc-foreground);
+	font-family: var(--nb-font-ui);
+	font-size: 0.875rem;
+	border-color: var(--nb-rule);
+}
+
+.tc-editor-codemirror6 .cm-panels.cm-panels-top {
+	border-block-end: 1px solid var(--nb-rule);
+}
+
+.tc-editor-codemirror6 .cm-panels.cm-panels-bottom {
+	border-block-start: 1px solid var(--nb-rule);
+}
+
+.tc-editor-codemirror6 .cm-panel input[type="text"],
+.tc-editor-codemirror6 .cm-textfield {
+	background: var(--tpc-tiddler-editor-background);
+	color: var(--tpc-foreground);
+	border: 1px solid var(--tpc-tiddler-editor-border);
+	border-radius: var(--nb-radius);
+	font-family: var(--nb-font-code);
+}
+
+.tc-editor-codemirror6 .cm-panel input[type="text"]:focus-visible,
+.tc-editor-codemirror6 .cm-textfield:focus-visible {
+	outline: 2px solid var(--nb-focus);
+	outline-offset: 1px;
+}
+
+.tc-editor-codemirror6 .cm-button {
+	background: var(--tpc-button-background, transparent);
+	color: var(--tpc-foreground);
+	border: 1px solid var(--nb-rule);
+	border-radius: var(--nb-radius);
+	font-family: var(--nb-font-ui);
+	background-image: none;
+}
+
+.tc-editor-codemirror6 .cm-button:hover {
+	background: color-mix(in oklch, var(--tpc-primary) 10%, transparent);
+	border-color: var(--nb-accent-edge);
+}
+
+/* ---- Autocomplete and tooltips ---- */
+
+.tc-editor-codemirror6 .cm-tooltip,
+.cm-tooltip.cm-tooltip-autocomplete {
+	background: var(--tpc-dropdown-background);
+	color: var(--tpc-foreground);
+	border: 1px solid var(--nb-paper-edge);
+	border-radius: var(--nb-radius);
+	box-shadow: 0 1px 2px var(--nb-shadow-soft), 0 10px 26px -12px var(--nb-shadow);
+	font-family: var(--nb-font-ui);
+}
+
+.cm-tooltip-autocomplete > ul > li[aria-selected] {
+	background: color-mix(in oklch, var(--tpc-primary) 16%, transparent);
+	color: var(--tpc-foreground);
+}
+
+/* ---- Matching brackets and search hits ---- */
+
+.tc-editor-codemirror6 .cm-matchingBracket {
+	background: color-mix(in oklch, var(--tpc-primary) 16%, transparent);
+	color: var(--tpc-primary);
+	border-radius: 2px;
+	font-weight: 600;
+}
+
+.tc-editor-codemirror6 .cm-nonmatchingBracket {
+	color: var(--tpc-alert-highlight);
+	font-weight: 600;
+}
+
+.tc-editor-codemirror6 .cm-searchMatch {
+	background: color-mix(in oklch, var(--tpc-primary) 20%, transparent);
+	border-radius: 2px;
+}
+
+.tc-editor-codemirror6 .cm-searchMatch-selected {
+	background: color-mix(in oklch, var(--tpc-primary) 40%, transparent);
+	outline: 1px solid var(--tpc-primary);
+}
+
+/* ---- Fold gutter ---- */
+
+.tc-editor-codemirror6 .cm-foldPlaceholder {
+	background: var(--tpc-pre-background);
+	border: 1px solid var(--nb-rule-faint);
+	border-radius: var(--nb-radius);
+	color: var(--nb-ink-faint);
+	font-family: var(--nb-font-code);
+}
+
+/* ---- Editor toolbar ----
+** The plugin's alternative toolbar styles are opt-in through
+** $:/config/codemirror-6/toolbars/style, so only the shared shape is touched
+** here: a strip of chrome above the paper, in the interface face. */
+
+.tc-editor-codemirror6-wrapper .tc-editor-toolbar {
+	font-family: var(--nb-font-ui);
+	gap: var(--nb-space-2xs);
+}
+
+/* ---- Ruled paper ----
+** With the ruled editor on, CM6 has to sit on the same rhythm as the plain
+** textarea or the text drifts off the lines. Same --nb-edit-lh token and the
+** same 26px the textarea ruling uses in base.tid, and the line-height is
+** pinned to it. The ruling is drawn on the scroller, not the editor, because
+** that is the element that scrolls with the content. */
+
+.nb-ruled-editor .tc-editor-codemirror6 .cm-editor {
+	--nb-edit-lh: 26px;
+	background-color: transparent;
+}
+
+.nb-ruled-editor .tc-editor-codemirror6 .cm-line {
+	line-height: var(--nb-edit-lh);
+}
+
+.nb-ruled-editor .tc-editor-codemirror6 .cm-content {
+	background-image: repeating-linear-gradient(
+		to bottom,
+		transparent 0,
+		transparent calc(var(--nb-edit-lh) - 1px),
+		var(--nb-rule-faint) calc(var(--nb-edit-lh) - 1px),
+		var(--nb-rule-faint) var(--nb-edit-lh)
+	);
+	background-attachment: local;
+}
+
+/* ---- Sticky titles: nothing to do here, deliberately ----
+**
+** The plugin offsets .tc-tiddler-title by --tv-menubar-height when VANILLA's
+** stickytitles option is set. That option is only a compatibility shim in this
+** theme, so the rule cannot fire for a Notebook user who turns sticky titles
+** on - and if someone did set the vanilla tiddler by hand, it would apply a
+** physical `top` alongside the logical inset-block-start that
+** $:/themes/BurningTreeC/vanilla-notebook/sticky sets.
+**
+** No rule is needed for that, because the two are the same used value and the
+** cascade settles it by order: measured in a wiki with this plugin installed,
+** the plugin's sheet is 31st and the theme's sticky sheet is 65th. The theme
+** wins. Writing an override here would only be a third declaration saying what
+** the second already says.
+**
+** The plugin sets --tv-menubar-height itself from JS, in
+** files/editor/startup/menubar-height.js, so its own panel offsets keep
+** working and agree with the theme's measured --nb-menubar-h.
+*/
+
+</$list>

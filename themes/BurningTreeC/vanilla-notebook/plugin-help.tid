@@ -1,0 +1,119 @@
+title: $:/themes/BurningTreeC/vanilla-notebook/plugins/help
+tags: [[$:/tags/Stylesheet]]
+code-body: yes
+
+\rules only filteredtranscludeinline transcludeinline macrodef macrocallinline html
+
+<$list filter="[[$:/plugins/tiddlywiki/help]is[tiddler]]" variable="ignore">
+
+/* ==========================================================================
+** Help
+**
+** The cheatsheet panel is a card pinned to the corner of the window, so it
+** takes the theme's paper treatment. Two substantive changes beyond that.
+**
+** First, it is a fixed 310x400 box with `overflow: auto`. On a phone in
+** landscape that is taller than the viewport and the bottom of the sheet is
+** unreachable, so the height becomes a max against the viewport instead.
+**
+** Second, the cheatsheet is built from floated dt/dd pairs at 45% each.
+** Floats at a percentage do not degrade - below about 400px the two columns
+** are 140px wide and every entry wraps to three lines. It becomes a plain
+** two-column grid, which collapses to one column when there is no room.
+** ========================================================================== */
+
+.tc-help-panel {
+	position: fixed;
+	inset-block-end: 0;
+	inset-inline-end: 0;
+	inline-size: 310px;
+	max-inline-size: calc(100vw - 1em);
+	block-size: 400px;
+	max-block-size: calc(100vh - 1em);
+	overflow: auto;
+	-webkit-overflow-scrolling: touch;
+	padding: var(--nb-space-md);
+	margin: var(--nb-space-sm);
+	background: var(--tpc-tiddler-background);
+	border: 1px solid var(--nb-paper-edge);
+	border-radius: var(--nb-radius-lg);
+	box-shadow: 0 1px 2px var(--nb-shadow-soft), 0 16px 36px -16px var(--nb-shadow);
+	font-family: var(--nb-font-ui);
+	font-size: 0.875rem;
+	z-index: 1000;
+	scrollbar-width: thin;
+}
+
+/*
+** Grid instead of floats. `overflow: hidden` on the dl was only there to
+** contain them, and `clear: left` on each dt only to start a new row - a
+** grid does both by existing, and it lets the pair sit on one row without the
+** widths having to add up to less than 100%.
+*/
+dl.tc-help-cheatsheet {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+	gap: var(--nb-space-2xs) var(--nb-space-sm);
+	align-items: baseline;
+	overflow: visible;
+	margin: 0;
+}
+
+.tc-help-cheatsheet > dt,
+.tc-help-cheatsheet > dd {
+	display: block;
+	float: none;
+	inline-size: auto;
+	margin: 0;
+	padding: 0;
+	min-inline-size: 0;
+}
+
+.tc-help-cheatsheet > dt {
+	font-family: var(--nb-font-code);
+	font-weight: normal;
+	color: var(--nb-ink-soft);
+}
+
+.tc-help-cheatsheet > dt > pre {
+	margin: 0;
+	overflow-wrap: anywhere;
+}
+
+.tc-help-cheatsheet > dd > p,
+.tc-help-cheatsheet > dd > h1,
+.tc-help-cheatsheet > dd > pre,
+.tc-help-cheatsheet > dd > ul,
+.tc-help-cheatsheet > dd > ol,
+.tc-help-cheatsheet > dd > dl,
+.tc-help-cheatsheet > dd > table,
+.tc-help-cheatsheet > dd > blockquote,
+.tc-help-cheatsheet > dd > blockquote > p {
+	margin: 0;
+}
+
+/* No room for two columns: one column, with each syntax sitting above the
+   thing it does. */
+@media (max-width: 380px) {
+	dl.tc-help-cheatsheet {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.tc-help-cheatsheet > dd {
+		margin-block-end: var(--nb-space-sm);
+		color: var(--nb-ink-soft);
+	}
+}
+
+/* The plugin uses a literal `red` to mark syntax characters. The theme has a
+   colour for "look here" and it is the one the margin rule uses. */
+dl.tc-help-cheatsheet .red {
+	color: var(--nb-margin-rule);
+	font-weight: 600;
+}
+
+.tc-help-cheatsheet .tc-image {
+	inline-size: 16px;
+}
+
+</$list>
