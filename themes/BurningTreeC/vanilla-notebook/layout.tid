@@ -93,6 +93,18 @@ code-body: yes
 	**   --nb-menubar-h       what a pinned menubar takes, if one is present
 	** --nb-story-top is their sum. Keeping them separate is what lets a
 	** non-zero storytop survive the menubar detection below.
+	**
+	** Only ONE of the two applies to the sidebar. `storytop` is a story river
+	** metric - that is what it is named and what the core's own hint for it
+	** says - so it moves the river and nothing else. Vanilla also hangs the
+	** sidebar off it (its base.tid:1046), which couples two things a reader
+	** would not expect to be coupled: you cannot indent the river from the top
+	** of the page without the sidebar dropping with it.
+	**
+	** The menubar height is different in kind. A pinned bar covers the top of
+	** the VIEWPORT, so anything else pinned to the viewport has to start below
+	** it or slide underneath. The sidebar is fixed, so it takes that offset and
+	** only that one.
 	*/
 	--nb-story-top-base: {{$:/themes/BurningTreeC/vanilla-notebook/metrics/storytop}};
 	--nb-menubar-h: 0px;
@@ -249,9 +261,11 @@ html[dir="rtl"] {
 
 @media (min-width: {{$:/themes/BurningTreeC/vanilla-notebook/metrics/sidebarbreakpoint}}) {
 
+	/* --nb-menubar-h, NOT --nb-story-top: the bar has to be cleared, the
+	   river's own top offset is none of the sidebar's business. */
 	.tc-sidebar-scrollable {
 		position: fixed;
-		inset-block: var(--nb-story-top) 0;
+		inset-block: var(--nb-menubar-h) 0;
 		overflow-y: auto;
 		overflow-x: hidden;
 		-webkit-overflow-scrolling: touch;

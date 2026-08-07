@@ -34,7 +34,7 @@ padding, so body text scrolls under an opaque strip instead of appearing in
 the gutter beside it.
 -->
 
-<$reveal state="$:/themes/BurningTreeC/vanilla-notebook/options/stickytitles" type="match" text="yes">
+<%if [{$:/themes/BurningTreeC/vanilla-notebook/options/stickytitles}match[yes]] %>
 ``
 .tc-tiddler-title {
 	position: sticky;
@@ -103,4 +103,4 @@ containing block for this pseudo-element.
 }
 `
 </$list>
-</$reveal>
+<% endif %>

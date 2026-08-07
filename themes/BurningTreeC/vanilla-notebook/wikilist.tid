@@ -21,7 +21,7 @@ code-body: yes
  * and friends handle the flex layout, the thumbnail grid, the plugin dialog and
  * the drag behaviour, and none of that is this theme's business. What it reads
  * from the palette is colour, and most of the work here is therefore done by
- * NotebookDay / NotebookNight rather than by CSS.
+ * Vanilla Notebook Day / Vanilla Notebook Night rather than by CSS.
  *
  * This file adds only what a palette cannot express: the reading face on
  * titles, a monospace face on paths, and the sheet-on-a-desk treatment that

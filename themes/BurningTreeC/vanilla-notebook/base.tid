@@ -117,11 +117,21 @@ code-body: yes
 	--nb-accent-edge: color-mix(in oklch, var(--tpc-primary) 40%, var(--tpc-background));
 
 	/* The margin rule borrows the palette's own highlight hue, so it stays
-	   red-family on Notebook Day and still reads as an accent on palettes
+	   red-family on Vanilla Notebook Day and still reads as an accent on palettes
 	   that were never designed with a margin rule in mind. */
 	--nb-margin-rule: color-mix(in oklch, var(--tpc-alert-highlight) 58%, var(--tpc-background));
 
 	--nb-focus: var(--tpc-primary);
+
+	/*
+	** Drag and drop has its own colour, and it is NOT the accent.
+	** `dropzone-background` is a standard palette entry and every palette in
+	** the wild sets it green, including core Vanilla - green-for-drop is the
+	** convention, not a Notebook decision. Deriving the drag language from the
+	** accent instead would have this theme fighting whatever palette is loaded,
+	** and would have paired a green fill with a navy rule on Vanilla Notebook Day.
+	*/
+	--nb-drop: var(--tpc-dropzone-background);
 
 	color-scheme: light dark;
 	accent-color: var(--tpc-primary);
@@ -1140,7 +1150,7 @@ textarea:disabled {
 	pointer-events: none;
 	opacity: 0.9;
 	background-color: var(--tpc-background);
-	border: 3px dashed var(--nb-accent-edge);
+	border: 3px dashed var(--nb-drop);
 	border-radius: var(--nb-radius);
 	color: var(--tpc-foreground);
 	font-weight: 600;
@@ -1701,14 +1711,32 @@ a.tc-list-item-selected svg {
 ** Drag and drop
 ** ========================================================================== */
 
-.tc-dragover {
-	outline: 2px dashed var(--tpc-primary);
-	outline-offset: -4px;
-}
+/*
+** There is deliberately NO bare `.tc-dragover` rule here.
+**
+** Two different widgets add that class to their own root node: droppable.js
+** adds it to each drop target row, and dropzone.js adds it to the whole-page
+** dropzone AND to the editor's dropzone. So an unqualified `.tc-dragover`
+** selector is not "the thing being dragged over" - it is all three at once,
+** and it drew a dashed outline around the entire 100vh page and a second
+** outline around the editor on top of the overlay that was already there.
+**
+** Each of the three is styled through its own compound selector below.
+*/
 
-.tc-dropzone.tc-dragover::before {
-	background-color: var(--tpc-dropzone-background);
-}
+/*
+** There is deliberately no background on `.tc-droppable.tc-dragover` either.
+**
+** That element is not the row - it wraps BOTH the placeholder and the row
+** content (core/ui/SideBar/Open.tid, macro `droppable-item`). When the
+** placeholder unhides at its 2em height the wrapper grows with it, 20px to
+** 52px, so anything painted on the wrapper paints a block 2.6x the height of
+** the row it appears to belong to.
+**
+** The growth is correct and wanted: it is the gap opening to show where the
+** item will land. Only the paint was wrong. The placeholder sitting in that
+** gap is the affordance, and it already carries the drop colour.
+*/
 
 /*
 ** The placeholder is rendered for EVERY draggable item (see
@@ -1721,7 +1749,7 @@ a.tc-list-item-selected svg {
 
 .tc-droppable.tc-dragover > .tc-droppable-placeholder {
 	display: block;
-	border: 2px dashed var(--tpc-primary);
+	border: 2px dashed var(--nb-drop);
 	border-radius: var(--nb-radius);
 }
 
@@ -3250,17 +3278,47 @@ span.tc-translink > a:first-child {
 	fill: var(--tpc-alert-muted-foreground);
 }
 
-/* ---- Whole-page drop target ---- */
+/* ---- Whole-page drop target ----
+** A band of tape across the head of the page. It carries the core's own drop
+** message rather than being a mute 4px rule: dropping a file into a wiki
+** imports it, which is consequential enough that the user should be told what
+** is about to happen and how to back out.
+**
+** The text sits on the palette's MESSAGE surface, not on `dropzone-background`.
+** That entry is green in every palette that sets it, but opaque in some
+** (SolarFlare #008800, Nord #a3be8c) and translucent in others, so page
+** foreground on top of it is unreadable in one palette or the other and there
+** is no way to know which without resolving the colour. `message-background`
+** is the surface a palette author already sized for a band of text across the
+** head of the page.
+**
+** The ink on it is `foreground`, not `message-foreground`. The latter is a
+** deliberately MUTED secondary ink - across six palettes it measured 3.26:1 to
+** 5.76:1, under AA for body text in half of them. This is a primary alert
+** about an irreversible import, so it takes the page's own ink, which every
+** palette guarantees against its own paper.
+**
+** The drop colour then does the job it is good at - signalling - as a heavy
+** rule under the band rather than as a text background.
+*/
 
 .tc-dropzone.tc-dragover::before {
-	content: "";
+	content: "<<lingo DropMessage>>";
 	display: block;
 	position: fixed;
 	inset-block-start: 0;
 	inset-inline: 0;
 	z-index: 10000;
-	block-size: 4px;
-	background-color: var(--tpc-primary);
+	padding: var(--nb-space-xs) var(--nb-space-md);
+	background-color: var(--tpc-message-background);
+	border-block-end: 4px solid var(--nb-drop);
+	color: var(--tpc-foreground);
+	font-family: var(--nb-font-ui);
+	font-size: 0.875rem;
+	font-weight: 500;
+	letter-spacing: 0.01em;
+	text-align: center;
+	pointer-events: none;
 }
 
 /* ---- Fold / unfold banners --------------------------------------------
