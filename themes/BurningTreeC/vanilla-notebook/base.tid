@@ -2699,10 +2699,11 @@ canvas.tc-edit-bitmapeditor {
 .tc-chooser-item {
 	border-block: 1px solid var(--nb-rule);
 	padding-block: 2px;
+	padding-inline: var(--nb-space-xs);
 }
 
 .tc-drop-down .tc-chooser-item {
-	padding: 2px;
+	padding: 2px var(--nb-space-xs);
 }
 
 .tc-chosen,
@@ -2712,18 +2713,21 @@ canvas.tc-edit-bitmapeditor {
 }
 
 /*
-** A flex row with a gap, not a plain block.
+** A plain block, as Vanilla has it.
 **
-** $:/snippets/viewswitcher renders the icon and the label with no separator at
-** all - `<$transclude tiddler=<<icon>>/><$text text=<<storyview>>/>` under
-** \whitespace trim - so there is no space in the markup for CSS to preserve
-** and the glyph runs straight into the word. The gap supplies it, and it works
-** the same for the layout switcher, which is built the same way.
+** This was briefly `display: flex` with a gap, to separate the icon from the
+** label in the story-view and layout switchers - which have no whitespace
+** between them at all in the markup. It works there and wrecks the palette
+** list, because a palette row puts the NAME, the DESCRIPTION and the whole
+** swatch strip inside this one link ($:/snippets/paletteswitcher): as flex
+** items they line up in a row instead of reading as a heading with the
+** swatches beneath.
+**
+** The separation is done on the icon instead - see the rule below. Swatches
+** are divs, not svg or img, so they are untouched by it.
 */
 .tc-chooser-item .tc-tiddlylink {
-	display: flex;
-	align-items: center;
-	gap: 0.4em;
+	display: block;
 	text-decoration: none;
 	background-color: transparent;
 }
@@ -2737,21 +2741,51 @@ canvas.tc-edit-bitmapeditor {
 	color: var(--tpc-foreground);
 }
 
+/*
+** The icon's trailing margin is what separates it from its label.
+**
+** $:/snippets/viewswitcher renders them with nothing in between -
+** `<$transclude tiddler=<<icon>>/><$text text=<<storyview>>/>` under
+** \whitespace trim - so there is no space in the markup for CSS to preserve
+** and the glyph runs into the word. The layout switcher is built the same way.
+** A margin here reaches both, in the Control Panel and in the toolbar popup,
+** without altering how the row itself is laid out.
+*/
 .tc-chooser-item svg,
 .tc-chooser-item img {
 	max-inline-size: 1em;
 	max-block-size: 1em;
 	vertical-align: middle;
+	margin-inline-end: 0.35em;
 }
 
 .tc-chosen .tc-tiddlylink {
 	cursor: default;
 }
 
+/*
+** The chosen marker sits in a slot every row reserves.
+**
+** Vanilla hangs it outside with a -10px start margin, which works there
+** because its chooser items carry 14px of inline padding for it to hang into.
+** This theme's rows are tighter, so the same margin put the marker outside the
+** row altogether - past the border - and left the chosen row's label starting
+** at a different place from every other row's.
+**
+** Instead the pseudo-element is on EVERY item at a fixed inline size, and only
+** the chosen one is made visible. `visibility: hidden` still takes up its
+** space, so all rows indent identically and the marker appears inside the row
+** without moving anything.
+*/
+.tc-chooser-item > .tc-tiddlylink::before {
+	content: "\00bb";
+	display: inline-block;
+	inline-size: 1em;
+	visibility: hidden;
+}
+
 .tc-chosen > .tc-tiddlylink::before {
-	content: "\00bb\00a0";
-	margin-inline-start: -10px;
-	position: relative;
+	visibility: visible;
 }
 
 /*
