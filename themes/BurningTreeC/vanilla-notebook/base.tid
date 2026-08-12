@@ -1540,31 +1540,47 @@ textarea:disabled {
 }
 
 /*
-** DIRECT children only.
+** Menu items, however deep the reveal widgets bury them.
 **
-** A menu dropdown emits its items as bare buttons straight inside
-** .tc-drop-down - see core/ui/ViewToolbar/more-tiddler-actions.tid - so they
-** need to be blocks or they run together on one line. Vanilla gets the same
-** result without a rule, which is why there is no counterpart to compare with.
+** This was a child combinator for a while, on the reasoning that a menu emits
+** its items as bare buttons straight inside .tc-drop-down. It does not, and
+** the actual DOM is worth writing down because nothing in the markup suggests
+** it: core/ui/ViewToolbar/more-tiddler-actions.tid wraps every item in a
+** $list + $reveal pair, and each of those reveals renders a SPAN in inline
+** mode, so a toolbar item arrives as
 **
-** As a DESCENDANT selector this also caught every link and button nested
-** deeper: an <a> inside a dropdown's prose paragraph became a full-width
-** block, and so did buttons inside .tc-menu-list-item rows. Measured on 63
-** elements. The child combinator reaches the menu items and nothing else;
-** rows that come pre-wrapped in a block already stack on their own.
+**     .tc-drop-down > span.tc-reveal > span.tc-reveal > span.tc-reveal > button
+**
+** Three levels down, and spans, so the child rule missed them and the browser
+** laid the buttons out inline: the "more" menu came out as one row of commands
+** stretched across the page instead of a stack. The same applies to the
+** sidebar's More menu, which is built the same way.
+**
+** The tag-pill dropdown failed for the neighbouring reason: its rows come from
+** $:/core/ui/ListItemTemplate, which wraps the link in a .tc-menu-list-item
+** div, so those links kept no inline padding and sat flush against the panel
+** edge.
+**
+** So this is a descendant selector, as Vanilla's always was, with the two
+** places that genuinely must not become full-width blocks excluded by name:
+** links inside a dropdown's prose, and a tab strip nested in a dropdown.
+** Tag pills are excluded as well — a chip that spans the panel is not a chip,
+** and they bring their own hover.
+**
+** It also no longer resets `background` and `border`. Those were safe on bare
+** menu buttons and are not safe on everything a dropdown can contain; every
+** real menu item already carries .tc-btn-invisible, which zeroes both.
 */
-.tc-drop-down > :is(a, button) {
+.tc-drop-down :is(a, button):not(p :is(a, button), .tc-tab-buttons button, .tc-tag-label) {
 	display: block;
 	inline-size: 100%;
 	text-align: start;
 	padding: var(--nb-space-2xs) var(--nb-space-sm);
-	background: none;
-	border: none;
 	color: var(--tpc-foreground);
 	cursor: pointer;
 }
 
-.tc-drop-down :is(a, button):hover {
+.tc-drop-down :is(a, button):not(p :is(a, button), .tc-tab-buttons button, .tc-tag-label):hover {
 	background-color: var(--nb-accent-wash);
 }
 
