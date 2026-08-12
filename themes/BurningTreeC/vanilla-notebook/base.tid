@@ -1539,7 +1539,21 @@ textarea:disabled {
 	color: var(--tpc-muted-foreground);
 }
 
-.tc-drop-down :is(a, button) {
+/*
+** DIRECT children only.
+**
+** A menu dropdown emits its items as bare buttons straight inside
+** .tc-drop-down - see core/ui/ViewToolbar/more-tiddler-actions.tid - so they
+** need to be blocks or they run together on one line. Vanilla gets the same
+** result without a rule, which is why there is no counterpart to compare with.
+**
+** As a DESCENDANT selector this also caught every link and button nested
+** deeper: an <a> inside a dropdown's prose paragraph became a full-width
+** block, and so did buttons inside .tc-menu-list-item rows. Measured on 63
+** elements. The child combinator reaches the menu items and nothing else;
+** rows that come pre-wrapped in a block already stack on their own.
+*/
+.tc-drop-down > :is(a, button) {
 	display: block;
 	inline-size: 100%;
 	text-align: start;
@@ -2006,6 +2020,24 @@ form.tc-form-inline {
 ** The huge font-size is the standard trick to make the native control's hit
 ** area cover the wrapper in every engine.
 */
+/*
+** Checkboxes and radios sit on the middle, not the baseline.
+**
+** `baseline` is the initial value, and a control has no text baseline of its
+** own, so the browser aligns its BOTTOM EDGE with the line's baseline - which
+** drops it a couple of pixels below the label beside it. Vanilla carries
+** `input[type="checkbox"] { vertical-align: middle }` for exactly this; the
+** rule was simply never brought across, and 36 checkboxes across the Control
+** Panel were sitting low as a result.
+**
+** Radios get it too. Vanilla does not set them, so they are low there as well,
+** but the reason is identical and the fix costs nothing.
+*/
+input[type="checkbox"],
+input[type="radio"] {
+	vertical-align: middle;
+}
+
 .tc-file-input-wrapper {
 	position: relative;
 	overflow: hidden;
