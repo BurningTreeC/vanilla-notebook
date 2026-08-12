@@ -133,7 +133,12 @@ code-body: yes
 	*/
 	--nb-drop: var(--tpc-dropzone-background);
 
-	color-scheme: {{{ [{$:/palette}get[color-scheme]] }}};
+	/* The active palette's own color-scheme field, which is what the core reads
+	   too (core/modules/editor/engines/framed.js). Palettes that omit it fall
+	   back to `light dark` so form controls still adapt rather than being left
+	   with no scheme at all - an empty value here would make the whole
+	   declaration invalid. */
+	color-scheme: {{{ [{$:/palette}get[color-scheme]] ~[[light dark]] }}};
 	accent-color: var(--tpc-primary);
 }
 
@@ -280,6 +285,20 @@ body.tc-body {
 	** sheet's corner radius, and both change at narrow widths.
 	*/
 	--nb-sheet-radius: var(--nb-radius);
+
+	/*
+	** The sheet's inline-start gutter, and it is UNCONDITIONAL.
+	**
+	** It is wider than the other three sides because a notebook page has a
+	** margin, and the margin is the point - the red rule is only what marks
+	** it. Switching the rule off leaves the margin there and stops drawing the
+	** line in it, which is how ruled paper without a printed margin behaves;
+	** collapsing the gutter as well would change the measure of the text and
+	** re-flow the whole page for what is meant to be a decorative setting.
+	**
+	** Published as a token because the sticky title strip has to span exactly
+	** the same distance, and two copies of this calculation would drift.
+	*/
 	--nb-sheet-pad-start: calc(var(--nb-margin) + var(--nb-space-lg));
 
 	margin-block-end: var(--nb-space-lg);
@@ -707,10 +726,36 @@ button.tc-btn-invisible {
 	*/
 	white-space: break-spaces;
 	overflow-wrap: anywhere;
+
+	transition: background-color 120ms var(--nb-ease-out);
+}
+
+/*
+** Tag pills own their hover and pressed states.
+**
+** A pill is a .tc-btn-invisible, so it was picking up that button's grey hover
+** wash, and clicking one opens a dropdown - which re-renders the button, drops
+** :hover for a frame, and flashes the pill back to its resting colour before
+** the pointer is noticed again. Giving hover, active and selected the SAME
+** background removes the difference there is to flash between, and the short
+** transition covers the frame in which the node is replaced.
+*/
+.tc-tag-label:hover,
+.tc-tag-label:active,
+.tc-tag-label.tc-selected,
+.tc-btn-invisible.tc-tag-label:hover {
+	background-color: color-mix(in oklch, var(--tpc-tag-background) 82%, var(--tpc-foreground));
+	color: var(--tpc-tag-foreground);
 }
 
 .tc-untagged-label {
 	background-color: var(--tpc-untagged-background);
+}
+
+.tc-untagged-label:hover,
+.tc-untagged-label:active,
+.tc-btn-invisible.tc-untagged-label:hover {
+	background-color: color-mix(in oklch, var(--tpc-untagged-background) 82%, var(--tpc-foreground));
 }
 
 .tc-remove-tag-button {
@@ -718,6 +763,51 @@ button.tc-btn-invisible {
 }
 
 .tc-remove-tag-button:hover {
+	opacity: 1;
+}
+
+/* ==========================================================================
+** Interaction options
+**
+** Three switches, all off-by-absence: the classes appear on the page container
+** only when the option is set away from its default, so the default costs
+** nothing and the rules below are the exceptions.
+** ========================================================================== */
+
+/*
+** The press animation. Buttons and tag pills drop a pixel on :active, which is
+** the whole of it - there is no scaling or bounce. It is off with
+** `pressanimation: no`, which also covers people who find any movement under
+** the pointer distracting but do not have reduced-motion set system-wide.
+*/
+.nb-no-press .tc-btn-invisible:active,
+.nb-no-press .tc-btn-boxed:active,
+.nb-no-press .tc-btn-rounded:active,
+.nb-no-press .tc-btn-big-green:active,
+.nb-no-press .tc-primary-btn:active,
+.nb-no-press .tc-tag-label:active {
+	translate: none;
+}
+
+/*
+** The hover wash behind tiddler toolbar buttons. Some readers want the glyph
+** to light up without a filled rectangle appearing under it; the colour change
+** on the icon itself is left alone, so the button still answers the pointer.
+*/
+.nb-no-toolbar-hover .tc-tiddler-controls button:hover,
+.nb-no-toolbar-hover .tc-page-controls button:hover {
+	background-color: transparent;
+}
+
+/*
+** Permanent toolbars. The default reveals the controls when the sheet is
+** hovered or focused, which keeps the page quiet; this pins them on.
+**
+** It has to beat .tc-tiddler-frame .tc-tiddler-controls, which is two classes,
+** so the page-container class is included rather than relying on order alone -
+** the reveal rule sits later in this sheet.
+*/
+.nb-toolbar-always .tc-tiddler-frame .tc-tiddler-controls {
 	opacity: 1;
 }
 
@@ -1345,7 +1435,22 @@ textarea:disabled {
 	border-color: var(--tpc-sidebar-tab-border);
 }
 
+/*
+** Both colours, from the same pair.
+**
+** This rule used to set only the background, leaving the text at
+** `tab-foreground-selected` from the rule above - a foreground from one pair on
+** a background from another. Palettes are not obliged to keep those two in
+** step, and several do not: on DarkPhotos the mixed pairing measured 1.21:1,
+** i.e. the label vanished, against 5.25:1 for the palette's own sidebar pair.
+**
+** Not every palette defines a sidebar foreground, so it is asked for directly
+** and the general tab colour is used when it is absent. `colour` would not
+** answer that question - it falls through to a default and always returns
+** something - which is why this reads the palette index.
+*/
 .tc-sidebar-lists .tc-tab-buttons button.tc-tab-selected {
+	color: {{{ [{$:/palette}getindex[sidebar-tab-foreground-selected]!is[blank]then[var(--tpc-sidebar-tab-foreground-selected)]] ~[[var(--tpc-tab-foreground-selected)]] }}};
 	background-color: var(--tpc-sidebar-tab-background-selected);
 	border-color: var(--tpc-sidebar-tab-border-selected);
 }
@@ -1590,6 +1695,28 @@ textarea:disabled {
 	display: flex;
 	gap: var(--nb-space-2xs);
 	align-items: center;
+}
+
+/* Advanced Search's filter tab puts a line of prose immediately above this
+   row, with nothing between them. */
+.tc-advanced-search {
+	margin-block-start: var(--nb-space-sm);
+}
+
+/*
+** The input has to be told to GROW, not just to be 100% wide.
+**
+** The core wraps it in two nested keyboard spans, and .tc-search is a flex
+** row, so the outer span becomes a flex item - which blockifies it and makes
+** it the input's containing block. With `flex: 0 1 auto` that item is
+** shrink-to-fit, so `inline-size: 100%` on the input resolved against the
+** input's own intrinsic 240px and the field stayed short with empty space
+** beside it. Growing the wrapper is what actually fills the row; the chevron
+** button next to it is not a .tc-keyboard, so it keeps its natural size.
+*/
+.tc-advanced-search > .tc-keyboard {
+	flex: 1 1 auto;
+	min-inline-size: 0;
 }
 
 /*
@@ -2001,10 +2128,18 @@ nav.tc-menubar .tc-form-inline {
 	clear: both;
 }
 
+/*
+** Left inline, deliberately. `display: inline-flex` makes this an atomic inline
+** box, so it can never wrap internally - in the Control Panel's toolbar lists
+** the caption and its description are inside this span, and a long description
+** pushed the whole span onto its own line, leaving the checkbox stranded above
+** it. Vanilla styles only the svg here and leaves the span alone.
+**
+** The icons still line up: the svg rule near the top of this sheet gives them
+** `vertical-align: middle` and a 1em box.
+*/
 .tc-icon-wrapper {
-	display: inline-flex;
-	align-items: center;
-	gap: var(--nb-space-2xs);
+	display: inline;
 }
 
 .tc-image-button svg {
@@ -2391,10 +2526,92 @@ nav.tc-menubar .tc-form-inline {
 */
 @media (max-width: {{{ [{$:/themes/BurningTreeC/vanilla-notebook/metrics/sidebarbreakpoint}removesuffix[px]subtract[1]addsuffix[px]] ~[{$:/themes/BurningTreeC/vanilla-notebook/metrics/sidebarbreakpoint}] }}}) {
 
+	/*
+	** Below the breakpoint the sidebar is not beside the river, it is ABOVE it,
+	** so the chevron points up rather than sideways - and the side flip is
+	** switched off, because "which inline edge" means nothing once the panel is
+	** in normal flow.
+	**
+	** Only the two custom properties are set here, never `transform` itself.
+	** This selector is (0,2,1) and the one that composes the transform is
+	** (0,1,1), so writing a second `transform` here would win outright and
+	** silently discard the mirror rather than combining with it.
+	*/
 	.tc-show-sidebar-btn svg.tc-image-chevron-left,
 	.tc-hide-sidebar-btn svg.tc-image-chevron-right {
-		transform: rotate(-90deg);
+		--nb-chevron-rot: -90deg;
+		--nb-chevron-flip: 1;
 	}
+}
+
+/*
+** With the sidebar on the leading edge, only OUR copy of the toggle shows.
+**
+** The theme moves the button by re-tagging it: $:/core/ui/TopBar/menu is
+** overridden to render nothing when the option is `start`, and a tiddler of
+** ours renders it from the leading slot instead. That depends on a core shadow
+** being overridden - and a wiki that has ever saved its own copy of
+** $:/core/ui/TopBar/menu holds a REAL tiddler, which beats a theme's shadow.
+** The stray button then stays on the trailing edge and there are two.
+**
+** So the visibility is asserted here too: any toggle WITHOUT our own marker
+** class is hidden.
+**
+** The marker is on the button, not on a wrapper around it. A wrapping span was
+** the first attempt and it broke the menubar: the plugin styles its items with
+** `li.tc-menubar-item > button`, a CHILD combinator, so putting anything
+** between the li and the button stops all of it applying - the toggle silently
+** lost its padding and its hover inversion while every other item kept them.
+*/
+.nb-sidebar-start .tc-hide-sidebar-btn:not(.nb-sidebar-toggle),
+.nb-sidebar-start .tc-show-sidebar-btn:not(.nb-sidebar-toggle) {
+	display: none;
+}
+
+/*
+** The sidebar toggle takes no hover fill.
+**
+** It is a .tc-btn-invisible, so it was picking up that button's grey wash. In
+** the topbar the button floats over the page rather than sitting in a row of
+** toolbar icons, and in the menubar it sits on the bar's own dark ground -
+** neither is a surface a page-derived wash belongs on. The glyph still
+** brightens on hover, so the button answers the pointer without a plate
+** appearing behind it.
+**
+** Same specificity as .tc-btn-invisible:hover, so this has to stay below it in
+** the sheet; it is order, not weight, that settles the two.
+*/
+.tc-show-sidebar-btn:hover,
+.tc-hide-sidebar-btn:hover,
+.tc-show-sidebar-btn:active,
+.tc-hide-sidebar-btn:active {
+	background-color: transparent;
+}
+
+/*
+** The sidebar chevrons point toward the edge the sidebar lives on, and TWO
+** independent things can move that edge: the text direction, and the
+** sidebar-side option. The core draws them as left/right glyphs, which is
+** physical, so the correction has to happen here.
+**
+** Rather than four rules for the four combinations, the two factors the layout
+** engine already maintains are multiplied: --nb-dir is -1 in RTL, --nb-side is
+** -1 when the sidebar is on the inline start, and their product is exactly
+** when the glyph needs mirroring. Both flips together cancel, which is
+** correct - an RTL wiki with a start-side sidebar has the panel on the right,
+** the same side an LTR wiki with the default has it.
+**
+** scaleX rather than rotate(180deg): these are horizontal arrows and a mirror
+** is what is wanted. A 180 degree rotation would also flip them vertically,
+** which is invisible on a symmetric chevron but wrong on any icon someone
+** substitutes for one.
+*/
+.tc-show-sidebar-btn svg,
+.tc-hide-sidebar-btn svg {
+	--nb-chevron-rot: 0deg;
+	--nb-chevron-flip: calc(var(--nb-dir, 1) * var(--nb-side, 1));
+
+	transform: rotate(var(--nb-chevron-rot)) scaleX(var(--nb-chevron-flip));
 }
 
 /* ---- Editor ---- */
@@ -2494,8 +2711,19 @@ canvas.tc-edit-bitmapeditor {
 	border-color: var(--nb-accent-edge);
 }
 
+/*
+** A flex row with a gap, not a plain block.
+**
+** $:/snippets/viewswitcher renders the icon and the label with no separator at
+** all - `<$transclude tiddler=<<icon>>/><$text text=<<storyview>>/>` under
+** \whitespace trim - so there is no space in the markup for CSS to preserve
+** and the glyph runs straight into the word. The gap supplies it, and it works
+** the same for the layout switcher, which is built the same way.
+*/
 .tc-chooser-item .tc-tiddlylink {
-	display: block;
+	display: flex;
+	align-items: center;
+	gap: 0.4em;
 	text-decoration: none;
 	background-color: transparent;
 }
@@ -2653,9 +2881,24 @@ canvas.tc-edit-bitmapeditor {
 	display: inline-block;
 }
 
+/*
+** The tree's indentation comes from NESTED lists, not from the outer one.
+** Vanilla zeroes the outer ol and indents `ol ol`; giving the outer list the
+** padding instead shifts the whole tree right and leaves every level flush
+** with its parent, which is the one thing a tree has to show.
+*/
 .tc-tree ol {
 	list-style-type: none;
-	padding-inline-start: var(--nb-space-md);
+	padding-inline-start: 0;
+	margin-block-start: 0;
+}
+
+.tc-tree ol ol {
+	padding-inline-start: 1em;
+}
+
+.tc-tree > div {
+	padding-inline-start: 14px;
 }
 
 .tc-tree span svg {
@@ -2905,8 +3148,10 @@ canvas.tc-edit-bitmapeditor {
 
 /* ---- Advanced search, choosers ---- */
 
+/* Full width. Vanilla's 60% leaves the field short of the button beside it and
+   a gap where nothing is; on a narrow sheet it is barely usable. */
 .tc-advanced-search input {
-	inline-size: 60%;
+	inline-size: 100%;
 }
 
 .tc-chooser {
@@ -3819,11 +4064,6 @@ blockquote.tc-big-quote cite::before {
 }
 
 /* ---- Tree ---- */
-
-.tc-tree ol {
-	padding-inline-start: 0;
-	margin-block-start: 0;
-}
 
 .tc-tree button,
 .tc-tree svg,

@@ -76,6 +76,25 @@ html body .tc-editor-codemirror6-simple .cm-activeLineGutter {
 	background: transparent;
 }
 
+/*
+** The sidebar search field. The plugin caps it at `calc(100% - 3em)` to leave
+** room beside it for the search button, but the button is not a sibling taking
+** 3em of the same line here - so the cap just makes the field short and leaves
+** a gap where nothing is. 100% lets it fill the space it actually has.
+*/
+html body .tc-search .tc-editor-codemirror6-input {
+	max-inline-size: 100%;
+}
+
+/*
+** Same second caret as in the full editor: CodeMirror draws the real one on
+** .cm-cursorLayer. :not(.cm-fat-cursor) keeps vim's block cursor, which IS the
+** primary cursor rather than a separate element.
+*/
+html body .tc-editor-codemirror6-simple .cm-cursor-primary:not(.cm-fat-cursor) {
+	display: none;
+}
+
 /* Read-only fields say so by going quiet, rather than by the plugin's fixed
    rgba(0,0,0,0.15) which is invisible on a dark palette. */
 html body .tc-editor-codemirror6-simple .cm-editor.cm-readonly {

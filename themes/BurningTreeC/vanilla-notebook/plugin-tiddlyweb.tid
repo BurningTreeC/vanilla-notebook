@@ -9,22 +9,40 @@ code-body: yes
 /* ==========================================================================
 ** TiddlyWeb (client-server sync)
 **
-** The plugin swaps a cloud icon between idle and syncing states and fills both
-** with <<colour background>> - the PAGE background - on the assumption that
-** the icon sits on a coloured toolbar. In this theme the sidebar controls sit
-** on the page itself, so filling them with the page colour makes them
-** invisible until they move.
+** The plugin swaps a cloud icon between idle and syncing states and fills the
+** glyph inside it with `colour background` - the PAGE background - on the
+** assumption that the icon sits on a coloured toolbar. In this theme the
+** sidebar controls sit on the page itself, so that colour is not the surface
+** the icon is actually on.
 **
-** They are given the sidebar's own control colour instead, and the syncing
-** state gets the accent so that "something is happening" is legible without
-** having to notice that a shape is rotating.
+** The fix is not to give the inner glyph a foreground colour, which is the
+** obvious move and the wrong one - see the note on the rules below.
 ** ========================================================================== */
 
-body .tc-image-cloud-idle {
+/*
+** The cloud is one shape with a glyph KNOCKED OUT of it: icon-cloud.tid draws
+** the cloud body, then a tick (.tc-image-cloud-idle) and a spinner
+** (.tc-image-cloud-progress) as further paths inside it. Those inner paths are
+** meant to be the colour of the surface BEHIND the icon, so they read as holes
+** in the cloud rather than as marks on top of it.
+**
+** Filling them with a foreground colour - which is the obvious thing to do to
+** an icon path - makes them the same colour as the cloud around them, and the
+** tick simply disappears. The cloud carries the state colour; the glyph inside
+** it carries the page.
+*/
+body .tc-image-cloud {
 	fill: var(--tpc-sidebar-controls-foreground);
 }
 
+body .tc-image-cloud-idle,
 body .tc-image-cloud-progress {
+	fill: var(--tpc-page-background);
+}
+
+/* Syncing: the cloud itself takes the accent, so "something is happening" is
+   legible without having to notice that a shape is rotating. */
+body.tc-dirty .tc-image-cloud {
 	fill: var(--tpc-primary);
 }
 

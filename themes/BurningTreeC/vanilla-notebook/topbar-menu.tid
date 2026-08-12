@@ -1,0 +1,7 @@
+title: $:/core/ui/TopBar/menu
+tags: $:/tags/TopRightBar
+
+\whitespace trim
+<$list filter="[{$:/themes/BurningTreeC/vanilla-notebook/options/sidebarside}!match[start]]" variable="ignore">
+{{$:/themes/BurningTreeC/vanilla-notebook/sidebar-toggle}}
+</$list>

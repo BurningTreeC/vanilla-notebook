@@ -4,6 +4,10 @@ caption: Notebook
 
 \define lingo-base() $:/language/ThemeTweaks/
 
+\define sync-sidebarbreakpoint()
+<$action-setfield $tiddler="$:/themes/tiddlywiki/vanilla/metrics/sidebarbreakpoint" text=<<actionValue>>/>
+\end
+
 ! Notebook
 
 Settings for the Notebook theme.
@@ -28,6 +32,24 @@ Settings for the Notebook theme.
 
 <$checkbox tiddler="$:/themes/BurningTreeC/vanilla-notebook/options/stickytitles" field="text" checked="yes" unchecked="no" default="no"> Keep tiddler titles visible while scrolling</$checkbox>
 
+!! Sidebar
+
+<$radio tiddler="$:/themes/BurningTreeC/vanilla-notebook/options/sidebarside" value="end"> Sidebar on the trailing edge</$radio>
+
+<$radio tiddler="$:/themes/BurningTreeC/vanilla-notebook/options/sidebarside" value="start"> Sidebar on the leading edge</$radio>
+
+> Leading and trailing rather than left and right, because the layout is written with logical properties: in a left-to-right wiki the trailing edge is the right, in a right-to-left wiki it is the left. The slide direction follows, so the sidebar always leaves toward the edge it is anchored to.
+
+!! Controls
+
+<$checkbox tiddler="$:/themes/BurningTreeC/vanilla-notebook/options/toolbaralways" field="text" checked="yes" unchecked="no" default="no"> Keep tiddler toolbars visible instead of revealing them on hover</$checkbox>
+
+<$checkbox tiddler="$:/themes/BurningTreeC/vanilla-notebook/options/toolbarhover" field="text" checked="yes" unchecked="no" default="yes"> Draw a background behind toolbar buttons on hover</$checkbox>
+
+<$checkbox tiddler="$:/themes/BurningTreeC/vanilla-notebook/options/pressanimation" field="text" checked="yes" unchecked="no" default="yes"> Let buttons and tag pills move when pressed</$checkbox>
+
+> The press movement is a single pixel downwards on `:active` and nothing else. It is switched off automatically for anyone whose system asks for reduced motion; this setting is for turning it off without that.
+
 !! Metrics
 
 |!Setting |!Value |
@@ -40,11 +62,13 @@ Settings for the Notebook theme.
 |<$link to="$:/themes/BurningTreeC/vanilla-notebook/metrics/storyright"><<lingo Metrics/StoryRight>></$link><br>//how far the sidebar starts from the leading edge of the page// |^<$edit-text tiddler="$:/themes/BurningTreeC/vanilla-notebook/metrics/storyright" default="" tag="input"/> |
 |<$link to="$:/themes/BurningTreeC/vanilla-notebook/metrics/storywidth"><<lingo Metrics/StoryWidth>></$link><br>//<<lingo Metrics/StoryWidth/Hint>>// |^<$edit-text tiddler="$:/themes/BurningTreeC/vanilla-notebook/metrics/storywidth" default="" tag="input"/> |
 |<$link to="$:/themes/BurningTreeC/vanilla-notebook/metrics/tiddlerwidth"><<lingo Metrics/TiddlerWidth>></$link><br>//<<lingo Metrics/TiddlerWidth/Hint>>// |^<$edit-text tiddler="$:/themes/BurningTreeC/vanilla-notebook/metrics/tiddlerwidth" default="" tag="input"/> |
-|<$link to="$:/themes/BurningTreeC/vanilla-notebook/metrics/sidebarbreakpoint"><<lingo Metrics/SidebarBreakpoint>></$link><br>//<<lingo Metrics/SidebarBreakpoint/Hint>>// |^<$edit-text tiddler="$:/themes/BurningTreeC/vanilla-notebook/metrics/sidebarbreakpoint" default="" tag="input"/> |
+|<$link to="$:/themes/BurningTreeC/vanilla-notebook/metrics/sidebarbreakpoint"><<lingo Metrics/SidebarBreakpoint>></$link><br>//<<lingo Metrics/SidebarBreakpoint/Hint>>// |^<$edit-text tiddler="$:/themes/BurningTreeC/vanilla-notebook/metrics/sidebarbreakpoint" default="" tag="input" inputActions=<<sync-sidebarbreakpoint>>/> |
 |<$link to="$:/themes/BurningTreeC/vanilla-notebook/metrics/sidebarwidth"><<lingo Metrics/SidebarWidth>></$link><br>//<<lingo Metrics/SidebarWidth/Hint>>// |^<$edit-text tiddler="$:/themes/BurningTreeC/vanilla-notebook/metrics/sidebarwidth" default="" tag="input"/> |
 |<$link to="$:/themes/BurningTreeC/vanilla-notebook/metrics/storygutter">Story gutter</$link><br>//the space between the story river and the sidebar// |^<$edit-text tiddler="$:/themes/BurningTreeC/vanilla-notebook/metrics/storygutter" default="" tag="input"/> |
 |<$link to="$:/themes/BurningTreeC/vanilla-notebook/metrics/marginrule">Margin rule offset</$link><br>//how far the red rule sits from the leading edge of a tiddler// |^<$edit-text tiddler="$:/themes/BurningTreeC/vanilla-notebook/metrics/marginrule" default="" tag="input"/> |
 
+> ''Sidebar breakpoint'' is written through to <$link to="$:/themes/tiddlywiki/vanilla/metrics/sidebarbreakpoint">Vanilla's own metric</$link> as you type it. Plugins read that tiddler directly to place their own responsive rules - the menubar builds a media query from it, and there is no way for this theme to reach inside a media query and correct the number afterwards - so the two have to agree or a plugin will switch layout at a different width than the theme does.
+>
 > ''Story left'' and ''story right'' keep Vanilla's metric names so that settings carry across, but this theme lays out with logical properties. They measure from the ''leading'' edge — the left in a left-to-right wiki, the right in a right-to-left one — which is why the hints above are worded differently from Vanilla's.
 >
 > ''Story top'' moves the story river and only the story river. The sidebar is pinned to the viewport, so it keeps its own top edge; the only thing that pushes it down is a menubar, which has to be cleared or the sidebar would scroll underneath it. Vanilla applies this metric to both, which means you cannot indent the river from the top of the page there without the sidebar dropping with it.

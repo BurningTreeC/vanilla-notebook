@@ -123,6 +123,26 @@ html[dir="rtl"] {
 	--nb-dir: -1;
 }
 
+/*
+** --nb-side: which inline edge the sidebar is anchored to. +1 for the end
+** (the default), -1 for the start.
+**
+** Deliberately NOT folded into --nb-dir. The two answer different questions -
+** which way is forward in this script, and which edge does the panel live on -
+** and only the sidebar's own slide needs both at once. The story river's glide
+** needs the direction but not the side, because the side is already accounted
+** for by where its margin puts it. Combining them into one number sent the
+** river the wrong way in fixed-fluid with a start-side sidebar, and it ended
+** up underneath the panel.
+*/
+:root {
+	--nb-side: 1;
+}
+
+.tc-page-container.nb-sidebar-start {
+	--nb-side: -1;
+}
+
 /* Prefer the real selector where it exists — it also catches dir set on a
    subtree rather than on <html>. */
 @supports selector(:dir(rtl)) {
@@ -223,7 +243,7 @@ html[dir="rtl"] {
 */
 
 .tc-sidebar-scrollable {
-	translate: calc(var(--nb-dir) * (1 - var(--nb-open)) * 100%) 0;
+	translate: calc(var(--nb-dir) * var(--nb-side) * (1 - var(--nb-open)) * 100%) 0;
 	will-change: translate;
 	overscroll-behavior: contain;
 	scrollbar-gutter: stable;
@@ -313,11 +333,15 @@ html[dir="rtl"] {
 	** river already starts", scaled by how closed the sidebar is.
 	*/
 	.nb-layout-fixed-fluid .tc-story-river {
+		/* Where the river's leading edge sits. Named, because the glide below
+		   is measured from it and the two must not drift apart. */
+		--nb-river-start: var(--nb-story-left);
+
 		inline-size: var(--nb-story-w);
-		margin-inline: var(--nb-story-left) 0;
+		margin-inline: var(--nb-river-start) 0;
 		translate: calc(
 			var(--nb-dir) * (1 - var(--nb-open)) *
-			((100vw - var(--nb-story-w)) / 2 - var(--nb-story-left))
+			((100vw - var(--nb-story-w)) / 2 - var(--nb-river-start))
 		) 0;
 		will-change: translate;
 	}
@@ -374,6 +398,60 @@ html[dir="rtl"] {
 	.tc-story-river.tc-static-story-river {
 		margin-inline-end: 0;
 		translate: none;
+	}
+
+	/* ======================================================================
+	** Sidebar on the inline START
+	**
+	** Everything above is written with logical properties, so putting the
+	** sidebar on the other side is a matter of swapping the two ends rather
+	** than rewriting the layout. Three things have to move together:
+	**
+	**   1. the panel's own inset, so it is anchored to the other edge;
+	**   2. the river's margins, which reserve the space it occupies;
+	**   3. --nb-dir, because `translate` percentages are PHYSICAL and the
+	**      panel now has to leave toward the inline start. Flipping the sign
+	**      keeps that in step with the story river's own glide, which reads
+	**      the same variable - if only one of them flipped, the two would
+	**      slide apart instead of together.
+	**
+	** The flip is applied on top of whatever direction the document is in, so
+	** it composes with RTL rather than fighting it: in an RTL wiki with the
+	** sidebar on the start side the two negations cancel and --nb-dir is +1
+	** again, which is correct.
+	** ====================================================================== */
+
+	.nb-layout-fluid-fixed.nb-sidebar-start .tc-sidebar-scrollable {
+		inset-inline: 0 auto;
+	}
+
+	.nb-layout-fluid-fixed.nb-sidebar-start .tc-story-river {
+		margin-inline: calc(var(--nb-open) * var(--nb-sidebar-w)) var(--nb-story-left);
+	}
+
+	/*
+	** The fluid sidebar keeps the width it would have had on the other edge -
+	** everything past --nb-story-right - and the river starts where it ends.
+	** Stating the width explicitly rather than pinning both insets is what
+	** makes it the mirror: `inset-inline: 0 var(--nb-story-right)` would leave
+	** a panel the width of the RIVER, not of the sidebar.
+	*/
+	.nb-layout-fixed-fluid.nb-sidebar-start .tc-sidebar-scrollable {
+		inset-inline: 0 auto;
+		inline-size: max(0px, calc(100vw - var(--nb-story-right)));
+	}
+
+	.nb-layout-fixed-fluid.nb-sidebar-start .tc-story-river {
+		--nb-river-start: max(0px, calc(100vw - var(--nb-story-right)));
+	}
+
+	.nb-fullwidth.nb-layout-fluid-fixed.nb-sidebar-start .tc-story-river {
+		margin-inline: calc(var(--nb-open) * var(--nb-sidebar-w)) var(--nb-story-left);
+	}
+
+	.nb-fullwidth.nb-layout-fixed-fluid.nb-sidebar-start .tc-story-river {
+		margin-inline: calc(var(--nb-open) * max(0px, 100vw - var(--nb-story-right)))
+			var(--nb-story-left);
 	}
 }
 

@@ -261,6 +261,35 @@ code-body: yes
 	font-family: var(--nb-font-code);
 }
 
+/*
+** The plugin's own icons are STROKED, not filled: every one of them is
+** `fill="none" stroke="currentColor"` (editor/icons/*.tid). This theme fills
+** toolbar glyphs, because the core's icons are solid shapes, and that fill
+** inherits into the SVG and turns each outline drawing into a solid blob.
+**
+** So .cm6-icon opts out: no fill, and the stroke follows the button's colour
+** so it still lights up on hover with everything else.
+*/
+.tc-editor-toolbar svg.cm6-icon,
+.tc-editor-toolbar > button svg.cm6-icon,
+.tc-editor-toolbar > span > button svg.cm6-icon {
+	fill: none;
+	stroke: currentColor;
+}
+
+/*
+** The blinking caret is drawn by CodeMirror on its own .cm-cursorLayer, so the
+** primary cursor rendered in the content flow is a second caret sitting in the
+** same place. Hiding it leaves exactly one.
+**
+** :not(.cm-fat-cursor) matters - the vim keymap turns the primary cursor INTO
+** the block cursor rather than drawing a separate one, so hiding it outright
+** would leave vim's normal mode with no cursor at all.
+*/
+.tc-editor-codemirror6 .cm-cursor-primary:not(.cm-fat-cursor) {
+	display: none;
+}
+
 /* ---- Editor toolbar ----
 ** The plugin's alternative toolbar styles are opt-in through
 ** $:/config/codemirror-6/toolbars/style, so only the shared shape is touched
@@ -272,11 +301,25 @@ code-body: yes
 }
 
 /* ---- Ruled paper ----
-** With the ruled editor on, CM6 has to sit on the same rhythm as the plain
-** textarea or the text drifts off the lines. Same --nb-edit-lh token and the
-** same 26px the textarea ruling uses in base.tid, and the line-height is
-** pinned to it. The ruling is drawn on the scroller, not the editor, because
-** that is the element that scrolls with the content. */
+**
+** Yes, the main CodeMirror 6 editor can be ruled, but not by putting the
+** gradient on .cm-editor: that element does not grow with the text, so the
+** lines stop at the bottom of the visible box and do not scroll with the
+** content. The ruling belongs on .cm-content, which is exactly as tall as the
+** document and moves with it.
+**
+** Three things have to agree or the text drifts off the lines:
+**
+**   - the line height. CM6 sets its own on .cm-line, so that is pinned to the
+**     same --nb-edit-lh token the plain textarea uses in base.tid.
+**   - the first line's starting offset. .cm-content carries padding, so the
+**     gradient is pushed down by the same amount with background-position.
+**   - the box the gradient is measured from. padding-box, so the padding is
+**     not counted twice.
+**
+** CM6 also gives .cm-line its own padding, which would add to the line box and
+** break the rhythm after the first row; it is zeroed on the block axis.
+*/
 
 .nb-ruled-editor .tc-editor-codemirror6 .cm-editor {
 	--nb-edit-lh: 26px;
@@ -285,9 +328,11 @@ code-body: yes
 
 .nb-ruled-editor .tc-editor-codemirror6 .cm-line {
 	line-height: var(--nb-edit-lh);
+	padding-block: 0;
 }
 
 .nb-ruled-editor .tc-editor-codemirror6 .cm-content {
+	padding-block-start: var(--nb-space-xs);
 	background-image: repeating-linear-gradient(
 		to bottom,
 		transparent 0,
@@ -295,7 +340,13 @@ code-body: yes
 		var(--nb-rule-faint) calc(var(--nb-edit-lh) - 1px),
 		var(--nb-rule-faint) var(--nb-edit-lh)
 	);
-	background-attachment: local;
+	background-origin: padding-box;
+	background-position-y: var(--nb-space-xs);
+}
+
+/* The gutter keeps solid paper so the line numbers do not sit on the ruling. */
+.nb-ruled-editor .tc-editor-codemirror6 .cm-gutters {
+	background-color: var(--tpc-tiddler-editor-background);
 }
 
 /* ---- Sticky titles: nothing to do here, deliberately ----

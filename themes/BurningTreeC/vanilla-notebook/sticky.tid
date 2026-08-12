@@ -46,17 +46,18 @@ the gutter beside it.
 	Widen the strip from the sheet's content box out to its padding box, so
 	body text scrolls under an opaque band rather than appearing beside it.
 
-	These must mirror .tc-tiddler-frame's padding EXACTLY. The frame's extra
-	inline-start padding is unconditional — it reserves the margin gutter
-	whether or not the rule is drawn in it — so this compensation has to be
-	unconditional too. Scoping it to .nb-margin-rule left the strip 34px short
-	on the inline start whenever the rule was switched off.
+	These must mirror .tc-tiddler-frame's padding EXACTLY, so they read the
+	same --nb-sheet-pad-start token the frame does rather than restating the
+	calculation. The frame's extra inline-start padding is unconditional — it
+	reserves the margin whether or not the rule is drawn in it — so this
+	compensation is unconditional too. Scoping it to .nb-margin-rule left the
+	strip 34px short on the inline start whenever the rule was switched off.
 
 	Negative margins only widen a box whose inline-size is auto. Anything here
 	that sets an explicit width silently turns this back into a shift.
 	*/
-	margin-inline: calc(-1 * (var(--nb-margin) + var(--nb-space-lg))) calc(-1 * var(--nb-space-lg));
-	padding-inline: calc(var(--nb-margin) + var(--nb-space-lg)) var(--nb-space-lg);
+	margin-inline: calc(-1 * var(--nb-sheet-pad-start)) calc(-1 * var(--nb-space-lg));
+	padding-inline: var(--nb-sheet-pad-start) var(--nb-space-lg);
 	padding-block: 2px;
 }
 
