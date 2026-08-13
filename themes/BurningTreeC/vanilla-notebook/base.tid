@@ -758,8 +758,22 @@ button.tc-btn-invisible {
 	background-color: color-mix(in oklch, var(--tpc-untagged-background) 82%, var(--tpc-foreground));
 }
 
+/*
+** The remove button sits INSIDE the pill, so it has to be pill-sized: the
+** button's own 4px padding and a full-em glyph make it taller than the label
+** it belongs to. Flex centring plus a glyph a shade under the cap height puts
+** it on the same optical line as the text.
+*/
 .tc-remove-tag-button {
+	display: inline-flex;
+	align-items: center;
+	padding: 0;
 	opacity: 0.6;
+}
+
+.tc-remove-tag-button svg {
+	inline-size: 0.85em;
+	block-size: 0.85em;
 }
 
 .tc-remove-tag-button:hover {
@@ -2547,8 +2561,25 @@ nav.tc-menubar .tc-form-inline {
 	font-weight: normal;
 }
 
+/*
+** In EDIT mode a tag pill carries BOTH classes.
+**
+** core/ui/EditTemplate/tags.tid emits `<span class="tc-tag-label
+** tc-tag-list-item ...">`, where the view-mode template wraps a separate pill
+** in a plain .tc-tag-list-item. So `display: inline-block` here — same
+** specificity as .tc-tag-label's `inline-flex`, and later in the file — was
+** silently winning on the edit-mode pill and taking the flex centring with it:
+** the icon and the remove button fell back to inline layout and lined up on
+** two different vertical alignments, one `bottom` and one `middle`.
+**
+** The wrapper still needs to be a block box; the pill must not stop being a
+** flex container. Only the wrapper gets it.
+*/
 .tc-tag-list-item {
 	position: relative;
+}
+
+.tc-tag-list-item:not(.tc-tag-label) {
 	display: inline-block;
 }
 
@@ -4202,12 +4233,19 @@ blockquote.tc-big-quote cite::before {
 	vertical-align: middle;
 }
 
+/*
+** The pill is a flex row, so the icon is centred by the pill's own
+** `align-items` and spaced by its `gap`. The margin here used to double that
+** gap, and `vertical-align: bottom` fought the middle alignment the reset
+** gives every other icon inside a button or link — visible the moment a tag
+** with an icon appeared next to a remove button. `middle` is kept as the
+** fallback for any context where the pill is not laid out as flex.
+*/
 .tc-tag-label svg,
 .tc-tag-label img {
 	inline-size: 1em;
 	block-size: 1em;
-	margin-inline-end: 3px;
-	vertical-align: bottom;
+	vertical-align: middle;
 }
 
 .tc-titlebar img {
