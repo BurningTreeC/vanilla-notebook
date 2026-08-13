@@ -1,0 +1,87 @@
+title: $:/themes/BurningTreeC/vanilla-paper/ThemeTweaks
+tags: $:/tags/ControlPanel/Appearance
+caption: Paper
+
+\define lingo-base() $:/language/ThemeTweaks/
+
+\define sync-sidebarbreakpoint()
+<$action-setfield $tiddler="$:/themes/tiddlywiki/vanilla/metrics/sidebarbreakpoint" text=<<actionValue>>/>
+\end
+
+! Paper
+
+Settings for the Paper theme.
+
+!! Layout
+
+<$radio tiddler="$:/themes/BurningTreeC/vanilla-paper/options/sidebarlayout" value="fluid-fixed"> Fluid story river, fixed sidebar</$radio>
+
+<$radio tiddler="$:/themes/BurningTreeC/vanilla-paper/options/sidebarlayout" value="fixed-fluid"> Fixed story river, fluid sidebar</$radio>
+
+> In ''fixed-fluid'' the story river keeps its width, so hiding the sidebar is composited entirely on the GPU — nothing reflows. In ''fluid-fixed'' the river reclaims the freed space, which is a layout change by definition; it is interpolated rather than snapped, so it glides, but it is not GPU work.
+
+<$checkbox tiddler="$:/themes/BurningTreeC/vanilla-paper/options/fullwidth" field="text" checked="yes" unchecked="no" default="no"> Full width — story river and tiddlers take all the space the sidebar is not using</$checkbox>
+
+> Full width lifts the cap on tiddler width and the 68-character measure on tiddler text, so tiddlers fill the story river. The sidebar keeps the sizing its layout mode gives it. In ''fluid-fixed'' the river takes the viewport minus the fixed sidebar. In ''fixed-fluid'' the sidebar is fluid and owns the space beside the river while it is visible, so the river only expands to the full viewport once the sidebar is hidden. On a wide display full width means lines longer than is comfortable to read, which is why it is off by default.
+
+!! Paper
+
+<$checkbox tiddler="$:/themes/BurningTreeC/vanilla-paper/options/marginrule" field="text" checked="yes" unchecked="no" default="yes"> Draw the margin rule down each tiddler</$checkbox>
+
+<$checkbox tiddler="$:/themes/BurningTreeC/vanilla-paper/options/ruleseditor" field="text" checked="yes" unchecked="no" default="yes"> Rule the editor like ruled paper</$checkbox>
+
+<$checkbox tiddler="$:/themes/BurningTreeC/vanilla-paper/options/stickytitles" field="text" checked="yes" unchecked="no" default="no"> Keep tiddler titles visible while scrolling</$checkbox>
+
+!! Sidebar
+
+<$radio tiddler="$:/themes/BurningTreeC/vanilla-paper/options/sidebarside" value="end"> Sidebar on the trailing edge</$radio>
+
+<$radio tiddler="$:/themes/BurningTreeC/vanilla-paper/options/sidebarside" value="start"> Sidebar on the leading edge</$radio>
+
+> Leading and trailing rather than left and right, because the layout is written with logical properties: in a left-to-right wiki the trailing edge is the right, in a right-to-left wiki it is the left. The slide direction follows, so the sidebar always leaves toward the edge it is anchored to.
+
+!! Controls
+
+<$checkbox tiddler="$:/themes/BurningTreeC/vanilla-paper/options/toolbaralways" field="text" checked="yes" unchecked="no" default="no"> Keep tiddler toolbars visible instead of revealing them on hover</$checkbox>
+
+<$checkbox tiddler="$:/themes/BurningTreeC/vanilla-paper/options/toolbarhover" field="text" checked="yes" unchecked="no" default="yes"> Draw a background behind toolbar buttons on hover</$checkbox>
+
+<$checkbox tiddler="$:/themes/BurningTreeC/vanilla-paper/options/pressanimation" field="text" checked="yes" unchecked="no" default="yes"> Let buttons and tag pills move when pressed</$checkbox>
+
+> The press movement is a single pixel downwards on `:active` and nothing else. It is switched off automatically for anyone whose system asks for reduced motion; this setting is for turning it off without that.
+
+!! Metrics
+
+|!Setting |!Value |
+|<$link to="$:/themes/BurningTreeC/vanilla-paper/metrics/fontsize"><<lingo Metrics/FontSize>></$link> |^<$edit-text tiddler="$:/themes/BurningTreeC/vanilla-paper/metrics/fontsize" default="" tag="input"/> |
+|<$link to="$:/themes/BurningTreeC/vanilla-paper/metrics/lineheight"><<lingo Metrics/LineHeight>></$link> |^<$edit-text tiddler="$:/themes/BurningTreeC/vanilla-paper/metrics/lineheight" default="" tag="input"/> |
+|<$link to="$:/themes/BurningTreeC/vanilla-paper/metrics/bodyfontsize"><<lingo Metrics/BodyFontSize>></$link> |^<$edit-text tiddler="$:/themes/BurningTreeC/vanilla-paper/metrics/bodyfontsize" default="" tag="input"/> |
+|<$link to="$:/themes/BurningTreeC/vanilla-paper/metrics/bodylineheight"><<lingo Metrics/BodyLineHeight>></$link> |^<$edit-text tiddler="$:/themes/BurningTreeC/vanilla-paper/metrics/bodylineheight" default="" tag="input"/> |
+|<$link to="$:/themes/BurningTreeC/vanilla-paper/metrics/storyleft"><<lingo Metrics/StoryLeft>></$link><br>//how far the story river starts from the leading edge of the page// |^<$edit-text tiddler="$:/themes/BurningTreeC/vanilla-paper/metrics/storyleft" default="" tag="input"/> |
+|<$link to="$:/themes/BurningTreeC/vanilla-paper/metrics/storytop"><<lingo Metrics/StoryTop>></$link><br>//<<lingo Metrics/StoryTop/Hint>>// |^<$edit-text tiddler="$:/themes/BurningTreeC/vanilla-paper/metrics/storytop" default="" tag="input"/> |
+|<$link to="$:/themes/BurningTreeC/vanilla-paper/metrics/storyright"><<lingo Metrics/StoryRight>></$link><br>//how far the sidebar starts from the leading edge of the page// |^<$edit-text tiddler="$:/themes/BurningTreeC/vanilla-paper/metrics/storyright" default="" tag="input"/> |
+|<$link to="$:/themes/BurningTreeC/vanilla-paper/metrics/storywidth"><<lingo Metrics/StoryWidth>></$link><br>//<<lingo Metrics/StoryWidth/Hint>>// |^<$edit-text tiddler="$:/themes/BurningTreeC/vanilla-paper/metrics/storywidth" default="" tag="input"/> |
+|<$link to="$:/themes/BurningTreeC/vanilla-paper/metrics/tiddlerwidth"><<lingo Metrics/TiddlerWidth>></$link><br>//<<lingo Metrics/TiddlerWidth/Hint>>// |^<$edit-text tiddler="$:/themes/BurningTreeC/vanilla-paper/metrics/tiddlerwidth" default="" tag="input"/> |
+|<$link to="$:/themes/BurningTreeC/vanilla-paper/metrics/sidebarbreakpoint"><<lingo Metrics/SidebarBreakpoint>></$link><br>//<<lingo Metrics/SidebarBreakpoint/Hint>>// |^<$edit-text tiddler="$:/themes/BurningTreeC/vanilla-paper/metrics/sidebarbreakpoint" default="" tag="input" inputActions=<<sync-sidebarbreakpoint>>/> |
+|<$link to="$:/themes/BurningTreeC/vanilla-paper/metrics/sidebarwidth"><<lingo Metrics/SidebarWidth>></$link><br>//<<lingo Metrics/SidebarWidth/Hint>>// |^<$edit-text tiddler="$:/themes/BurningTreeC/vanilla-paper/metrics/sidebarwidth" default="" tag="input"/> |
+|<$link to="$:/themes/BurningTreeC/vanilla-paper/metrics/storygutter">Story gutter</$link><br>//the space between the story river and the sidebar// |^<$edit-text tiddler="$:/themes/BurningTreeC/vanilla-paper/metrics/storygutter" default="" tag="input"/> |
+|<$link to="$:/themes/BurningTreeC/vanilla-paper/metrics/marginrule">Margin rule offset</$link><br>//how far the red rule sits from the leading edge of a tiddler// |^<$edit-text tiddler="$:/themes/BurningTreeC/vanilla-paper/metrics/marginrule" default="" tag="input"/> |
+
+> ''Sidebar breakpoint'' is written through to <$link to="$:/themes/tiddlywiki/vanilla/metrics/sidebarbreakpoint">Vanilla's own metric</$link> as you type it. Plugins read that tiddler directly to place their own responsive rules - the menubar builds a media query from it, and there is no way for this theme to reach inside a media query and correct the number afterwards - so the two have to agree or a plugin will switch layout at a different width than the theme does.
+>
+> ''Story left'' and ''story right'' keep Vanilla's metric names so that settings carry across, but this theme lays out with logical properties. They measure from the ''leading'' edge — the left in a left-to-right wiki, the right in a right-to-left one — which is why the hints above are worded differently from Vanilla's.
+>
+> ''Story top'' moves the story river and only the story river. The sidebar is pinned to the viewport, so it keeps its own top edge; the only thing that pushes it down is a menubar, which has to be cleared or the sidebar would scroll underneath it. Vanilla applies this metric to both, which means you cannot indent the river from the top of the page there without the sidebar dropping with it.
+>
+> It is also a starting offset rather than the final one: when the menubar plugin is installed, its measured height is added to whatever you set here, so the river clears the bar without you having to work the number out by hand.
+
+!! Fonts
+
+|!Role |!Stack |
+|Body (serif) |<$edit-text tiddler="$:/themes/BurningTreeC/vanilla-paper/settings/fontfamily" default="" tag="input"/> |
+|Interface (sans) |<$edit-text tiddler="$:/themes/BurningTreeC/vanilla-paper/settings/uifontfamily" default="" tag="input"/> |
+|Code (mono) |<$edit-text tiddler="$:/themes/BurningTreeC/vanilla-paper/settings/codefontfamily" default="" tag="input"/> |
+
+!! Motion
+
+The slide duration follows your global <$link to="$:/config/AnimationDuration">animation duration</$link> setting, currently <$text text={{$:/config/AnimationDuration}}/>ms. Setting it to `0` disables the slide without breaking the layout.

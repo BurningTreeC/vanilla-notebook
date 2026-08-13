@@ -1,0 +1,275 @@
+title: $:/themes/BurningTreeC/vanilla-paper/plugins/codemirror
+tags: [[$:/tags/Stylesheet]]
+code-body: yes
+
+\rules only filteredtranscludeinline transcludeinline macrodef macrocallinline html
+
+<$list filter="[[$:/plugins/tiddlywiki/codemirror]is[tiddler]]" variable="ignore">
+
+/* ==========================================================================
+** CodeMirror
+**
+** The plugin ships a complete Solarized syntax scheme with every colour
+** written as a literal: #586e75, #859900, #cb4b16 and a dozen more. Those are
+** fixed, so on Vanilla Paper Night the editor turns into a bright Solarized
+** Light panel in the middle of a dark page, and under any other palette the
+** syntax colours simply have nothing to do with the rest of the wiki.
+**
+** Paper derives the whole scheme from the palette instead, with
+** `oklch(from ...)` - see the note on the token block below for which channel
+** comes from where and why. Roles that already mean something in the palette -
+** error, match, comment - take that meaning rather than a hue.
+**
+** Everything is scoped under .cm-s-tiddlywiki, exactly as the plugin scopes
+** its own rules, so nothing here reaches a CodeMirror instance that another
+** plugin has themed differently.
+** ========================================================================== */
+
+.cm-s-tiddlywiki {
+	/*
+	** Lightness comes from the PALETTE'S FOREGROUND, not from its accent.
+	**
+	** Deriving it from the accent was the obvious first move and it is wrong.
+	** An accent is chosen to stand out, not to be read at length, and its
+	** lightness says nothing about which way the paper goes: pinning tokens
+	** near L 0.37 measured 8.75:1 to 10.69:1 on Vanilla Paper Day and then
+	** 2.96:1 to 3.47:1 on Night, where two roles failed outright, because on
+	** dark paper the tokens have to be lighter than the page rather than
+	** darker.
+	**
+	** `foreground` is the one colour a palette guarantees against its own
+	** background - that is what it is for. Taking `l` from it and overriding
+	** only chroma and hue gives every token the exact legibility of body text,
+	** on any palette, with the hue left free to carry the role. Uniform
+	** lightness is also what you want in an editor: the eye reads the shape of
+	** the code and lets colour say what kind of token it is.
+	*/
+	--vp-syn-c: 0.11;
+
+	--vp-syn-keyword: oklch(from var(--tpc-foreground) l var(--vp-syn-c) 264);
+	--vp-syn-string: oklch(from var(--tpc-foreground) l var(--vp-syn-c) 150);
+	--vp-syn-number: oklch(from var(--tpc-foreground) l var(--vp-syn-c) 25);
+	--vp-syn-name: oklch(from var(--tpc-foreground) l var(--vp-syn-c) 310);
+	--vp-syn-type: oklch(from var(--tpc-foreground) l var(--vp-syn-c) 195);
+	--vp-syn-punct: var(--vp-ink-soft);
+
+	/* Comments step a bounded distance from the foreground TOWARD THE EDITOR'S
+	   OWN PAPER, rather than using one of the theme's general muted inks.
+	   --vp-ink-faint measured 1.56:1 in here on SolarFlare and --vp-ink-soft
+	   2.30:1, because both are mixed against the page background and the
+	   editor's is a different colour. Mixing against the right surface keeps
+	   comments at a fixed fraction of whatever contrast the palette itself
+	   manages. Italic already marks them as secondary. */
+	--vp-syn-comment: color-mix(in oklch, var(--tpc-foreground) 80%, var(--tpc-tiddler-editor-background));
+
+	/* Error is derived like the rest rather than taken from alert-highlight,
+	   which is picked to sit on the alert surface and not on editor paper -
+	   on Nord that measured 2.13:1. Same red hue as numbers, more chroma, and
+	   the dotted underline is what actually says "error". */
+	--vp-syn-error: oklch(from var(--tpc-foreground) l 0.19 25);
+}
+
+/*
+** Relative colour syntax is recent. Where it is missing the scheme collapses
+** onto colours the palette states outright - fewer distinct hues, but every
+** one of them legible and still palette-derived, which is the property that
+** actually matters.
+*/
+@supports not (color: oklch(from red l c h)) {
+	.cm-s-tiddlywiki {
+		--vp-syn-keyword: var(--tpc-primary);
+		--vp-syn-string: var(--tpc-external-link-foreground);
+		--vp-syn-number: var(--tpc-primary);
+		--vp-syn-name: var(--tpc-tiddler-link-foreground);
+		--vp-syn-type: var(--tpc-primary);
+		--vp-syn-punct: var(--vp-ink-soft);
+		--vp-syn-comment: var(--vp-ink-soft);
+		--vp-syn-error: var(--tpc-alert-highlight);
+	}
+}
+
+/* ---- The frame ---------------------------------------------------------
+** The plugin reads $:/themes/tiddlywiki/vanilla/settings/editorfontfamily and
+** .../metrics/bodyfontsize. This theme ships those tiddlers as a compatibility
+** shim, so the values resolve, but they are the SHIM's defaults and do not
+** follow the Paper settings a user actually edits in Theme Tweaks. Pointing
+** the editor back at the theme's own tokens is what keeps the two in step. */
+
+.CodeMirror {
+	font-family: var(--vp-font-code);
+	font-size: var(--vp-body-size);
+	line-height: var(--vp-body-lh);
+	border: 1px solid var(--tpc-tiddler-editor-border);
+	border-radius: var(--vp-radius);
+}
+
+.cm-s-tiddlywiki.CodeMirror,
+.cm-s-tiddlywiki .CodeMirror-gutters {
+	background-color: var(--tpc-tiddler-editor-background);
+	color: var(--tpc-foreground);
+}
+
+.cm-s-tiddlywiki .CodeMirror-gutters {
+	border-inline-end: 1px solid var(--vp-rule-faint);
+}
+
+.cm-s-tiddlywiki .CodeMirror-linenumber {
+	color: var(--vp-ink-faint);
+	font-variant-numeric: tabular-nums;
+}
+
+.cm-s-tiddlywiki .CodeMirror-cursor {
+	border-inline-start: 2px solid var(--tpc-primary);
+}
+
+/* A wash rather than the plugin's flat grey, so the active line reads as
+   paper catching the light instead of a band laid over it. */
+.cm-s-tiddlywiki .CodeMirror-activeline-background,
+.cm-s-tiddlywiki .CodeMirror-activeline-gutter .CodeMirror-linenumber {
+	background: color-mix(in oklch, var(--tpc-primary) 7%, transparent);
+}
+
+.cm-s-tiddlywiki .CodeMirror-dialog {
+	background: var(--tpc-tiddler-background);
+	color: var(--tpc-foreground);
+	border-block-end: 1px solid var(--vp-rule);
+	font-family: var(--vp-font-ui);
+}
+
+/* ---- Tokens ---- */
+
+.cm-s-tiddlywiki span.cm-comment,
+.cm-s-tiddlywiki .cm-comment {
+	color: var(--vp-syn-comment);
+	font-style: italic;
+}
+
+.cm-s-tiddlywiki .cm-keyword,
+.cm-s-tiddlywiki .cm-atom,
+.cm-s-tiddlywiki .cm-builtin {
+	color: var(--vp-syn-keyword);
+}
+
+.cm-s-tiddlywiki .cm-string,
+.cm-s-tiddlywiki .cm-string-2,
+.cm-s-tiddlywiki .cm-meta {
+	color: var(--vp-syn-string);
+}
+
+.cm-s-tiddlywiki .cm-number {
+	color: var(--vp-syn-number);
+	font-variant-numeric: tabular-nums;
+}
+
+.cm-s-tiddlywiki .cm-def,
+.cm-s-tiddlywiki .cm-property,
+.cm-s-tiddlywiki .cm-attribute,
+.cm-s-tiddlywiki .cm-qualifier {
+	color: var(--vp-syn-name);
+}
+
+.cm-s-tiddlywiki .cm-variable-2,
+.cm-s-tiddlywiki .cm-variable-3,
+.cm-s-tiddlywiki .cm-type,
+.cm-s-tiddlywiki .cm-operator,
+.cm-s-tiddlywiki .cm-special {
+	color: var(--vp-syn-type);
+}
+
+.cm-s-tiddlywiki .cm-variable,
+.cm-s-tiddlywiki .cm-tag,
+.cm-s-tiddlywiki .cm-bracket {
+	color: var(--vp-syn-punct);
+}
+
+/* Headings and quotes are structure, not syntax, so they take the theme's
+   own editorial weights rather than a colour. */
+.cm-s-tiddlywiki .cm-header {
+	color: var(--tpc-foreground);
+	font-family: var(--vp-font-body);
+	font-weight: 600;
+}
+
+.cm-s-tiddlywiki .cm-quote {
+	color: var(--vp-ink-soft);
+	font-style: italic;
+}
+
+.cm-s-tiddlywiki .cm-link {
+	color: var(--tpc-tiddler-link-foreground);
+	cursor: pointer;
+}
+
+.cm-s-tiddlywiki .cm-em {
+	color: inherit;
+	font-style: italic;
+	text-decoration: none;
+}
+
+.cm-s-tiddlywiki .cm-hr {
+	color: transparent;
+	border-block-start: 1px solid var(--vp-rule);
+	display: block;
+}
+
+.cm-s-tiddlywiki .cm-error,
+.cm-s-tiddlywiki .cm-invalidchar {
+	color: var(--vp-syn-error);
+	border-block-end: 1px dotted var(--vp-syn-error);
+}
+
+.cm-s-tiddlywiki .CodeMirror-matchingbracket {
+	color: var(--tpc-primary);
+	background: color-mix(in oklch, var(--tpc-primary) 16%, transparent);
+	border-radius: 2px;
+	font-weight: 600;
+}
+
+.cm-s-tiddlywiki .CodeMirror-nonmatchingbracket {
+	color: var(--vp-syn-error);
+	font-weight: 600;
+}
+
+/* The plugin's search highlight is a fixed orange. The theme has a colour for
+   "the thing you are looking for" already, and it is the drop/accent language,
+   not a second unrelated hue. */
+.cm-s-tiddlywiki .cm-searching {
+	background: color-mix(in oklch, var(--tpc-primary) 22%, transparent);
+	outline: 1px solid var(--tpc-primary);
+	border-radius: 2px;
+}
+
+.cm-s-tiddlywiki span.cm-matchhighlight {
+	color: var(--tpc-background);
+	background-color: var(--tpc-primary);
+	border-radius: 2px;
+}
+
+/* ---- Ruled paper ----
+** When the editor is ruled, CodeMirror has to sit on the same rhythm or the
+** text drifts off the lines. The plugin sets its own line-height, so the rule
+** spacing is taken from the theme's leading and the panel's own background is
+** dropped to let the ruling through. */
+
+.vp-ruled-editor .cm-s-tiddlywiki.CodeMirror {
+	background-color: transparent;
+	/* --vp-edit-lh, the same token and the same 26px rhythm the textarea
+	   ruling uses in base.tid, and CodeMirror's line-height is pinned to it -
+	   otherwise the lines and the text drift apart a pixel per row. */
+	--vp-edit-lh: 26px;
+	line-height: var(--vp-edit-lh);
+	background-image: repeating-linear-gradient(
+		to bottom,
+		transparent 0,
+		transparent calc(var(--vp-edit-lh) - 1px),
+		var(--vp-rule-faint) calc(var(--vp-edit-lh) - 1px),
+		var(--vp-rule-faint) var(--vp-edit-lh)
+	);
+	background-attachment: local;
+}
+
+.vp-ruled-editor .cm-s-tiddlywiki .CodeMirror-gutters {
+	background-color: var(--tpc-tiddler-editor-background);
+}
+
+</$list>

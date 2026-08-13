@@ -1,0 +1,90 @@
+title: $:/themes/BurningTreeC/vanilla-paper/plugins/railroad
+tags: [[$:/tags/Stylesheet]]
+code-body: yes
+
+\rules only filteredtranscludeinline transcludeinline macrodef macrocallinline html
+
+<$list filter="[[$:/plugins/tiddlywiki/railroad]is[tiddler]]" variable="ignore">
+
+/* ==========================================================================
+** Railroad diagrams
+**
+** These are SVG syntax diagrams, and the plugin ships the upstream
+** railroad-diagrams stylesheet: black tracks, hardcoded fills on the boxes,
+** and a font stack of its own. On a dark palette the tracks vanish into the
+** page and the label text stays black on a black background.
+**
+** A railroad diagram is a technical drawing, so Paper treats it as one: ink
+** on paper. The track is the page's own ink, terminals and non-terminals are
+** told apart by fill weight rather than by two unrelated colours, and the
+** labels take the code face because that is what they are - literal syntax.
+** ========================================================================== */
+
+svg.railroad-diagram {
+	background-color: transparent;
+	max-inline-size: 100%;
+	block-size: auto;
+}
+
+/* The track. `stroke` is what draws it; the plugin also sets fill:none on
+   paths, which must be preserved or every curve fills in solid. */
+svg.railroad-diagram path {
+	stroke: var(--tpc-foreground);
+	stroke-width: 2;
+	fill: none;
+}
+
+/* Labels. Both the text inside the boxes and the comments beside the track. */
+svg.railroad-diagram text {
+	fill: var(--tpc-foreground);
+	font-family: var(--vp-font-code);
+	font-size: 13px;
+	font-weight: 500;
+}
+
+svg.railroad-diagram text.diagram-text {
+	fill: var(--vp-ink-faint);
+	font-family: var(--vp-font-ui);
+	font-size: 11px;
+}
+
+svg.railroad-diagram text.comment {
+	fill: var(--vp-ink-soft);
+	font-family: var(--vp-font-ui);
+	font-style: italic;
+	font-size: 11px;
+}
+
+svg.railroad-diagram path.diagram-text {
+	stroke-width: 1.5;
+	stroke: var(--vp-ink-faint);
+	fill: none;
+}
+
+/* A terminal is a literal you type, so it is the solid one - a wash of the
+   accent. A non-terminal is a reference to another rule, so it is hollow. That
+   is one distinction carried by weight instead of two by hue, which also means
+   it survives being printed. */
+svg.railroad-diagram rect {
+	stroke: var(--tpc-foreground);
+	stroke-width: 2;
+	fill: color-mix(in oklch, var(--tpc-primary) 14%, var(--tpc-tiddler-background));
+}
+
+svg.railroad-diagram rect.group-box {
+	stroke: var(--vp-ink-faint);
+	stroke-dasharray: 10 5;
+	fill: none;
+}
+
+svg.railroad-diagram g.non-terminal rect {
+	fill: var(--tpc-tiddler-background);
+}
+
+/* The start and end markers. */
+svg.railroad-diagram .label {
+	fill: var(--vp-ink-faint);
+	font-family: var(--vp-font-ui);
+}
+
+</$list>

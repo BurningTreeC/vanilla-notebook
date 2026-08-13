@@ -1,0 +1,221 @@
+title: $:/themes/BurningTreeC/vanilla-paper/plugins/tour
+tags: [[$:/tags/Stylesheet]]
+code-body: yes
+
+\rules only filteredtranscludeinline transcludeinline macrodef macrocallinline html
+
+<$list filter="[[$:/plugins/tiddlywiki/tour]is[tiddler]]" variable="ignore">
+
+/* ==========================================================================
+** Tour
+**
+** The tour panel is a card that floats over the page, so it is treated as a
+** sheet of paper resting on the desk rather than a floating dialog: the same
+** border, radius and shadow the story's tiddlers use.
+**
+** Colours here go through `colour` rather than --tpc-*, because every one of
+** the tour-* palette entries is introduced by the plugin and none of them
+** exist in $:/palettes/Vanilla - so no --tpc-tour-* property is generated and
+** var() on one would silently resolve to nothing. `colour` falls through to
+** the plugin's own $:/config/DefaultColourMappings when a palette is silent.
+** ========================================================================== */
+
+/*
+** SCOPED WITH :not(.tc-tour-panel-fullscreen), and that matters.
+**
+** The plugin sizes the panel with `.tc-tour-panel { width: 310px }` and then
+** un-sizes it for the full-screen mode with `.tc-tour-panel-fullscreen {
+** width: auto; border: none; border-radius: 0; box-shadow: none }`. Both are
+** single-class selectors, so between them it is source order that decides -
+** and this sheet comes after the plugin's. An unqualified `.tc-tour-panel`
+** rule here therefore wins over the full-screen rule and pins the full-screen
+** tour to 310px with a border, a radius and a shadow round it. Measured: 310px
+** wide in a 1100px viewport.
+**
+** :not() keeps the card treatment on the floating panel and lets the
+** full-screen mode be full screen.
+*/
+.tc-tour-panel:not(.tc-tour-panel-fullscreen) {
+	inline-size: 310px;
+	max-inline-size: calc(100vw - 2 * var(--vp-space-md));
+
+	/*
+	** `tour-overlay-background` defaults to a flat #cbfff8 in the plugin's own
+	** $:/config/DefaultColourMappings - a pale mint with no relationship to any
+	** palette. That is what made the close button invisible: the icon takes the
+	** palette's control colour, which on Vanilla Paper Day is a light warm
+	** grey tuned for cream paper, and light warm grey on pale mint measured
+	** 2.00:1.
+	**
+	** So the panel is the theme's own paper UNLESS the active palette states a
+	** tour colour itself, in which case that is honoured. getindex asks the
+	** palette directly rather than going through `colour`, because `colour`
+	** would fall through to the plugin's mint and the question here is
+	** precisely whether the palette has an opinion.
+	*/
+	background: {{{ [{$:/palette}getindex[tour-overlay-background]!is[blank]] ~[[var(--tpc-tiddler-background)]] }}};
+	border: 1px solid {{{ [{$:/palette}getindex[tour-overlay-border]!is[blank]] ~[[var(--vp-paper-edge)]] }}};
+	border-radius: var(--vp-radius-lg);
+	box-shadow: 0 1px 2px var(--vp-shadow-soft), 0 18px 40px -16px var(--vp-shadow);
+	font-family: var(--vp-font-ui);
+}
+
+/* Full screen keeps the plugin's own geometry. Only the background is stated,
+   and with the entry the plugin actually means for this mode -
+   `tour-fullscreen-background`, which defaults to the page background and so
+   is already palette-derived. */
+.tc-tour-panel-fullscreen {
+	background: <<colour tour-fullscreen-background>>;
+	font-family: var(--vp-font-ui);
+}
+
+/*
+** The control icons follow `color` instead of being filled directly.
+**
+** The core's close-button SVG is filled by the theme's general rule for
+** .tc-tiddler-controls, which resolves against the PAGE background - but these
+** controls sit on the tour's panel, which is a different surface. The plugin
+** already sets the right colour on the full-screen controls
+** (tour-fullscreen-controls-foreground) and it was going nowhere, because a
+** `color` does not reach an SVG whose fill is set explicitly elsewhere.
+** currentColor connects the two, and gives the floating panel a colour too,
+** which it never had - it was computing to the initial black.
+**
+** The ink is --vp-ink-soft, NOT tiddler-controls-foreground. Toolbar controls
+** are deliberately faint in this theme because they sit in rows of icons you
+** discover on hover; measured on the tour panel that colour gives 1.72:1 to
+** 2.60:1. This close button is the only way out of a full-screen takeover, so
+** it has to be legible at rest rather than on hover.
+*/
+.tc-tour-panel .tc-tour-panel-controls {
+	color: var(--vp-ink-soft);
+}
+
+.tc-tour-panel .tc-tour-panel-controls button svg {
+	fill: currentColor;
+}
+
+.tc-tour-panel .tc-tour-panel-controls button:hover svg {
+	fill: var(--tpc-foreground);
+}
+
+.tc-tour-panel-fullscreen h1 {
+	font-family: var(--vp-font-body);
+	font-weight: 600;
+	letter-spacing: -0.01em;
+	text-wrap: balance;
+}
+
+/* ---- Navigation ----
+** The plugin styles these as .tc-btn-big-green. Paper has no green; a
+** button is a button, and the three roles are told apart by weight rather
+** than by three unrelated fills. */
+
+.tc-tour-panel-navigation .tc-btn-big-green {
+	border-radius: var(--vp-radius);
+	font-family: var(--vp-font-ui);
+	font-weight: 500;
+	border: 1px solid transparent;
+	transition: background-color 140ms var(--vp-ease-out), border-color 140ms var(--vp-ease-out);
+}
+
+.tc-tour-panel-navigation .tc-btn-big-green.tc-tour-panel-navigation-next {
+	background: <<colour tour-navigation-buttons-next-background>>;
+	color: <<colour tour-navigation-buttons-next-foreground>>;
+	font-weight: 600;
+}
+
+.tc-tour-panel-navigation .tc-btn-big-green.tc-tour-panel-navigation-back {
+	background: <<colour tour-navigation-buttons-back-background>>;
+	color: <<colour tour-navigation-buttons-back-foreground>>;
+}
+
+.tc-tour-panel-navigation .tc-btn-big-green.tc-tour-panel-navigation-hint {
+	background: <<colour tour-navigation-buttons-hint-background>>;
+	color: <<colour tour-navigation-buttons-hint-foreground>>;
+}
+
+.tc-tour-panel-navigation .tc-btn-big-green:hover {
+	background: <<colour tour-navigation-buttons-hover-background>>;
+	color: <<colour tour-navigation-buttons-hover-foreground>>;
+	border-color: var(--vp-accent-edge);
+}
+
+.tc-tour-panel-navigation .tc-btn-big-green:focus-visible {
+	outline: 2px solid var(--vp-focus);
+	outline-offset: 2px;
+}
+
+/* ---- Step chooser ---- */
+
+.tc-tour-panel-controls .tc-tour-panel-list-button {
+	border-radius: var(--vp-radius);
+	font-family: var(--vp-font-ui);
+}
+
+.tc-tour-panel-controls .tc-tour-panel-list-button.tc-selected,
+.tc-tour-panel-controls .tc-tour-panel-list-button:hover {
+	background-color: color-mix(in oklch, var(--tpc-primary) 12%, transparent);
+}
+
+.tc-tour-panel-controls .tc-popup .tc-drop-down {
+	background: var(--tpc-dropdown-background);
+	border: 1px solid var(--vp-paper-edge);
+	border-radius: var(--vp-radius);
+	box-shadow: 0 1px 2px var(--vp-shadow-soft), 0 10px 28px -12px var(--vp-shadow);
+}
+
+.tc-tour-panel-chooser-item {
+	border-block-end: 1px solid var(--vp-rule-faint);
+}
+
+.tc-tour-panel-chooser-wrapper button:hover {
+	background-color: color-mix(in oklch, var(--tpc-primary) 10%, transparent);
+}
+
+/* The tiddler the tour renders inside its own panel is a quotation of the
+   page, not a tiddler in the story, so it loses the sheet's shadow and keeps
+   only a hairline. */
+.tc-tour-panel .tc-tour-panel-inner .tc-tiddler-frame {
+	box-shadow: none;
+	border: 1px solid var(--vp-rule-faint);
+	border-radius: var(--vp-radius);
+	margin-block-end: 0;
+}
+
+.tc-tour-panel .tc-tour-panel-banner-image,
+.tc-tour-panel-fullscreen .tc-tour-panel-banner-image {
+	border-radius: var(--vp-radius);
+}
+
+/* ---- Settings screens ---- */
+
+.tc-tour-settings-tour-step,
+.tc-tour-settings-tour-step-details {
+	border: 1px solid var(--vp-rule-faint);
+	border-radius: var(--vp-radius);
+}
+
+.tc-tour-settings-tour-step-heading {
+	font-family: var(--vp-font-ui);
+	font-weight: 600;
+}
+
+.tc-tour-settings-tour-step-heading-step-number {
+	color: var(--vp-ink-faint);
+	font-variant-numeric: tabular-nums;
+}
+
+.tc-tour-settings-tour-details-description {
+	color: var(--vp-ink-soft);
+}
+
+.tc-tour-settings-tour-step-launch-button:hover {
+	background-color: color-mix(in oklch, var(--tpc-primary) 12%, transparent);
+}
+
+.tc-tour-task svg {
+	fill: var(--tpc-primary);
+}
+
+</$list>

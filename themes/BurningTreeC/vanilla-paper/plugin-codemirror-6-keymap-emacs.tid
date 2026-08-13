@@ -1,0 +1,34 @@
+title: $:/themes/BurningTreeC/vanilla-paper/plugins/codemirror-6-keymap-emacs
+tags: [[$:/tags/Stylesheet]]
+code-body: yes
+
+\rules only filteredtranscludeinline transcludeinline macrodef macrocallinline html
+
+<$list filter="[[$:/plugins/tiddlywiki/codemirror-6-keymap-emacs]is[tiddler]]" variable="ignore">
+
+/* ==========================================================================
+** CodeMirror 6 - emacs keymap
+**
+** The plugin's stylesheet is small on purpose: it only restyles the selection
+** and the cursor, because the emacs binding's visible difference from the
+** default is the MARK - the region between where you set the mark and where
+** point is now. That region is drawn with the ordinary selection colour.
+**
+** So the selection wash is the whole surface here, and it matters more than it
+** does in the default editor: with the mark set, the highlight can span the
+** better part of a screen and stays there while you move around. It has to be
+** faint enough to read a paragraph of code through and still obvious enough to
+** tell you the mark is active. The accent at 22% is a little lighter than the
+** ordinary selection for that reason.
+** ========================================================================== */
+
+.tc-editor-codemirror6 .cm-selectionBackground,
+.tc-editor-codemirror6 .cm-selectionBackground * {
+	background: color-mix(in oklch, var(--tpc-primary) 22%, transparent);
+}
+
+.tc-editor-codemirror6 .cm-cursor {
+	border-inline-start: 2px solid var(--tpc-primary);
+}
+
+</$list>

@@ -1,0 +1,73 @@
+title: $:/themes/BurningTreeC/vanilla-paper/plugins/codemirror-6-themes
+tags: [[$:/tags/Stylesheet]]
+code-body: yes
+
+\rules only filteredtranscludeinline transcludeinline macrodef macrocallinline html
+
+<$list filter="[[$:/plugins/tiddlywiki/codemirror-6-themes]is[tiddler]]" variable="ignore">
+
+/* ==========================================================================
+** CodeMirror 6 - themes
+**
+** This sheet deliberately does almost nothing, and that is the design.
+**
+** The plugin exists so a user can choose a syntax theme - Nord, Dracula,
+** Gruvbox, Solarized and fourteen more. Someone who has picked one has made a
+** decision, and a page theme that re-tinted it would be overriding a choice
+** rather than styling an unstyled surface. So none of the --wt-* variables the
+** themes set are touched here.
+**
+** The mechanism makes that easy to respect. Each theme declares its variables
+** on [data-cm6-theme="name"], and the plugin sets that attribute on the EDITOR
+** element (files/editor/widgets/subclasses/edit-text.js). The Paper
+** defaults in .../plugins/codemirror-6 are on :root. The editor element is
+** deeper in the inheritance chain, so a chosen theme wins over the Paper
+** defaults without either sheet having to know about the other, and Paper
+** is what you get when no theme is chosen.
+**
+** What IS worth doing is making sure a chosen theme sits in the page properly.
+** A CM6 theme colours the text and the editor's own background; it says
+** nothing about the frame around it. Left alone, a dark theme in a light wiki
+** is a dark rectangle butted straight against cream paper with a border that
+** belongs to neither.
+** ========================================================================== */
+
+/*
+** The frame follows the theme rather than the page when a theme is active.
+** currentColor is the theme's own text colour, so the border is derived from
+** whatever theme is loaded without this sheet needing to know any of their
+** names - which matters, because the plugin ships eighteen and will ship more.
+*/
+.tc-editor-codemirror6[data-cm6-theme] .cm-editor,
+.tc-editor-codemirror6 .cm-editor[data-cm6-theme] {
+	border-radius: var(--vp-radius);
+}
+
+.tc-editor-codemirror6:has([data-cm6-theme]),
+.tc-editor-codemirror6[data-cm6-theme] {
+	border-color: color-mix(in srgb, currentColor 22%, transparent);
+	/* The theme owns the inside of the editor, so the wrapper stops painting a
+	   background of its own behind it - otherwise the theme's colour sits on a
+	   sliver of the theme's paper at the edges. */
+	background: transparent;
+}
+
+/*
+** The ruled editor is switched off while a theme is active.
+**
+** The ruling is drawn in --vp-rule-faint, a colour mixed against the PAGE
+** background. A CM6 theme replaces the editor's background with its own, so
+** those lines are being drawn for paper that is no longer there: on a dark
+** theme in a light wiki they disappear, and on a light theme in a dark wiki
+** they turn into hard bright stripes across the code.
+**
+** Ruled paper is a Vanilla Paper idea about writing prose. A syntax theme is a
+** deliberate choice to make the editor look like something else, and the two
+** should not be layered.
+*/
+.vp-ruled-editor .tc-editor-codemirror6:has([data-cm6-theme]) .cm-content,
+.vp-ruled-editor .tc-editor-codemirror6[data-cm6-theme] .cm-content {
+	background-image: none;
+}
+
+</$list>

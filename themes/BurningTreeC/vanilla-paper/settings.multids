@@ -1,0 +1,5 @@
+title: $:/themes/BurningTreeC/vanilla-paper/settings/
+
+fontfamily: ui-serif, Charter, "Bitstream Charter", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Noto Serif", serif
+uifontfamily: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif
+codefontfamily: ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Consolas, "Liberation Mono", monospace

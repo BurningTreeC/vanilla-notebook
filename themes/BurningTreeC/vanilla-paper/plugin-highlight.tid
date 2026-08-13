@@ -1,0 +1,138 @@
+title: $:/themes/BurningTreeC/vanilla-paper/plugins/highlight
+tags: [[$:/tags/Stylesheet]]
+code-body: yes
+
+\rules only filteredtranscludeinline transcludeinline macrodef macrocallinline html
+
+<$list filter="[[$:/plugins/tiddlywiki/highlight]is[tiddler]]" variable="ignore">
+
+/* ==========================================================================
+** Highlight (highlight.js)
+**
+** Same problem as CodeMirror and the same answer. The plugin ships Solarized
+** Light as seven literal hex values, so highlighted code blocks stay a pale
+** Solarized panel no matter what palette is loaded.
+**
+** The token roles are re-derived exactly as the editor's are: lightness taken
+** from the palette's own foreground, so every span reads with the contrast of
+** body text on whatever paper is behind it, and hue left free to say what kind
+** of token it is. The hue angles are deliberately THE SAME as the editor's, so
+** a snippet looks the same whether you are reading it or editing it.
+**
+** See $:/themes/BurningTreeC/vanilla-paper/plugins/codemirror for the full
+** reasoning on why lightness comes from the foreground and not the accent.
+** ========================================================================== */
+
+.hljs {
+	--vp-syn-c: 0.11;
+
+	--vp-syn-keyword: oklch(from var(--tpc-foreground) l var(--vp-syn-c) 264);
+	--vp-syn-string: oklch(from var(--tpc-foreground) l var(--vp-syn-c) 150);
+	--vp-syn-number: oklch(from var(--tpc-foreground) l var(--vp-syn-c) 25);
+	--vp-syn-name: oklch(from var(--tpc-foreground) l var(--vp-syn-c) 310);
+	--vp-syn-type: oklch(from var(--tpc-foreground) l var(--vp-syn-c) 195);
+	--vp-syn-comment: color-mix(in oklch, var(--tpc-foreground) 80%, var(--tpc-tiddler-editor-background));
+	--vp-syn-error: oklch(from var(--tpc-foreground) l 0.19 25);
+
+	background: var(--tpc-tiddler-editor-background);
+	color: var(--tpc-foreground);
+	font-family: var(--vp-font-code);
+}
+
+@supports not (color: oklch(from red l c h)) {
+	.hljs {
+		--vp-syn-keyword: var(--tpc-primary);
+		--vp-syn-string: var(--tpc-external-link-foreground);
+		--vp-syn-number: var(--tpc-primary);
+		--vp-syn-name: var(--tpc-tiddler-link-foreground);
+		--vp-syn-type: var(--tpc-primary);
+		--vp-syn-comment: var(--vp-ink-soft);
+		--vp-syn-error: var(--tpc-alert-highlight);
+	}
+}
+
+.hljs-comment,
+.hljs-quote {
+	color: var(--vp-syn-comment);
+	font-style: italic;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-addition {
+	color: var(--vp-syn-keyword);
+}
+
+.hljs-number,
+.hljs-string,
+.hljs-meta .hljs-string,
+.hljs-literal,
+.hljs-doctag,
+.hljs-regexp {
+	color: var(--vp-syn-string);
+}
+
+.hljs-title,
+.hljs-section,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class {
+	color: var(--vp-syn-name);
+}
+
+.hljs-attribute,
+.hljs-attr,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-class .hljs-title,
+.hljs-type {
+	color: var(--vp-syn-type);
+}
+
+.hljs-symbol,
+.hljs-bullet,
+.hljs-subst,
+.hljs-meta,
+.hljs-meta .hljs-keyword,
+.hljs-selector-attr,
+.hljs-selector-pseudo,
+.hljs-link {
+	color: var(--vp-syn-number);
+}
+
+.hljs-built_in,
+.hljs-deletion {
+	color: var(--vp-syn-error);
+}
+
+/* A wash rather than the plugin's fixed #eee8d5, which is a Solarized paper
+   tone and turns into a bright block on any dark palette. */
+.hljs-formula {
+	background: color-mix(in oklch, var(--tpc-primary) 10%, transparent);
+	border-radius: 2px;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: 600;
+}
+
+/* The block itself is a sheet of code laid on the page, so it takes the
+   theme's own code-block treatment rather than sitting flush and bare. */
+pre.hljs {
+	padding: 0;
+	border: 1px solid var(--vp-rule-faint);
+	border-radius: var(--vp-radius);
+	overflow-x: auto;
+}
+
+pre code.hljs {
+	padding: var(--vp-space-sm) var(--vp-space-md);
+	background: none;
+	border: none;
+}
+
+</$list>

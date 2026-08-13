@@ -1,0 +1,154 @@
+title: $:/palettes/VanillaPaperNight
+name: Vanilla Paper Night
+description: Writing after dark - warm dark paper, soft ink
+tags: $:/tags/Palette
+type: application/x-tiddler-dictionary
+color-scheme: dark
+
+alert-background: #3d3a2c
+alert-border: #7a6a3f
+alert-highlight: #d4746a
+alert-muted-foreground: #9a8a5f
+background: #1f1e1a
+blockquote-bar: <<colour muted-foreground>>
+button-background:
+button-foreground:
+button-border:
+code-background: #26251f
+code-border: #35332b
+code-foreground: #d99a7e
+diff-delete-background: #4a2b28
+diff-delete-foreground: <<colour foreground>>
+diff-equal-background:
+diff-equal-foreground: <<colour foreground>>
+diff-insert-background: #2c3f2e
+diff-insert-foreground: <<colour foreground>>
+diff-invisible-background:
+diff-invisible-foreground: <<colour muted-foreground>>
+dirty-indicator: #d4746a
+download-background: #6b9c78
+download-foreground: <<colour background>>
+dragger-background: <<colour foreground>>
+dragger-foreground: <<colour background>>
+dropdown-background: #26251f
+dropdown-border: #3a382f
+dropdown-tab-background-selected: #2c2b24
+dropdown-tab-background: #26251f
+dropzone-background: rgba(107,156,120,0.45)
+external-link-background-hover: inherit
+external-link-background-visited: inherit
+external-link-background: inherit
+external-link-foreground-hover: inherit
+external-link-foreground-visited: #b0a0c8
+external-link-foreground: #8fb0dd
+footnote-target-background: #2c2b24
+foreground: #ddd8cb
+highlight-background: #5c5433
+highlight-foreground: #f0ece0
+menubar-background: #16150f
+menubar-foreground: #ddd8cb
+message-background: #26251f
+message-border: #3a382f
+message-foreground: #a49e90
+modal-backdrop: #0c0b09
+modal-background: #26251f
+modal-border: #3a382f
+modal-footer-background: #22211b
+modal-footer-border: #35332b
+modal-header-border: #35332b
+muted-foreground: #8a8478
+network-activity-foreground: #6b9c78
+notification-background: #2c2b24
+notification-border: #3a382f
+page-background: #171613
+pre-background: #26251f
+pre-border: #35332b
+primary: #8fb0dd
+selection-background: #33405a
+selection-foreground: <<colour foreground>>
+select-tag-background:
+select-tag-foreground:
+sidebar-button-foreground: <<colour foreground>>
+sidebar-controls-foreground-hover: #ddd8cb
+sidebar-controls-foreground: #6b6558
+sidebar-foreground-shadow: transparent
+sidebar-foreground: #a49e90
+sidebar-muted-foreground-hover: #ddd8cb
+sidebar-muted-foreground: #8a8478
+sidebar-tab-background-selected: #1f1e1a
+sidebar-tab-background: #22211b
+sidebar-tab-border-selected: <<colour tab-border-selected>>
+sidebar-tab-border: <<colour tab-border>>
+sidebar-tab-divider: #2c2b24
+sidebar-tab-foreground-selected: <<colour foreground>>
+sidebar-tab-foreground: <<colour tab-foreground>>
+sidebar-tiddler-link-foreground-hover: #ddd8cb
+sidebar-tiddler-link-foreground: #8fb0dd
+site-title-foreground: <<colour tiddler-title-foreground>>
+stability-stable: #6b9c78
+stability-experimental: #c9a959
+stability-deprecated: #d4746a
+stability-legacy: #8fb0dd
+static-alert-foreground: #6b6558
+tab-background-selected: #1f1e1a
+tab-background: #26251f
+tab-border-selected: #3a382f
+tab-border: #35332b
+tab-divider: #35332b
+tab-foreground-selected: <<colour foreground>>
+tab-foreground: #a49e90
+table-border: #35332b
+table-footer-background: #26251f
+table-header-background: #26251f
+tag-background: #5c5433
+tag-foreground: #f0ece0
+testcase-accent-level-1: #33405a
+testcase-accent-level-2: #5c5433
+testcase-accent-level-3: #2c3f2e
+tiddler-background: <<colour background>>
+tiddler-border: #2e2c25
+tiddler-controls-foreground-hover: #ddd8cb
+tiddler-controls-foreground-selected: #8fb0dd
+tiddler-controls-foreground: #5e594e
+tiddler-editor-background: #1b1a16
+tiddler-editor-border-image: #1f1e1a
+tiddler-editor-border: #35332b
+tiddler-editor-fields-even: #26251f
+tiddler-editor-fields-odd: #22211b
+tiddler-info-background: #22211b
+tiddler-info-border: #35332b
+tiddler-info-tab-background: #22211b
+tiddler-link-background: <<colour background>>
+tiddler-link-foreground: <<colour primary>>
+tiddler-subtitle-foreground: #6b6558
+tiddler-title-foreground: #f0ece0
+toolbar-new-button:
+toolbar-options-button:
+toolbar-save-button:
+toolbar-info-button:
+toolbar-edit-button:
+toolbar-close-button:
+toolbar-delete-button:
+toolbar-cancel-button:
+toolbar-done-button:
+untagged-background: #6b6558
+very-muted-foreground: #5e594e
+wikilist-background: #171613
+wikilist-item: #1f1e1a
+wikilist-info: #ddd8cb
+wikilist-title: #f0ece0
+wikilist-url: #90897d
+wikilist-title-svg: <<colour wikilist-title>>
+wikilist-button-open: #5d9670
+wikilist-button-open-hover: #78ad8a
+wikilist-button-reveal: #7ea6d8
+wikilist-button-reveal-hover: #9cbde6
+wikilist-button-remove: #d4746a
+wikilist-button-remove-hover: #e08e85
+wikilist-toolbar-background: #26251f
+wikilist-toolbar-foreground: #a49e90
+wikilist-droplink-dragover: #2c3f2e
+wikilist-button-background: #a49e90
+wikilist-button-foreground: #1f1e1a
+modal-header-background: #22211b
+wikilist-item-border-hover: #d4746a

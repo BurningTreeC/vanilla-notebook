@@ -1,0 +1,138 @@
+title: $:/themes/BurningTreeC/vanilla-paper/plugins/text-slicer
+tags: [[$:/tags/Stylesheet]]
+code-body: yes
+
+\rules only filteredtranscludeinline transcludeinline macrodef macrocallinline html
+
+<$list filter="[[$:/plugins/tiddlywiki/text-slicer]is[tiddler]]" variable="ignore">
+
+/* ==========================================================================
+** Text slicer
+**
+** Two things to fix, one of them a genuine integration bug.
+**
+** The bug: the preview column is sized with
+**
+**     width: {{$:/themes/tiddlywiki/vanilla/metrics/storyleft}}
+**
+** and the plugin's own documentation tells you to set that metric to 400px to
+** make room for it. This theme has its own storyleft, and ships the vanilla
+** one only as a compatibility shim holding a fixed 0px - so following those
+** instructions in Theme Tweaks would move the story river and leave the
+** preview column zero pixels wide. Rewritten against the metric this theme
+** actually uses.
+**
+** The rest is the slice note, which the plugin renders as a sticky-note in
+** five stacked vendor-prefixed gradients of #feed77 with #800 text. Paper
+** already has a language for "a note in the margin", and this is exactly that.
+** ========================================================================== */
+
+.tc-document-preview-column {
+	inline-size: {{$:/themes/BurningTreeC/vanilla-paper/metrics/storyleft}};
+	background-color: var(--tpc-page-background);
+	border-inline-end: 1px solid var(--vp-rule);
+}
+
+.tc-document-preview-column .tc-sliced-document-header {
+	font-family: var(--vp-font-ui);
+	border-block-end: 1px solid var(--vp-rule-faint);
+}
+
+.tc-sliced-document-title {
+	font-family: var(--vp-font-body);
+	font-size: 1.7em;
+	font-weight: 600;
+	letter-spacing: -0.01em;
+	text-wrap: balance;
+}
+
+/*
+** The slice note. One flat wash instead of five gradient declarations, the
+** margin rule's own colour for the text, and the paper stripe down the
+** leading edge - the same mark the theme uses everywhere else to say "this is
+** annotation, not content".
+*/
+.tc-slice-note {
+	padding: var(--vp-space-xs) var(--vp-space-sm);
+	color: var(--vp-margin-rule);
+	background: color-mix(in oklch, var(--vp-margin-rule) 10%, var(--tpc-tiddler-background));
+	border: none;
+	border-inline-start: 3px solid var(--vp-margin-rule);
+	border-radius: 0;
+	box-shadow: none;
+	font-family: var(--vp-font-ui);
+	font-size: 0.8125rem;
+}
+
+/* ---- The document tree ---- */
+
+.tc-edit-template-document-tiddler-wrapper {
+	border-inline-start: 1px solid var(--vp-rule-faint);
+}
+
+div.tc-edit-template-document-tiddler-heading a {
+	color: var(--tpc-tiddler-link-foreground);
+	font-family: var(--vp-font-ui);
+	font-weight: 600;
+	text-decoration: none;
+}
+
+div.tc-edit-template-document-tiddler-heading a:hover {
+	text-decoration: underline;
+	text-underline-offset: 0.15em;
+}
+
+.tc-edit-template-document-tiddler-subheading {
+	color: var(--vp-ink-faint);
+	font-family: var(--vp-font-ui);
+	font-size: 0.8125rem;
+}
+
+.tc-edit-template-document-tiddler-heading-icon svg {
+	fill: var(--tpc-tiddler-controls-foreground);
+}
+
+.tc-document-tiddler-link {
+	color: var(--tpc-tiddler-link-foreground);
+	text-decoration: none;
+}
+
+.tc-document-tiddler-link:hover {
+	text-decoration: underline;
+	text-underline-offset: 0.15em;
+}
+
+.tc-text-slicer-rename input {
+	inline-size: 100%;
+	background: var(--tpc-tiddler-editor-background);
+	border: 1px solid var(--tpc-tiddler-editor-border);
+	border-radius: var(--vp-radius);
+	font-family: var(--vp-font-ui);
+}
+
+.tc-document-tiddler-toolbar button svg,
+.tc-table-of-contents .tc-slice-toolbar button svg {
+	fill: var(--tpc-tiddler-controls-foreground);
+}
+
+.tc-document-tiddler-toolbar button:hover svg,
+.tc-table-of-contents .tc-slice-toolbar button:hover svg {
+	fill: var(--tpc-tiddler-controls-foreground-hover);
+}
+
+/*
+** The preview column is a fixed-width fixed panel beside the river. Below the
+** sidebar breakpoint there is no room for two columns at all, so it stops
+** being a column and becomes a block in the flow.
+*/
+@media (max-width: {{$:/themes/BurningTreeC/vanilla-paper/metrics/sidebarbreakpoint}}) {
+	.tc-document-preview-column {
+		position: static;
+		inline-size: auto;
+		max-inline-size: 100%;
+		border-inline-end: none;
+		border-block-end: 1px solid var(--vp-rule);
+	}
+}
+
+</$list>

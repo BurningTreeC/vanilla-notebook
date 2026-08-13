@@ -1,0 +1,12 @@
+title: $:/themes/BurningTreeC/vanilla-paper/options/
+
+sidebarlayout: fluid-fixed
+stickytitles: no
+codewrapping: pre-wrap
+ruleseditor: yes
+marginrule: yes
+fullwidth: no
+pressanimation: yes
+toolbarhover: yes
+toolbaralways: no
+sidebarside: end

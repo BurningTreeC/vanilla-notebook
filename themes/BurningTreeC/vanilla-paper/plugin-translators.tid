@@ -1,0 +1,72 @@
+title: $:/themes/BurningTreeC/vanilla-paper/plugins/translators
+tags: [[$:/tags/Stylesheet]]
+code-body: yes
+
+\rules only filteredtranscludeinline transcludeinline macrodef macrocallinline html
+
+<$list filter="[[$:/plugins/tiddlywiki/translators]is[tiddler]]" variable="ignore">
+
+/* ==========================================================================
+** Translators
+**
+** This one is worth reading carefully, because the plugin's stylesheet ends
+** with a rule that has nothing to do with translation:
+**
+**     .tc-tiddler-frame textarea.tc-edit-texteditor,
+**     .tc-tiddler-frame input.tc-edit-texteditor {
+**       background-color: #feffef;
+**     }
+**
+** That is not scoped to the translator interface. It is EVERY text editor and
+** EVERY input in EVERY tiddler in the wiki, painted a fixed pale yellow, for
+** as long as the plugin is installed. On any dark palette it turns the whole
+** editing experience into black-on-cream inside an otherwise dark page, and it
+** overrides the ruled-paper editor this theme draws.
+**
+** Presumably it was meant to tint the string-editing fields on the translator
+** screens. Paper puts the general case back to the palette and gives the
+** translator tables their own tint, which is what the rule appears to have
+** been reaching for.
+** ========================================================================== */
+
+/* Put the editors back. Matching the plugin's own selector shape exactly, so
+   this is a straight replacement at equal specificity that wins on order. */
+.tc-tiddler-frame textarea.tc-edit-texteditor,
+.tc-tiddler-frame input.tc-edit-texteditor {
+	background-color: var(--tpc-tiddler-editor-background);
+}
+
+/* The ruled editor sets a background IMAGE over that colour, and it has to be
+   restated here: the plugin's rule and this one both set background-color, and
+   whichever wins must not be a colour the ruling cannot show through. */
+.vp-ruled-editor .tc-tiddler-frame textarea.tc-edit-texteditor {
+	background-color: var(--tpc-tiddler-editor-background);
+}
+
+/* ---- The translator interface itself ---- */
+
+.tc-translators-string-table table {
+	inline-size: 100%;
+}
+
+/* Now the tint, where it belongs: the fields you are actually translating,
+   washed with the accent so an untranslated string is visible at a glance. */
+.tc-translators-string-table textarea.tc-edit-texteditor,
+.tc-translators-string-table input.tc-edit-texteditor {
+	background-color: color-mix(in oklch, var(--tpc-primary) 6%, var(--tpc-tiddler-editor-background));
+	border: 1px solid var(--tpc-tiddler-editor-border);
+	border-radius: var(--vp-radius);
+	font-family: var(--vp-font-ui);
+}
+
+.tc-translators-string-table .tc-btn-invisible {
+	inline-size: 1em;
+	block-size: 2em;
+}
+
+.tc-translators-string-table .tc-drop-down {
+	min-inline-size: 500px;
+	max-inline-size: 100%;
+}
+
+</$list>

@@ -1,0 +1,96 @@
+title: $:/themes/BurningTreeC/vanilla-paper/plugins/upgrade
+tags: [[$:/tags/Stylesheet]]
+code-body: yes
+
+\rules only filteredtranscludeinline transcludeinline macrodef macrocallinline html
+
+<$list filter="[[$:/plugins/tiddlywiki/upgrade]is[tiddler]]" variable="ignore">
+
+/* ==========================================================================
+** Upgrade wizard
+**
+** The drop target is the whole interface here, so it is the thing worth
+** getting right. The plugin gives it a #ddd border and an inset black shadow,
+** both fixed, and the file input is hidden by the `font-size: 999px` trick so
+** that the entire card is clickable.
+**
+** Paper makes it read as a drop target rather than as a panel that happens
+** to be clickable: a dashed edge in the theme's own drop colour, which is the
+** same language the story river and the editor use when you drag a file over
+** them.
+** ========================================================================== */
+
+.tc-upgrade-wizard-wrapper {
+	inline-size: 100%;
+}
+
+.tc-upgrade-wizard {
+	background: var(--tpc-tiddler-background);
+	border: 2px dashed var(--vp-drop);
+	border-radius: var(--vp-radius-lg);
+	box-shadow: none;
+	padding: var(--vp-space-xl);
+	text-align: center;
+	cursor: pointer;
+	transition: background-color 160ms var(--vp-ease-out), border-color 160ms var(--vp-ease-out);
+}
+
+.tc-upgrade-wizard:hover {
+	background: color-mix(in oklch, var(--vp-drop) 8%, var(--tpc-tiddler-background));
+	border-color: var(--tpc-primary);
+}
+
+/* The card is one big label wrapping a hidden <input type=file>, so a keyboard
+   user gets no focus ring unless it is put on the wrapper. */
+.tc-upgrade-wizard:focus-within {
+	outline: 2px solid var(--vp-focus);
+	outline-offset: 3px;
+}
+
+.tc-upgrade-wizard svg.tc-image-download-button {
+	fill: var(--vp-ink-faint);
+	transition: fill 160ms var(--vp-ease-out);
+}
+
+.tc-upgrade-wizard:hover svg.tc-image-download-button {
+	fill: var(--tpc-primary);
+}
+
+.tc-upgrade-wizard svg .tc-image-download-button-ring,
+.tc-upgrade-wizard:hover svg .tc-image-download-button-ring {
+	fill: none;
+	stroke: currentColor;
+}
+
+.tc-upgrade-wizard em {
+	color: var(--tpc-tiddler-subtitle-foreground);
+	font-family: var(--vp-font-ui);
+	font-style: normal;
+	font-size: 0.875rem;
+}
+
+/* The report of what will change. It is a table of decisions, so it gets the
+   theme's table treatment and room to scroll rather than a 14em column that
+   truncates tiddler titles. */
+.tc-upgrade-wizard table {
+	inline-size: 100%;
+	display: block;
+	overflow-x: auto;
+	border-collapse: collapse;
+	text-align: start;
+}
+
+.tc-upgrade-wizard table td,
+.tc-upgrade-wizard table th {
+	border-block-end: 1px solid var(--vp-rule-faint);
+	padding: var(--vp-space-2xs) var(--vp-space-sm);
+}
+
+/* The plugin sets `background: white` on the file input to hide it. White is
+   only invisible on a white page. */
+.tc-upgrade-wizard input[type=file] {
+	background: transparent;
+	color: transparent;
+}
+
+</$list>

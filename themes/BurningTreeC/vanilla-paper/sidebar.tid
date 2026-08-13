@@ -1,0 +1,43 @@
+title: $:/core/ui/PageTemplate/sidebar
+tags: $:/tags/PageTemplate
+
+\whitespace trim
+\define config-title()
+$:/config/SideBarSegments/Visibility/$(listItem)$
+\end
+
+<!--
+Paper theme override of the core sidebar segment.
+
+The core version wraps the sidebar body in `<$reveal ... animate="yes">`, which
+collapses the content's HEIGHT in JavaScript (see
+core/modules/utils/dom/animations/slide.js). That fights a CSS slide: the panel
+would shrink upwards and translate sideways at the same time.
+
+Paper drives sidebar visibility entirely from CSS instead — the page
+container carries `vp-sidebar-open` / `vp-sidebar-closed` (see
+$:/themes/BurningTreeC/vanilla-paper/classfilter) and layout.tid animates a single
+`--vp-open` scalar. So the reveal is dropped here and the segments render
+unconditionally.
+
+Keep this in sync with $:/core/ui/PageTemplate/sidebar if the core version
+changes. It is otherwise identical.
+-->
+
+<$scrollable fallthrough="no" class="tc-sidebar-scrollable">
+
+<div class="tc-sidebar-header">
+
+<$list filter="[all[shadows+tiddlers]tag[$:/tags/SideBarSegment]!has[draft.of]]" variable="listItem">
+
+<$reveal type="nomatch" state=<<config-title>> text="hide" tag="div">
+
+<$transclude tiddler=<<listItem>> mode="block"/>
+
+</$reveal>
+
+</$list>
+
+</div>
+
+</$scrollable>

@@ -1,0 +1,105 @@
+title: $:/themes/BurningTreeC/vanilla-paper/plugins/codemirror-6-edit-text
+tags: [[$:/tags/Stylesheet]]
+code-body: yes
+
+\rules only filteredtranscludeinline transcludeinline macrodef macrocallinline html
+
+<$list filter="[[$:/plugins/tiddlywiki/codemirror-6-edit-text]is[tiddler]]" variable="ignore">
+
+/* ==========================================================================
+** CodeMirror 6 - simple edit-text fields
+**
+** This plugin puts CM6 behind the ordinary one-line inputs: the title field,
+** the tag input, field values. Those are FORM CONTROLS, not editors, and the
+** theme already has a look for them - so the job here is to make the CM6
+** instance disappear into the input it replaced rather than to style it as an
+** editor in miniature.
+**
+** Every selector below is prefixed `html body`, matching the plugin's own
+** selectors exactly. That is not decoration: the plugin writes
+** `html body .tc-editor-codemirror6-simple .cm-editor`, which is (0,1,4), and
+** an ordinary two-class rule here would lose to it no matter what order the
+** sheets are in. Matching the shape is what makes these overrides take.
+** ========================================================================== */
+
+html body .tc-editor-codemirror6-simple .cm-editor {
+	background: var(--tpc-tiddler-editor-background);
+	color: var(--tpc-foreground);
+	font-family: var(--vp-font-ui);
+	font-size: inherit;
+	border-radius: var(--vp-radius);
+}
+
+/* The title field is set in the theme's display face at title size, and the
+   CM6 instance standing in for it has to match or the title visibly changes
+   shape the moment you click into it. */
+html body .tc-tiddler-frame .tc-editor-codemirror6-simple .cm-editor {
+	font-family: var(--vp-font-body);
+}
+
+html body .tc-tiddler-frame .tc-edit-tags .tc-editor-codemirror6-simple .cm-editor {
+	font-family: var(--vp-font-ui);
+	font-size: 0.875rem;
+}
+
+/* A single-line control gets the theme's focus ring, not CodeMirror's outline
+   suppression - these are exactly the fields people tab through. */
+html body .tc-editor-codemirror6-simple .cm-editor.cm-focused {
+	outline: 2px solid var(--vp-focus);
+	outline-offset: 1px;
+}
+
+html body .tc-editor-codemirror6-simple .cm-content,
+html body .tc-editor-codemirror6-simple .cm-line {
+	padding-inline: var(--vp-space-2xs);
+	caret-color: var(--tpc-foreground);
+}
+
+html body .tc-editor-codemirror6-simple .cm-placeholder {
+	color: var(--vp-ink-faint);
+	font-style: normal;
+}
+
+html body .tc-editor-codemirror6-simple .cm-editor .cm-line ::selection,
+html body .tc-editor-codemirror6-simple .cm-editor:not(.cm-focused) .cm-content ::selection {
+	background: color-mix(in oklch, var(--tpc-primary) 26%, transparent);
+}
+
+/* No gutter on a one-line field. The plugin already suppresses most of it;
+   this makes sure nothing shows through as a stripe down the input. */
+html body .tc-editor-codemirror6-simple .cm-gutters {
+	background: transparent;
+	border: none;
+}
+
+html body .tc-editor-codemirror6-simple .cm-activeLineGutter {
+	background: transparent;
+}
+
+/*
+** The sidebar search field. The plugin caps it at `calc(100% - 3em)` to leave
+** room beside it for the search button, but the button is not a sibling taking
+** 3em of the same line here - so the cap just makes the field short and leaves
+** a gap where nothing is. 100% lets it fill the space it actually has.
+*/
+html body .tc-search .tc-editor-codemirror6-input {
+	max-inline-size: 100%;
+}
+
+/*
+** Same second caret as in the full editor: CodeMirror draws the real one on
+** .cm-cursorLayer. :not(.cm-fat-cursor) keeps vim's block cursor, which IS the
+** primary cursor rather than a separate element.
+*/
+html body .tc-editor-codemirror6-simple .cm-cursor-primary:not(.cm-fat-cursor) {
+	display: none;
+}
+
+/* Read-only fields say so by going quiet, rather than by the plugin's fixed
+   rgba(0,0,0,0.15) which is invisible on a dark palette. */
+html body .tc-editor-codemirror6-simple .cm-editor.cm-readonly {
+	background: color-mix(in oklch, var(--tpc-foreground) 6%, var(--tpc-tiddler-editor-background));
+	color: var(--vp-ink-soft);
+}
+
+</$list>

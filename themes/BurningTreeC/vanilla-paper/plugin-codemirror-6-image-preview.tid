@@ -1,0 +1,52 @@
+title: $:/themes/BurningTreeC/vanilla-paper/plugins/codemirror-6-image-preview
+tags: [[$:/tags/Stylesheet]]
+code-body: yes
+
+\rules only filteredtranscludeinline transcludeinline macrodef macrocallinline html
+
+<$list filter="[[$:/plugins/tiddlywiki/codemirror-6-image-preview]is[tiddler]]" variable="ignore">
+
+/* ==========================================================================
+** CodeMirror 6 - image preview
+**
+** Shows the picture inline where its reference appears in the source. The
+** plugin ships no colours at all, so nothing here is a correction - it is
+** giving the preview a place in the page.
+**
+** The framing is the same as everywhere else this theme shows an image inside
+** text: a hairline and the theme's radius, so a preview reads as a plate laid
+** into the manuscript rather than as an image that has escaped.
+** ========================================================================== */
+
+.cm-image-preview {
+	display: block;
+	margin-block: var(--vp-space-2xs);
+	max-inline-size: 100%;
+}
+
+.cm-image-preview img {
+	max-inline-size: 100%;
+	block-size: auto;
+	border: 1px solid var(--vp-paper-edge);
+	border-radius: var(--vp-radius);
+	background-color: var(--tpc-tiddler-background);
+}
+
+/*
+** A failed preview is a message, not a broken image. It takes the theme's
+** alert ink and a dashed edge - the same language used elsewhere for "there
+** is meant to be something here" - so a missing file is legible rather than
+** just absent.
+*/
+.cm-image-preview-error {
+	display: inline-block;
+	padding: var(--vp-space-2xs) var(--vp-space-sm);
+	color: var(--tpc-alert-highlight);
+	background: color-mix(in oklch, var(--tpc-alert-highlight) 8%, var(--tpc-tiddler-editor-background));
+	border: 1px dashed color-mix(in oklch, var(--tpc-alert-highlight) 50%, transparent);
+	border-radius: var(--vp-radius);
+	font-family: var(--vp-font-ui);
+	font-size: 0.8125rem;
+}
+
+</$list>

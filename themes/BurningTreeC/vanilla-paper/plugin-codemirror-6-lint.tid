@@ -1,0 +1,151 @@
+title: $:/themes/BurningTreeC/vanilla-paper/plugins/codemirror-6-lint
+tags: [[$:/tags/Stylesheet]]
+code-body: yes
+
+\rules only filteredtranscludeinline transcludeinline macrodef macrocallinline html
+
+<$list filter="[[$:/plugins/tiddlywiki/codemirror-6-lint]is[tiddler]]" variable="ignore">
+
+/* ==========================================================================
+** CodeMirror 6 - lint
+**
+** The plugin's palette is eight literals: #fa5252 error, #fab005 warning,
+** #4dabf7 info, and #fff / #f8f9fa / #e9ecef / #dee2e6 / #ccc for the panel
+** and tooltip chrome. The greys are the problem - a white tooltip listing
+** diagnostics appears in the middle of a dark page, and the panel chrome
+** vanishes on light paper.
+**
+** SEVERITY COLOURS ARE KEPT AS SEVERITY COLOURS. Red for error, amber for
+** warning, blue for info is not a stylistic choice a theme should re-tint into
+** its own accent - it is the entire signal, and a reader scanning a list of
+** diagnostics needs the three to be told apart at a glance. What they get here
+** is a lightness derived from the palette so they hold their contrast on dark
+** paper as well as light, with the hue left alone.
+** ========================================================================== */
+
+/*
+** Declared on :root, not on .tc-editor-codemirror6.
+**
+** CodeMirror renders its lint tooltip and its diagnostics panel outside the
+** editor element - a tooltip is positioned against the viewport, not the
+** editor - so tokens scoped to the editor never reach them. Measured with them
+** on the editor: the panel's severity stripe fell back to currentColor and the
+** gutter marker to plain black. :root is also where the plugin's own --wt-*
+** live, so this stays consistent with how CodeMirror 6 is themed.
+*/
+:root {
+	--vp-lint-error: oklch(from var(--tpc-foreground) l 0.19 25);
+	--vp-lint-warning: oklch(from var(--tpc-foreground) l 0.15 75);
+	--vp-lint-info: oklch(from var(--tpc-foreground) l 0.13 250);
+}
+
+@supports not (color: oklch(from red l c h)) {
+	:root {
+		--vp-lint-error: var(--tpc-alert-highlight);
+		--vp-lint-warning: var(--tpc-alert-highlight);
+		--vp-lint-info: var(--tpc-primary);
+	}
+}
+
+/* ---- Gutter markers ---- */
+
+.cm-lint-marker {
+	cursor: pointer;
+}
+
+.cm-lint-marker-error {
+	color: var(--vp-lint-error);
+}
+
+.cm-lint-marker-warning {
+	color: var(--vp-lint-warning);
+}
+
+.cm-lint-marker-info {
+	color: var(--vp-lint-info);
+}
+
+/* ---- Inline ranges ----
+** A wavy underline rather than a fill, so the code underneath stays readable -
+** which is the point of marking it in the first place. */
+
+.cm-lintRange-error,
+.cm-lintRange-warning,
+.cm-lintRange-info {
+	background-image: none;
+	text-decoration: underline wavy;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 0.2em;
+}
+
+.cm-lintRange-error {
+	text-decoration-color: var(--vp-lint-error);
+}
+
+.cm-lintRange-warning {
+	text-decoration-color: var(--vp-lint-warning);
+}
+
+.cm-lintRange-info {
+	text-decoration-color: var(--vp-lint-info);
+}
+
+/* ---- Tooltip and panel ----
+** Paper, not the plugin's fixed white. */
+
+.cm-tooltip.cm-tooltip-lint {
+	background: var(--tpc-dropdown-background);
+	color: var(--tpc-foreground);
+	border: 1px solid var(--vp-paper-edge);
+	border-radius: var(--vp-radius);
+	box-shadow: 0 1px 2px var(--vp-shadow-soft), 0 10px 26px -12px var(--vp-shadow);
+	font-family: var(--vp-font-ui);
+	font-size: 0.8125rem;
+}
+
+.cm-diagnostic {
+	border-inline-start: 3px solid transparent;
+	padding: var(--vp-space-2xs) var(--vp-space-sm);
+	font-family: var(--vp-font-ui);
+}
+
+.cm-diagnostic-error {
+	border-inline-start-color: var(--vp-lint-error);
+}
+
+.cm-diagnostic-warning {
+	border-inline-start-color: var(--vp-lint-warning);
+}
+
+.cm-diagnostic-info {
+	border-inline-start-color: var(--vp-lint-info);
+}
+
+.cm-panel.cm-lint-panel {
+	background: var(--tpc-tiddler-background);
+	color: var(--tpc-foreground);
+	border-block-start: 1px solid var(--vp-rule);
+	font-family: var(--vp-font-ui);
+	font-size: 0.8125rem;
+}
+
+.cm-panel.cm-lint-panel ul {
+	padding-inline-start: 0;
+	list-style: none;
+	max-block-size: 12em;
+	overflow-y: auto;
+	scrollbar-width: thin;
+}
+
+.cm-panel.cm-lint-panel li {
+	padding: var(--vp-space-2xs) var(--vp-space-sm);
+	border-block-end: 1px solid var(--vp-rule-faint);
+	cursor: pointer;
+}
+
+.cm-panel.cm-lint-panel li:hover,
+.cm-panel.cm-lint-panel li[aria-selected] {
+	background: color-mix(in oklch, var(--tpc-primary) 12%, transparent);
+}
+
+</$list>
