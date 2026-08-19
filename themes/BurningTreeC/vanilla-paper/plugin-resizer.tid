@@ -28,13 +28,18 @@ code-body: yes
 **
 ** One thing this sheet deliberately does NOT do is fight the plugin over the
 ** story river. The plugin ships a block of Vanilla-shaped geometry — an
-** !important margin-right on the river among it — which would override the
-** margin layout.tid animates and freeze the slide. Core ships
-** $:/config/BTC/resizer/manage-sidebar-layout = no, which switches that block
-** off at source. Overriding it from here instead would have meant restating
-** the entire layout matrix (two modes x two sides x full-width, plus the
-** minimap's contribution to each) at !important, in a second place, where it
-** would drift out of step with layout.tid the first time either changed.
+** !important margin-right on the river among it — which overrides the margin
+** the layout animates and freezes the river in place while the sidebar slides.
+** Overriding that from here would have meant restating the entire layout matrix
+** (two modes x two sides x full-width, plus the minimap's contribution to each)
+** at !important, in a second place, where it would drift out of step with the
+** layout sheet the first time either changed.
+**
+** Instead every theme here carries `manages-sidebar-layout: yes` in its
+** plugin.info, and the plugin skips that block while such a theme is active.
+** A field rather than a config tiddler, because the damage is invisible at
+** rest — the resting margin is identical either way, and only the transition
+** breaks — so anything switchable would eventually get switched.
 ** ========================================================================== */
 
 /*
@@ -298,16 +303,19 @@ body.tc-resizing .tc-story-river .tc-tiddler-frame {
 ** background and was invisible, which for the only affordance saying "this
 ** edge moves" is a failure and not restraint.
 **
-** So it is the same recipe against the surface it is actually on. Sixteen
-** percent is the point where the line is unmistakably there and still reads as
-** ruled rather than drawn.
+** So it is the same recipe against the surface it is actually on, at thirty
+** percent — a ruled line you can find without looking for it. It started at
+** sixteen, which measured as a visible difference and in practice was not one:
+** a hairline that quiet is something you only notice once you already know it
+** is there, which is no use at all for the only thing on screen that says
+** "this edge moves".
 */
 .tc-sidebar-resizer::before,
 .tc-tiddler-editor-resizer::before {
 	inline-size: 1px;
 	block-size: 100%;
 	border-radius: 0;
-	background: color-mix(in oklch, var(--tpc-foreground) 16%, var(--tpc-page-background));
+	background: color-mix(in oklch, var(--tpc-foreground) 30%, var(--tpc-page-background));
 	transition:
 		background-color var(--btc-dur) var(--btc-ease),
 		inline-size var(--btc-dur) var(--btc-ease);
@@ -348,6 +356,40 @@ body.tc-resizing .tc-story-river .tc-tiddler-frame {
 .tc-tiddler-editor-resizer.tc-resizer-active {
 	background-color: transparent;
 	opacity: 1;
+}
+
+/*
+** The grab mark.
+**
+** A ruled line running the whole height tells you where the edge is. It does
+** not tell you that you can take hold of it, and it gives the eye nothing to
+** aim at — the hit area is six pixels but there is no six-pixel-looking thing
+** anywhere on it.
+**
+** So the line goes over twice in the middle, for about the height of a hand.
+** That is the same gesture as the hover state, held permanently at a smaller
+** scale, which keeps the whole control inside one idea: this is a ruled line,
+** and where it matters it is ruled harder. No pill, no dots, no bar — those
+** are objects, and there are no objects on a sheet of paper.
+*/
+.tc-sidebar-resizer::after,
+.tc-tiddler-editor-resizer::after {
+	content: "";
+	position: absolute;
+	inset-block-start: 50%;
+	inset-inline-start: 50%;
+	translate: -50% -50%;
+	inline-size: 3px;
+	block-size: 44px;
+	background: color-mix(in oklch, var(--tpc-foreground) 30%, var(--tpc-page-background));
+	transition: background-color var(--btc-dur) var(--btc-ease);
+}
+
+.tc-sidebar-resizer:hover::after,
+.tc-sidebar-resizer.tc-resizer-active::after,
+.tc-tiddler-editor-resizer:hover::after,
+.tc-tiddler-editor-resizer.tc-resizer-active::after {
+	background: var(--vp-margin-rule);
 }
 
 </$list>
