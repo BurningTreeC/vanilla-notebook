@@ -55,8 +55,8 @@ code-body: yes
 .tc-translators-string-table input.tc-edit-texteditor {
 	background-color: color-mix(in oklch, var(--tpc-primary) 6%, var(--tpc-tiddler-editor-background));
 	border: 1px solid var(--tpc-tiddler-editor-border);
-	border-radius: var(--vp-radius);
-	font-family: var(--vp-font-ui);
+	border-radius: var(--btc-radius);
+	font-family: var(--btc-font-ui);
 }
 
 .tc-translators-string-table .tc-btn-invisible {

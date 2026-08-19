@@ -50,17 +50,17 @@ code-body: yes
 
 .td-wikilist .td-wikilist-item {
 	background-color: var(--tpc-wikilist-item);
-	border-radius: var(--vp-radius);
+	border-radius: var(--btc-radius);
 	border-block: 1px solid var(--vp-paper-edge);
 	border-inline-end: 1px solid var(--vp-paper-edge);
-	box-shadow: 0 1px 2px var(--vp-shadow-soft), 0 6px 18px -10px var(--vp-shadow);
+	box-shadow: 0 1px 2px var(--btc-shadow-soft), 0 6px 18px -10px var(--btc-shadow);
 	transition:
-		box-shadow 180ms var(--vp-ease-out),
-		border-inline-start-color 180ms var(--vp-ease-out);
+		box-shadow 180ms var(--btc-ease-out),
+		border-inline-start-color 180ms var(--btc-ease-out);
 }
 
 .td-wikilist .td-wikilist-item:hover {
-	box-shadow: 0 1px 2px var(--vp-shadow-soft), 0 10px 28px -12px var(--vp-shadow);
+	box-shadow: 0 1px 2px var(--btc-shadow-soft), 0 10px 28px -12px var(--btc-shadow);
 }
 
 /* ==========================================================================
@@ -72,7 +72,7 @@ code-body: yes
 ** ========================================================================== */
 
 .td-wikilist .td-wiki-title {
-	font-family: var(--vp-font-body);
+	font-family: var(--btc-font-body);
 	font-size: 1.125rem;
 	font-style: normal;
 	font-weight: 600;
@@ -82,13 +82,13 @@ code-body: yes
 }
 
 .td-wikilist .td-wiki-subtitle {
-	font-family: var(--vp-font-ui);
+	font-family: var(--btc-font-ui);
 	font-size: 0.8125rem;
 	color: var(--tpc-wikilist-url);
 }
 
 .td-wikilist .td-wiki-url {
-	font-family: var(--vp-font-code);
+	font-family: var(--btc-font-code);
 	font-size: 0.75rem;
 	color: var(--tpc-wikilist-url);
 	overflow-wrap: anywhere;
@@ -115,11 +115,11 @@ code-body: yes
 
 button.td-button,
 a.td-button {
-	border-radius: var(--vp-radius);
-	font-family: var(--vp-font-ui);
+	border-radius: var(--btc-radius);
+	font-family: var(--btc-font-ui);
 	transition:
-		background-color 120ms var(--vp-ease-out),
-		translate 80ms var(--vp-ease-out);
+		background-color 120ms var(--btc-ease-out),
+		translate 80ms var(--btc-ease-out);
 }
 
 button.td-button:active,
@@ -129,12 +129,12 @@ a.td-button:active {
 
 button.td-button:focus-visible,
 a.td-button:focus-visible {
-	outline: 2px solid var(--vp-focus);
+	outline: 2px solid var(--btc-focus);
 	outline-offset: 2px;
 }
 
 .td-wikilist .td-wiki-toolbar {
-	font-family: var(--vp-font-ui);
+	font-family: var(--btc-font-ui);
 }
 
 /* ==========================================================================
@@ -147,45 +147,45 @@ a.td-button:focus-visible {
 .td-wikilist .td-wiki-advanced {
 	background-color: var(--tpc-tiddler-info-background);
 	border: 1px solid var(--tpc-tiddler-info-border);
-	border-radius: var(--vp-radius);
+	border-radius: var(--btc-radius);
 }
 
 .td-wiki-advanced-heading {
-	font-family: var(--vp-font-ui);
-	color: var(--vp-ink-faint);
-	border-block-end: 1px solid var(--vp-rule);
+	font-family: var(--btc-font-ui);
+	color: var(--btc-ink-faint);
+	border-block-end: 1px solid var(--btc-rule);
 }
 
 .td-wiki-advanced-field input,
 .td-plugin-search {
-	font-family: var(--vp-font-ui);
-	border-radius: var(--vp-radius);
+	font-family: var(--btc-font-ui);
+	border-radius: var(--btc-radius);
 }
 
 .td-wiki-advanced-field input:focus-visible,
 .td-plugin-search:focus-visible {
-	outline: 2px solid var(--vp-focus);
+	outline: 2px solid var(--btc-focus);
 	outline-offset: 1px;
 }
 
 .td-plugin-dialog {
-	border-radius: var(--vp-radius-lg);
-	box-shadow: 0 24px 64px -24px var(--vp-shadow), 0 2px 8px var(--vp-shadow-soft);
+	border-radius: var(--btc-radius-lg);
+	box-shadow: 0 24px 64px -24px var(--btc-shadow), 0 2px 8px var(--btc-shadow-soft);
 }
 
 .td-plugin-heading {
-	font-family: var(--vp-font-body);
+	font-family: var(--btc-font-body);
 	font-weight: 600;
 }
 
 .td-plugin-title {
-	font-family: var(--vp-font-code);
+	font-family: var(--btc-font-code);
 }
 
 .td-plugin-tab {
-	font-family: var(--vp-font-ui);
-	border-start-start-radius: var(--vp-radius);
-	border-start-end-radius: var(--vp-radius);
+	font-family: var(--btc-font-ui);
+	border-start-start-radius: var(--btc-radius);
+	border-start-end-radius: var(--btc-radius);
 }
 
 /* ==========================================================================
@@ -201,35 +201,35 @@ a.td-button:focus-visible {
 .td-topbar {
 	background-color: var(--tpc-wikilist-toolbar-background);
 	color: var(--tpc-wikilist-toolbar-foreground);
-	border-block-end: 1px solid var(--vp-rule);
+	border-block-end: 1px solid var(--btc-rule);
 	box-shadow: none;
 }
 
 .td-topbar-title {
-	font-family: var(--vp-font-body);
+	font-family: var(--btc-font-body);
 	font-weight: 600;
 }
 
 .td-sidebar {
 	background-color: var(--tpc-background);
 	color: var(--tpc-foreground);
-	box-shadow: calc(var(--vp-dir) * 12px) 0 32px -8px var(--vp-shadow);
+	box-shadow: calc(var(--btc-dir) * 12px) 0 32px -8px var(--btc-shadow);
 }
 
 .td-sidebar-head {
-	border-block-end: 1px solid var(--vp-rule);
+	border-block-end: 1px solid var(--btc-rule);
 }
 
 .td-share-panel {
 	background-color: var(--tpc-modal-background);
 	color: var(--tpc-foreground);
 	border: 1px solid var(--tpc-modal-border);
-	border-radius: var(--vp-radius-lg);
-	box-shadow: 0 24px 64px -24px var(--vp-shadow);
+	border-radius: var(--btc-radius-lg);
+	box-shadow: 0 24px 64px -24px var(--btc-shadow);
 }
 
 .td-share-heading {
-	font-family: var(--vp-font-body);
+	font-family: var(--btc-font-body);
 	font-weight: 600;
 }
 

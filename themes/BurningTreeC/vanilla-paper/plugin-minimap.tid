@@ -1,0 +1,253 @@
+title: $:/themes/BurningTreeC/vanilla-paper/plugins/minimap
+tags: [[$:/tags/Stylesheet]]
+code-body: yes
+
+\rules only filteredtranscludeinline transcludeinline macrodef macrocallinline html
+
+<$list filter="[[$:/plugins/BurningTreeC/minimap]is[tiddler]]" variable="ignore">
+
+/* ==========================================================================
+** Minimap — reserving the edge
+**
+** The plugin pins the map to the right of the VIEWPORT: it is placed once,
+** from the page template, `position: fixed` at `right: 0`, and it knows
+** nothing about the theme's layout. So without this sheet the map is simply
+** drawn on top of whatever is already there — which, in this family, is the
+** sidebar.
+**
+** This is the geometry half and it lives in Core because it is geometry: the
+** arithmetic below is the same in both layout modes and none of it is a design
+** decision. How the map itself LOOKS is a theme decision, and each theme has
+** its own sheet for that.
+**
+** The whole sheet is one idea: take a strip off the end of the layout and give
+** it to the map. Everything the layout anchors to that edge moves in by the
+** strip's width, and everything that measures against the edge measures
+** against the new one.
+** ========================================================================== */
+
+/*
+** The strip.
+**
+** The plugin publishes --tv-minimap-reserve: the width the map occupies, or
+** zero when it is switched off or hidden below the sidebar breakpoint. It is
+** aliased into the theme's own vocabulary here so the arithmetic below reads
+** like the rest of the layout, and so there is one place to look if the
+** plugin ever renames it.
+**
+** The fallback matters. A theme sheet is loaded whenever the plugin tiddler
+** exists, and an older build of the plugin published no such variable — in
+** which case the strip is computed from the width config the same way the
+** plugin's own baseline is.
+*/
+html {
+	--btc-minimap-reserve: var(--tv-minimap-reserve, var(--tv-minimap-width, 120px));
+}
+
+/*
+** Everything below is inside the sidebar breakpoint, because below it the
+** plugin hides the map and publishes a zero reserve — so there is nothing to
+** make room for and the layout is left exactly as the theme drew it.
+**
+** Everything below is also left-to-right only. RTL is deliberately left alone.
+**
+** The plugin has no RTL handling at all — `right: 0` is physical — so in a
+** right-to-left wiki the map lands on the story river's side rather than the
+** sidebar's, and the reserve below would move the wrong things. Doing nothing
+** leaves the map overlapping the river, which is wrong but honest and easy to
+** see; guessing would produce a layout that is wrong in a way that looks
+** deliberate. The fix belongs in the plugin, in the form of a logical
+** `inset-inline-end`.
+*/
+@media (min-width: {{{ [{$:/theme}addsuffix[/metrics/sidebarbreakpoint]get[text]] }}}) {
+
+	/* ---- The sidebar --------------------------------------------------- */
+
+	/*
+	** In both layout modes the sidebar is anchored to the inline end, so both
+	** are moved by re-stating that one inset — fluid-fixed keeps its fixed
+	** --btc-sidebar-w and slides inward, fixed-fluid has `inline-size: auto`
+	** between two insets and simply gets narrower. That difference is correct:
+	** it is exactly what each mode promises about who absorbs a change in
+	** available width.
+	**
+	** Only when the sidebar is on the end. With `sidebarside: start` it is at
+	** the other edge entirely and the map cannot reach it.
+	**
+	** This is a plain box shift, and it is worth recording that it could not
+	** always be. While the plugin rendered the map from a $:/tags/SideBarSegment
+	** the map lived INSIDE this element — which carries `translate` and
+	** `will-change: translate` for the slide, making it the containing block for
+	** fixed-position descendants, and which clips its own overflow. Moving the
+	** sidebar took the map with it, and compensating for that only moved the map
+	** into the clip. The plugin now places the map once at the page level in
+	** every sidebar state, so it is fixed to the viewport and none of that
+	** applies: the sidebar can simply move.
+	*/
+	html:not([dir="rtl"]) .btc-layout-fluid-fixed:not(.btc-sidebar-start) .tc-sidebar-scrollable,
+	html:not([dir="rtl"]) .btc-layout-fixed-fluid:not(.btc-sidebar-start) .tc-sidebar-scrollable {
+		inset-inline-end: var(--btc-minimap-reserve);
+	}
+
+	/* ---- The top bar ---------------------------------------------------- */
+
+	/*
+	** The trailing top bar is pinned to the same edge and is drawn at z-index
+	** 1200, well above the map's 400 — so left alone it does not go under the
+	** map, it sits on top of it, which is worse. It moves in by the same strip.
+	*/
+	html:not([dir="rtl"]) .tc-topbar-right {
+		inset-inline-end: var(--btc-minimap-reserve);
+	}
+
+	/* ---- The story river ------------------------------------------------ */
+
+	/*
+	** The river needs the strip too, and NOT scaled by --btc-open.
+	**
+	** Everything else that answers to the sidebar is multiplied by --btc-open
+	** so it rides the slide. The map does not answer to the sidebar at all: it
+	** is placed once, at the page level, in every sidebar state, so the strip
+	** it occupies is the same width whether the sidebar is open or shut.
+	** Scaling this by --btc-open would run the river back under the map every
+	** time the sidebar was hidden — which is precisely when the river grows to
+	** fill the space.
+	*/
+	html:not([dir="rtl"]) .btc-layout-fluid-fixed:not(.btc-sidebar-start) .tc-story-river,
+	html:not([dir="rtl"]) .btc-fullwidth.btc-layout-fluid-fixed:not(.btc-sidebar-start) .tc-story-river {
+		margin-inline-end: calc(var(--btc-open) * var(--btc-sidebar-w) + var(--btc-minimap-reserve));
+	}
+
+	html:not([dir="rtl"]) .btc-fullwidth.btc-layout-fixed-fluid:not(.btc-sidebar-start) .tc-story-river {
+		margin-inline-end: calc(
+			var(--btc-open) * max(0px, 100vw - var(--btc-story-right)) + var(--btc-minimap-reserve)
+		);
+	}
+
+	/*
+	** fixed-fluid, sidebar open: the river keeps its fixed width and does not
+	** reach the edge, so there is nothing to reserve. What does need correcting
+	** is the glide — when the sidebar closes the river slides to the centre of
+	** the viewport, and the centre it should aim for is the centre of what is
+	** left after the strip, or it drifts half a map to the right.
+	*/
+	html:not([dir="rtl"]) .btc-layout-fixed-fluid:not(.btc-sidebar-start) .tc-story-river {
+		translate: calc(
+			var(--btc-dir) * (1 - var(--btc-open)) *
+			((100vw - var(--btc-minimap-reserve) - var(--btc-story-w)) / 2 - var(--btc-river-start))
+		) 0;
+	}
+
+	/* ---- Sidebar on the leading edge ------------------------------------ */
+
+	/*
+	** The sidebar is at the other edge, so the map has only the river to
+	** collide with. In fluid-fixed the river's trailing margin is the plain
+	** story-left gutter; in fixed-fluid it is zero and the river is placed by
+	** its leading margin instead. Both simply gain the strip.
+	*/
+	html:not([dir="rtl"]) .btc-layout-fluid-fixed.btc-sidebar-start .tc-story-river,
+	html:not([dir="rtl"]) .btc-fullwidth.btc-layout-fluid-fixed.btc-sidebar-start .tc-story-river {
+		margin-inline: calc(var(--btc-open) * var(--btc-sidebar-w))
+			calc(var(--btc-story-left) + var(--btc-minimap-reserve));
+	}
+
+	html:not([dir="rtl"]) .btc-layout-fixed-fluid.btc-sidebar-start .tc-story-river {
+		margin-inline: var(--btc-river-start) var(--btc-minimap-reserve);
+	}
+
+	html:not([dir="rtl"]) .btc-fullwidth.btc-layout-fixed-fluid.btc-sidebar-start .tc-story-river {
+		margin-inline: calc(var(--btc-open) * max(0px, 100vw - var(--btc-story-right)))
+			calc(var(--btc-story-left) + var(--btc-minimap-reserve));
+	}
+}
+
+/* ==========================================================================
+** Minimap — Paper
+**
+** The geometry is not here — it is stated once, above, and this half is only
+** about what the map is made of. The two live in one file because they answer
+** to one plugin, and the split between them is worth keeping visible: nothing
+** above this banner is a design decision, and nothing below it is arithmetic.
+**
+** In this theme it is one more sheet of the same paper — the last one on the
+** desk, turned edge-on. So it takes the sheet's ground and the sheet's
+** hairline edge, and nothing else: the plugin's own default is
+** `page-background` with a `muted-foreground` border, which on cream reads as
+** a grey card laid over the paper rather than as part of it.
+** ========================================================================== */
+
+/*
+** The map is a sheet, so it is the sheet colour and not the desk colour.
+**
+** `border-inline-start` rather than the plugin's physical `border-left`: this
+** theme is written in logical properties throughout, and stating it logically
+** means the edge stays on the side facing the river. The plugin's own rule is
+** left in place underneath as the fallback for anyone who turns this sheet off.
+*/
+.tc-minimap {
+	background: var(--tpc-tiddler-background);
+	border-left: none;
+	border-inline-start: 1px solid var(--vp-paper-edge);
+}
+
+/*
+** The viewport indicator is the margin rule's own red, at a wash.
+**
+** The plugin picks a neutral grey or white by palette scheme, which is the
+** right default for a theme it knows nothing about. Here there is already a
+** colour that means "this is the part of the page you are on" — the red rule
+** down the margin of every sheet — so the indicator borrows it instead of
+** introducing a second vocabulary for the same idea.
+*/
+.tc-minimap-overlay {
+	background: var(--tpc-alert-highlight);
+	opacity: 0.14;
+}
+
+.tc-minimap-overlay:hover {
+	opacity: 0.22;
+}
+
+.tc-minimap-active .tc-minimap-overlay {
+	opacity: 0.30;
+}
+
+/* Blocks mode: ink at a wash, so a page of text reads as a page of text. */
+.tc-minimap-block-filled {
+	background: var(--btc-ink-soft);
+	opacity: 0.14;
+	border-radius: var(--btc-radius);
+}
+
+/*
+** The grip is a paper tab, not a plastic one.
+**
+** Same ground and hairline as a sheet, the theme's own corner radius, and the
+** plugin's `box-shadow: -1px 0 4px rgba(0,0,0,0.1)` replaced with the sheet's
+** own soft shadow — a fixed black blur is a bruise on cream and invisible on a
+** dark palette, which is the same argument the menubar sheet makes.
+*/
+.tc-minimap-grip {
+	background: var(--tpc-tiddler-background);
+	border: 1px solid var(--vp-paper-edge);
+	border-inline-end: none;
+	border-start-start-radius: var(--btc-radius-lg);
+	border-end-start-radius: var(--btc-radius-lg);
+	border-start-end-radius: 0;
+	border-end-end-radius: 0;
+	color: var(--btc-ink-faint);
+	box-shadow: -1px 0 2px var(--btc-shadow-soft);
+}
+
+.tc-minimap-grip:hover {
+	background: var(--btc-accent-wash);
+	color: var(--tpc-foreground);
+}
+
+.tc-minimap-grip:focus-visible {
+	outline: 2px solid var(--btc-focus);
+	outline-offset: 2px;
+}
+
+</$list>

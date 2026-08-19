@@ -7,4 +7,4 @@ Measures the menubar plugin's fixed bar, if one is present, so the theme can
 offset the story river, the sidebar and the sticky tiddler titles by its real
 height rather than by a guess.
 
-Consumed in `$:/themes/BurningTreeC/vanilla-paper/layout` as `--vp-menubar-h`.
+Consumed in `$:/themes/BurningTreeC/vanilla-paper/layout` as `--btc-menubar-h`.

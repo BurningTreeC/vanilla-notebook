@@ -44,29 +44,29 @@ code-body: yes
 	** lightness is also what you want in an editor: the eye reads the shape of
 	** the code and lets colour say what kind of token it is.
 	*/
-	--vp-syn-c: 0.11;
+	--btc-syn-c: 0.11;
 
-	--vp-syn-keyword: oklch(from var(--tpc-foreground) l var(--vp-syn-c) 264);
-	--vp-syn-string: oklch(from var(--tpc-foreground) l var(--vp-syn-c) 150);
-	--vp-syn-number: oklch(from var(--tpc-foreground) l var(--vp-syn-c) 25);
-	--vp-syn-name: oklch(from var(--tpc-foreground) l var(--vp-syn-c) 310);
-	--vp-syn-type: oklch(from var(--tpc-foreground) l var(--vp-syn-c) 195);
-	--vp-syn-punct: var(--vp-ink-soft);
+	--btc-syn-keyword: oklch(from var(--tpc-foreground) l var(--btc-syn-c) 264);
+	--btc-syn-string: oklch(from var(--tpc-foreground) l var(--btc-syn-c) 150);
+	--btc-syn-number: oklch(from var(--tpc-foreground) l var(--btc-syn-c) 25);
+	--btc-syn-name: oklch(from var(--tpc-foreground) l var(--btc-syn-c) 310);
+	--btc-syn-type: oklch(from var(--tpc-foreground) l var(--btc-syn-c) 195);
+	--vp-syn-punct: var(--btc-ink-soft);
 
 	/* Comments step a bounded distance from the foreground TOWARD THE EDITOR'S
 	   OWN PAPER, rather than using one of the theme's general muted inks.
-	   --vp-ink-faint measured 1.56:1 in here on SolarFlare and --vp-ink-soft
+	   --btc-ink-faint measured 1.56:1 in here on SolarFlare and --btc-ink-soft
 	   2.30:1, because both are mixed against the page background and the
 	   editor's is a different colour. Mixing against the right surface keeps
 	   comments at a fixed fraction of whatever contrast the palette itself
 	   manages. Italic already marks them as secondary. */
-	--vp-syn-comment: color-mix(in oklch, var(--tpc-foreground) 80%, var(--tpc-tiddler-editor-background));
+	--btc-syn-comment: color-mix(in oklch, var(--tpc-foreground) 80%, var(--tpc-tiddler-editor-background));
 
 	/* Error is derived like the rest rather than taken from alert-highlight,
 	   which is picked to sit on the alert surface and not on editor paper -
 	   on Nord that measured 2.13:1. Same red hue as numbers, more chroma, and
 	   the dotted underline is what actually says "error". */
-	--vp-syn-error: oklch(from var(--tpc-foreground) l 0.19 25);
+	--btc-syn-error: oklch(from var(--tpc-foreground) l 0.19 25);
 }
 
 /*
@@ -77,14 +77,14 @@ code-body: yes
 */
 @supports not (color: oklch(from red l c h)) {
 	.cm-s-tiddlywiki {
-		--vp-syn-keyword: var(--tpc-primary);
-		--vp-syn-string: var(--tpc-external-link-foreground);
-		--vp-syn-number: var(--tpc-primary);
-		--vp-syn-name: var(--tpc-tiddler-link-foreground);
-		--vp-syn-type: var(--tpc-primary);
-		--vp-syn-punct: var(--vp-ink-soft);
-		--vp-syn-comment: var(--vp-ink-soft);
-		--vp-syn-error: var(--tpc-alert-highlight);
+		--btc-syn-keyword: var(--tpc-primary);
+		--btc-syn-string: var(--tpc-external-link-foreground);
+		--btc-syn-number: var(--tpc-primary);
+		--btc-syn-name: var(--tpc-tiddler-link-foreground);
+		--btc-syn-type: var(--tpc-primary);
+		--vp-syn-punct: var(--btc-ink-soft);
+		--btc-syn-comment: var(--btc-ink-soft);
+		--btc-syn-error: var(--tpc-alert-highlight);
 	}
 }
 
@@ -96,11 +96,11 @@ code-body: yes
 ** the editor back at the theme's own tokens is what keeps the two in step. */
 
 .CodeMirror {
-	font-family: var(--vp-font-code);
+	font-family: var(--btc-font-code);
 	font-size: var(--vp-body-size);
 	line-height: var(--vp-body-lh);
 	border: 1px solid var(--tpc-tiddler-editor-border);
-	border-radius: var(--vp-radius);
+	border-radius: var(--btc-radius);
 }
 
 .cm-s-tiddlywiki.CodeMirror,
@@ -110,11 +110,11 @@ code-body: yes
 }
 
 .cm-s-tiddlywiki .CodeMirror-gutters {
-	border-inline-end: 1px solid var(--vp-rule-faint);
+	border-inline-end: 1px solid var(--btc-rule-faint);
 }
 
 .cm-s-tiddlywiki .CodeMirror-linenumber {
-	color: var(--vp-ink-faint);
+	color: var(--btc-ink-faint);
 	font-variant-numeric: tabular-nums;
 }
 
@@ -132,32 +132,32 @@ code-body: yes
 .cm-s-tiddlywiki .CodeMirror-dialog {
 	background: var(--tpc-tiddler-background);
 	color: var(--tpc-foreground);
-	border-block-end: 1px solid var(--vp-rule);
-	font-family: var(--vp-font-ui);
+	border-block-end: 1px solid var(--btc-rule);
+	font-family: var(--btc-font-ui);
 }
 
 /* ---- Tokens ---- */
 
 .cm-s-tiddlywiki span.cm-comment,
 .cm-s-tiddlywiki .cm-comment {
-	color: var(--vp-syn-comment);
+	color: var(--btc-syn-comment);
 	font-style: italic;
 }
 
 .cm-s-tiddlywiki .cm-keyword,
 .cm-s-tiddlywiki .cm-atom,
 .cm-s-tiddlywiki .cm-builtin {
-	color: var(--vp-syn-keyword);
+	color: var(--btc-syn-keyword);
 }
 
 .cm-s-tiddlywiki .cm-string,
 .cm-s-tiddlywiki .cm-string-2,
 .cm-s-tiddlywiki .cm-meta {
-	color: var(--vp-syn-string);
+	color: var(--btc-syn-string);
 }
 
 .cm-s-tiddlywiki .cm-number {
-	color: var(--vp-syn-number);
+	color: var(--btc-syn-number);
 	font-variant-numeric: tabular-nums;
 }
 
@@ -165,7 +165,7 @@ code-body: yes
 .cm-s-tiddlywiki .cm-property,
 .cm-s-tiddlywiki .cm-attribute,
 .cm-s-tiddlywiki .cm-qualifier {
-	color: var(--vp-syn-name);
+	color: var(--btc-syn-name);
 }
 
 .cm-s-tiddlywiki .cm-variable-2,
@@ -173,7 +173,7 @@ code-body: yes
 .cm-s-tiddlywiki .cm-type,
 .cm-s-tiddlywiki .cm-operator,
 .cm-s-tiddlywiki .cm-special {
-	color: var(--vp-syn-type);
+	color: var(--btc-syn-type);
 }
 
 .cm-s-tiddlywiki .cm-variable,
@@ -186,12 +186,12 @@ code-body: yes
    own editorial weights rather than a colour. */
 .cm-s-tiddlywiki .cm-header {
 	color: var(--tpc-foreground);
-	font-family: var(--vp-font-body);
+	font-family: var(--btc-font-body);
 	font-weight: 600;
 }
 
 .cm-s-tiddlywiki .cm-quote {
-	color: var(--vp-ink-soft);
+	color: var(--btc-ink-soft);
 	font-style: italic;
 }
 
@@ -208,14 +208,14 @@ code-body: yes
 
 .cm-s-tiddlywiki .cm-hr {
 	color: transparent;
-	border-block-start: 1px solid var(--vp-rule);
+	border-block-start: 1px solid var(--btc-rule);
 	display: block;
 }
 
 .cm-s-tiddlywiki .cm-error,
 .cm-s-tiddlywiki .cm-invalidchar {
-	color: var(--vp-syn-error);
-	border-block-end: 1px dotted var(--vp-syn-error);
+	color: var(--btc-syn-error);
+	border-block-end: 1px dotted var(--btc-syn-error);
 }
 
 .cm-s-tiddlywiki .CodeMirror-matchingbracket {
@@ -226,7 +226,7 @@ code-body: yes
 }
 
 .cm-s-tiddlywiki .CodeMirror-nonmatchingbracket {
-	color: var(--vp-syn-error);
+	color: var(--btc-syn-error);
 	font-weight: 600;
 }
 
@@ -262,8 +262,8 @@ code-body: yes
 		to bottom,
 		transparent 0,
 		transparent calc(var(--vp-edit-lh) - 1px),
-		var(--vp-rule-faint) calc(var(--vp-edit-lh) - 1px),
-		var(--vp-rule-faint) var(--vp-edit-lh)
+		var(--btc-rule-faint) calc(var(--vp-edit-lh) - 1px),
+		var(--btc-rule-faint) var(--vp-edit-lh)
 	);
 	background-attachment: local;
 }

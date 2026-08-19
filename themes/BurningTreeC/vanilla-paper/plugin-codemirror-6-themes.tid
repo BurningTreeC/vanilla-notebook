@@ -40,7 +40,7 @@ code-body: yes
 */
 .tc-editor-codemirror6[data-cm6-theme] .cm-editor,
 .tc-editor-codemirror6 .cm-editor[data-cm6-theme] {
-	border-radius: var(--vp-radius);
+	border-radius: var(--btc-radius);
 }
 
 .tc-editor-codemirror6:has([data-cm6-theme]),
@@ -55,7 +55,7 @@ code-body: yes
 /*
 ** The ruled editor is switched off while a theme is active.
 **
-** The ruling is drawn in --vp-rule-faint, a colour mixed against the PAGE
+** The ruling is drawn in --btc-rule-faint, a colour mixed against the PAGE
 ** background. A CM6 theme replaces the editor's background with its own, so
 ** those lines are being drawn for paper that is no longer there: on a dark
 ** theme in a light wiki they disappear, and on a light theme in a dark wiki

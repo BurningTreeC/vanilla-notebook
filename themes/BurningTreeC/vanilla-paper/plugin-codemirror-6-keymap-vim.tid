@@ -33,7 +33,7 @@ code-body: yes
 .tc-editor-codemirror6 .cm-editor:not(.cm-focused) .cm-fat-cursor,
 .tc-editor-codemirror6-simple .cm-editor:not(.cm-focused) .cm-fat-cursor {
 	background: transparent;
-	outline: 1px solid var(--vp-accent-edge);
+	outline: 1px solid var(--btc-accent-edge);
 	color: inherit;
 }
 
@@ -51,10 +51,10 @@ code-body: yes
 .tc-editor-codemirror6-simple .cm-vim-panel {
 	background: var(--tpc-tiddler-background);
 	color: var(--tpc-foreground);
-	border-block-start: 1px solid var(--vp-rule);
-	font-family: var(--vp-font-code);
+	border-block-start: 1px solid var(--btc-rule);
+	font-family: var(--btc-font-code);
 	font-size: 0.875rem;
-	padding: var(--vp-space-2xs) var(--vp-space-sm);
+	padding: var(--btc-space-2xs) var(--btc-space-sm);
 }
 
 .tc-editor-codemirror6 .cm-vim-panel input,
@@ -62,7 +62,7 @@ code-body: yes
 	background: transparent;
 	color: var(--tpc-foreground);
 	border: none;
-	font-family: var(--vp-font-code);
+	font-family: var(--btc-font-code);
 	font-size: inherit;
 	caret-color: var(--tpc-primary);
 }
@@ -83,8 +83,8 @@ code-body: yes
 /* Messages and errors from ex commands. */
 .tc-editor-codemirror6 .cm-vim-message,
 .tc-editor-codemirror6-simple .cm-vim-message {
-	color: var(--vp-ink-soft);
-	font-family: var(--vp-font-code);
+	color: var(--btc-ink-soft);
+	font-family: var(--btc-font-code);
 }
 
 .tc-editor-codemirror6 .cm-selectionBackground,

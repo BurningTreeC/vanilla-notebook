@@ -14,7 +14,7 @@ code-body: yes
 ** and a font stack of its own. On a dark palette the tracks vanish into the
 ** page and the label text stays black on a black background.
 **
-** A railroad diagram is a technical drawing, so Paper treats it as one: ink
+** A railroad diagram is a technical drawing, so the theme treats it as one: ink
 ** on paper. The track is the page's own ink, terminals and non-terminals are
 ** told apart by fill weight rather than by two unrelated colours, and the
 ** labels take the code face because that is what they are - literal syntax.
@@ -37,27 +37,27 @@ svg.railroad-diagram path {
 /* Labels. Both the text inside the boxes and the comments beside the track. */
 svg.railroad-diagram text {
 	fill: var(--tpc-foreground);
-	font-family: var(--vp-font-code);
+	font-family: var(--btc-font-code);
 	font-size: 13px;
 	font-weight: 500;
 }
 
 svg.railroad-diagram text.diagram-text {
-	fill: var(--vp-ink-faint);
-	font-family: var(--vp-font-ui);
+	fill: var(--btc-ink-faint);
+	font-family: var(--btc-font-ui);
 	font-size: 11px;
 }
 
 svg.railroad-diagram text.comment {
-	fill: var(--vp-ink-soft);
-	font-family: var(--vp-font-ui);
+	fill: var(--btc-ink-soft);
+	font-family: var(--btc-font-ui);
 	font-style: italic;
 	font-size: 11px;
 }
 
 svg.railroad-diagram path.diagram-text {
 	stroke-width: 1.5;
-	stroke: var(--vp-ink-faint);
+	stroke: var(--btc-ink-faint);
 	fill: none;
 }
 
@@ -72,7 +72,7 @@ svg.railroad-diagram rect {
 }
 
 svg.railroad-diagram rect.group-box {
-	stroke: var(--vp-ink-faint);
+	stroke: var(--btc-ink-faint);
 	stroke-dasharray: 10 5;
 	fill: none;
 }
@@ -83,8 +83,8 @@ svg.railroad-diagram g.non-terminal rect {
 
 /* The start and end markers. */
 svg.railroad-diagram .label {
-	fill: var(--vp-ink-faint);
-	font-family: var(--vp-font-ui);
+	fill: var(--btc-ink-faint);
+	font-family: var(--btc-font-ui);
 }
 
 </$list>

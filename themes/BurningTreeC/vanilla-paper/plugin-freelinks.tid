@@ -15,7 +15,7 @@ code-body: yes
 ** patch behind ordinary prose.
 **
 ** A freelink is not the same thing as a link the author typed - it is the wiki
-** noticing a word. So Paper marks it the way a reader marks a word they
+** noticing a word. So the theme marks it the way a reader marks a word they
 ** might look up later: a dotted underline in the link colour, no fill, nothing
 ** behind the text. It stays out of the way while reading and becomes a proper
 ** link on hover.
@@ -29,7 +29,7 @@ a.tc-tiddlylink.tc-freelink {
 	text-decoration-thickness: 1px;
 	text-underline-offset: 0.18em;
 	text-decoration-color: color-mix(in oklch, var(--tpc-tiddler-link-foreground) 55%, transparent);
-	transition: text-decoration-color 140ms var(--vp-ease-out), background-color 140ms var(--vp-ease-out);
+	transition: text-decoration-color 140ms var(--btc-ease-out), background-color 140ms var(--btc-ease-out);
 }
 
 button.tc-tiddlylink.tc-freelink:hover,

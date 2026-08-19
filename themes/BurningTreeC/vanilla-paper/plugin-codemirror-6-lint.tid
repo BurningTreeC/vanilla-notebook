@@ -97,16 +97,16 @@ code-body: yes
 	background: var(--tpc-dropdown-background);
 	color: var(--tpc-foreground);
 	border: 1px solid var(--vp-paper-edge);
-	border-radius: var(--vp-radius);
-	box-shadow: 0 1px 2px var(--vp-shadow-soft), 0 10px 26px -12px var(--vp-shadow);
-	font-family: var(--vp-font-ui);
+	border-radius: var(--btc-radius);
+	box-shadow: 0 1px 2px var(--btc-shadow-soft), 0 10px 26px -12px var(--btc-shadow);
+	font-family: var(--btc-font-ui);
 	font-size: 0.8125rem;
 }
 
 .cm-diagnostic {
 	border-inline-start: 3px solid transparent;
-	padding: var(--vp-space-2xs) var(--vp-space-sm);
-	font-family: var(--vp-font-ui);
+	padding: var(--btc-space-2xs) var(--btc-space-sm);
+	font-family: var(--btc-font-ui);
 }
 
 .cm-diagnostic-error {
@@ -124,8 +124,8 @@ code-body: yes
 .cm-panel.cm-lint-panel {
 	background: var(--tpc-tiddler-background);
 	color: var(--tpc-foreground);
-	border-block-start: 1px solid var(--vp-rule);
-	font-family: var(--vp-font-ui);
+	border-block-start: 1px solid var(--btc-rule);
+	font-family: var(--btc-font-ui);
 	font-size: 0.8125rem;
 }
 
@@ -138,8 +138,8 @@ code-body: yes
 }
 
 .cm-panel.cm-lint-panel li {
-	padding: var(--vp-space-2xs) var(--vp-space-sm);
-	border-block-end: 1px solid var(--vp-rule-faint);
+	padding: var(--btc-space-2xs) var(--btc-space-sm);
+	border-block-end: 1px solid var(--btc-rule-faint);
 	cursor: pointer;
 }
 

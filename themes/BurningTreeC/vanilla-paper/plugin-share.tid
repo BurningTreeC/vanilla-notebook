@@ -18,12 +18,12 @@ code-body: yes
 
 .tc-sharing-wizard-wrapper {
 	inline-size: 100%;
-	padding: var(--vp-space-md);
-	margin-block-end: var(--vp-space-md);
+	padding: var(--btc-space-md);
+	margin-block-end: var(--btc-space-md);
 	background: var(--tpc-tiddler-editor-background);
-	border: 1px solid var(--vp-rule-faint);
-	border-radius: var(--vp-radius);
-	box-shadow: inset 0 1px 3px var(--vp-shadow-soft);
+	border: 1px solid var(--btc-rule-faint);
+	border-radius: var(--btc-radius);
+	box-shadow: inset 0 1px 3px var(--btc-shadow-soft);
 }
 
 /* The URL to share is the point of the whole screen, so it is set in the code
@@ -31,16 +31,16 @@ code-body: yes
    given room to be selected. */
 input.tc-sharing-wizard-editor {
 	inline-size: 100%;
-	padding: var(--vp-space-xs) var(--vp-space-sm);
+	padding: var(--btc-space-xs) var(--btc-space-sm);
 	background: var(--tpc-tiddler-background);
 	border: 1px solid var(--tpc-tiddler-editor-border);
-	border-radius: var(--vp-radius);
-	font-family: var(--vp-font-code);
+	border-radius: var(--btc-radius);
+	font-family: var(--btc-font-code);
 	font-size: 0.875rem;
 }
 
 input.tc-sharing-wizard-editor:focus-visible {
-	outline: 2px solid var(--vp-focus);
+	outline: 2px solid var(--btc-focus);
 	outline-offset: 1px;
 }
 

@@ -14,7 +14,7 @@ code-body: yes
 ** both fixed, and the file input is hidden by the `font-size: 999px` trick so
 ** that the entire card is clickable.
 **
-** Paper makes it read as a drop target rather than as a panel that happens
+** the theme makes it read as a drop target rather than as a panel that happens
 ** to be clickable: a dashed edge in the theme's own drop colour, which is the
 ** same language the story river and the editor use when you drag a file over
 ** them.
@@ -26,30 +26,30 @@ code-body: yes
 
 .tc-upgrade-wizard {
 	background: var(--tpc-tiddler-background);
-	border: 2px dashed var(--vp-drop);
-	border-radius: var(--vp-radius-lg);
+	border: 2px dashed var(--btc-drop);
+	border-radius: var(--btc-radius-lg);
 	box-shadow: none;
-	padding: var(--vp-space-xl);
+	padding: var(--btc-space-xl);
 	text-align: center;
 	cursor: pointer;
-	transition: background-color 160ms var(--vp-ease-out), border-color 160ms var(--vp-ease-out);
+	transition: background-color 160ms var(--btc-ease-out), border-color 160ms var(--btc-ease-out);
 }
 
 .tc-upgrade-wizard:hover {
-	background: color-mix(in oklch, var(--vp-drop) 8%, var(--tpc-tiddler-background));
+	background: color-mix(in oklch, var(--btc-drop) 8%, var(--tpc-tiddler-background));
 	border-color: var(--tpc-primary);
 }
 
 /* The card is one big label wrapping a hidden <input type=file>, so a keyboard
    user gets no focus ring unless it is put on the wrapper. */
 .tc-upgrade-wizard:focus-within {
-	outline: 2px solid var(--vp-focus);
+	outline: 2px solid var(--btc-focus);
 	outline-offset: 3px;
 }
 
 .tc-upgrade-wizard svg.tc-image-download-button {
-	fill: var(--vp-ink-faint);
-	transition: fill 160ms var(--vp-ease-out);
+	fill: var(--btc-ink-faint);
+	transition: fill 160ms var(--btc-ease-out);
 }
 
 .tc-upgrade-wizard:hover svg.tc-image-download-button {
@@ -64,7 +64,7 @@ code-body: yes
 
 .tc-upgrade-wizard em {
 	color: var(--tpc-tiddler-subtitle-foreground);
-	font-family: var(--vp-font-ui);
+	font-family: var(--btc-font-ui);
 	font-style: normal;
 	font-size: 0.875rem;
 }
@@ -82,8 +82,8 @@ code-body: yes
 
 .tc-upgrade-wizard table td,
 .tc-upgrade-wizard table th {
-	border-block-end: 1px solid var(--vp-rule-faint);
-	padding: var(--vp-space-2xs) var(--vp-space-sm);
+	border-block-end: 1px solid var(--btc-rule-faint);
+	padding: var(--btc-space-2xs) var(--btc-space-sm);
 }
 
 /* The plugin sets `background: white` on the file input to hide it. White is

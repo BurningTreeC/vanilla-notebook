@@ -58,7 +58,7 @@ code-body: yes
 .tc-dynannotation-search-overlay-blurred {
 	background: color-mix(in oklch, var(--tpc-alert-highlight) 30%, transparent);
 	mix-blend-mode: {{{ [{$:/palette}get[color-scheme]match[dark]then[screen]] ~[[multiply]] }}};
-	border-radius: var(--vp-radius);
+	border-radius: var(--btc-radius);
 	filter: blur(2px);
 }
 
@@ -89,8 +89,8 @@ code-body: yes
 
 .tc-dynannotate-example-frame {
 	border: 1px solid var(--vp-paper-edge);
-	border-radius: var(--vp-radius-lg);
-	padding: var(--vp-space-md);
+	border-radius: var(--btc-radius-lg);
+	padding: var(--btc-space-md);
 	background-color: var(--tpc-tiddler-background);
 }
 
@@ -104,8 +104,8 @@ code-body: yes
 	background: var(--tpc-message-background);
 	color: var(--tpc-foreground);
 	border: 1px solid var(--tpc-message-border);
-	border-radius: var(--vp-radius);
-	padding: var(--vp-space-md);
+	border-radius: var(--btc-radius);
+	padding: var(--btc-space-md);
 }
 
 .tc-control-panel table.tc-dynannotate-search-parameters,

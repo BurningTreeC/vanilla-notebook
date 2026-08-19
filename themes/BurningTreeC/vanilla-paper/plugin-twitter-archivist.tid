@@ -9,7 +9,7 @@ code-body: yes
 /* ==========================================================================
 ** Twitter archivist
 **
-** An archived thread is a quoted conversation, so Paper sets it the way a
+** An archived thread is a quoted conversation, so the theme sets it the way a
 ** book sets one: an indent rule down the side of each reply rather than a
 ** rounded box around every tweet. Nesting is the whole structure of a thread,
 ** and a rule shows depth at any level where a border only shows a box.
@@ -21,21 +21,21 @@ code-body: yes
 .tc-twitter-tweet {
 	border: none;
 	border-radius: 0;
-	border-inline-start: 2px solid var(--vp-rule);
-	padding-inline-start: var(--vp-space-sm);
-	margin-block: var(--vp-space-sm);
+	border-inline-start: 2px solid var(--btc-rule);
+	padding-inline-start: var(--btc-space-sm);
+	margin-block: var(--btc-space-sm);
 }
 
 .tc-twitter-tweet-reply {
-	margin-inline-start: var(--vp-space-sm);
+	margin-inline-start: var(--btc-space-sm);
 }
 
 .tc-twitter-tweet-reply .tc-twitter-tweet {
-	border-inline-start-color: var(--vp-rule-faint);
+	border-inline-start-color: var(--btc-rule-faint);
 }
 
 .tc-twitter-tweet-header-displayname {
-	font-family: var(--vp-font-ui);
+	font-family: var(--btc-font-ui);
 	font-size: 0.8125rem;
 	font-weight: 600;
 	color: var(--tpc-foreground);
@@ -43,9 +43,9 @@ code-body: yes
 
 .tc-twitter-tweet-header-date,
 .tc-twitter-tweet-reply-to {
-	font-family: var(--vp-font-ui);
+	font-family: var(--btc-font-ui);
 	font-size: 0.75rem;
-	color: var(--vp-ink-faint);
+	color: var(--btc-ink-faint);
 }
 
 /* The tweet itself is prose, so it gets the body face at a readable size
@@ -53,15 +53,15 @@ code-body: yes
    thread, compounds until the text is unreadable. */
 .tc-twitter-tweet-body,
 .tc-twitter-tweet-reply .tc-twitter-tweet-body {
-	font-family: var(--vp-font-body);
+	font-family: var(--btc-font-body);
 	font-size: 0.9375rem;
 	line-height: 1.55;
 }
 
 .tc-twitter-tweet-footer {
-	font-family: var(--vp-font-ui);
+	font-family: var(--btc-font-ui);
 	font-size: 0.75rem;
-	color: var(--vp-ink-faint);
+	color: var(--btc-ink-faint);
 }
 
 </$list>

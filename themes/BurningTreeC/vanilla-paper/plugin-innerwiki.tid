@@ -23,8 +23,8 @@ code-body: yes
 
 .tc-innerwiki-wrapper {
 	border: 1px solid var(--vp-paper-edge);
-	border-radius: var(--vp-radius);
-	box-shadow: 0 1px 2px var(--vp-shadow-soft), 0 8px 22px -12px var(--vp-shadow);
+	border-radius: var(--btc-radius);
+	box-shadow: 0 1px 2px var(--btc-shadow-soft), 0 8px 22px -12px var(--btc-shadow);
 	max-inline-size: 100%;
 
 	/* The iframe inside is a fixed pixel size, set by the macro that renders

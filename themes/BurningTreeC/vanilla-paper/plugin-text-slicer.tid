@@ -30,16 +30,16 @@ code-body: yes
 .tc-document-preview-column {
 	inline-size: {{$:/themes/BurningTreeC/vanilla-paper/metrics/storyleft}};
 	background-color: var(--tpc-page-background);
-	border-inline-end: 1px solid var(--vp-rule);
+	border-inline-end: 1px solid var(--btc-rule);
 }
 
 .tc-document-preview-column .tc-sliced-document-header {
-	font-family: var(--vp-font-ui);
-	border-block-end: 1px solid var(--vp-rule-faint);
+	font-family: var(--btc-font-ui);
+	border-block-end: 1px solid var(--btc-rule-faint);
 }
 
 .tc-sliced-document-title {
-	font-family: var(--vp-font-body);
+	font-family: var(--btc-font-body);
 	font-size: 1.7em;
 	font-weight: 600;
 	letter-spacing: -0.01em;
@@ -53,26 +53,26 @@ code-body: yes
 ** annotation, not content".
 */
 .tc-slice-note {
-	padding: var(--vp-space-xs) var(--vp-space-sm);
+	padding: var(--btc-space-xs) var(--btc-space-sm);
 	color: var(--vp-margin-rule);
 	background: color-mix(in oklch, var(--vp-margin-rule) 10%, var(--tpc-tiddler-background));
 	border: none;
 	border-inline-start: 3px solid var(--vp-margin-rule);
 	border-radius: 0;
 	box-shadow: none;
-	font-family: var(--vp-font-ui);
+	font-family: var(--btc-font-ui);
 	font-size: 0.8125rem;
 }
 
 /* ---- The document tree ---- */
 
 .tc-edit-template-document-tiddler-wrapper {
-	border-inline-start: 1px solid var(--vp-rule-faint);
+	border-inline-start: 1px solid var(--btc-rule-faint);
 }
 
 div.tc-edit-template-document-tiddler-heading a {
 	color: var(--tpc-tiddler-link-foreground);
-	font-family: var(--vp-font-ui);
+	font-family: var(--btc-font-ui);
 	font-weight: 600;
 	text-decoration: none;
 }
@@ -83,8 +83,8 @@ div.tc-edit-template-document-tiddler-heading a:hover {
 }
 
 .tc-edit-template-document-tiddler-subheading {
-	color: var(--vp-ink-faint);
-	font-family: var(--vp-font-ui);
+	color: var(--btc-ink-faint);
+	font-family: var(--btc-font-ui);
 	font-size: 0.8125rem;
 }
 
@@ -106,8 +106,8 @@ div.tc-edit-template-document-tiddler-heading a:hover {
 	inline-size: 100%;
 	background: var(--tpc-tiddler-editor-background);
 	border: 1px solid var(--tpc-tiddler-editor-border);
-	border-radius: var(--vp-radius);
-	font-family: var(--vp-font-ui);
+	border-radius: var(--btc-radius);
+	font-family: var(--btc-font-ui);
 }
 
 .tc-document-tiddler-toolbar button svg,
@@ -131,7 +131,7 @@ div.tc-edit-template-document-tiddler-heading a:hover {
 		inline-size: auto;
 		max-inline-size: 100%;
 		border-inline-end: none;
-		border-block-end: 1px solid var(--vp-rule);
+		border-block-end: 1px solid var(--btc-rule);
 	}
 }
 

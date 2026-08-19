@@ -2,8 +2,8 @@ title: $:/themes/BurningTreeC/vanilla-paper/sidebar-toggle
 
 \whitespace trim
 <$list filter="[[$:/state/sidebar]get[text]] +[else[yes]!match[no]]" variable="ignore">
-<$button set="$:/state/sidebar" setTo="no" tooltip={{$:/language/Buttons/HideSideBar/Hint}} aria-label={{$:/language/Buttons/HideSideBar/Caption}} class="tc-btn-invisible tc-hide-sidebar-btn vp-sidebar-toggle">{{$:/core/images/chevron-right}}</$button>
+<$button set="$:/state/sidebar" setTo="no" tooltip={{$:/language/Buttons/HideSideBar/Hint}} aria-label={{$:/language/Buttons/HideSideBar/Caption}} class="tc-btn-invisible tc-hide-sidebar-btn btc-sidebar-toggle">{{$:/core/images/chevron-right}}</$button>
 </$list>
 <$list filter="[[$:/state/sidebar]get[text]] +[else[yes]match[no]]" variable="ignore">
-<$button set="$:/state/sidebar" setTo="yes" tooltip={{$:/language/Buttons/ShowSideBar/Hint}} aria-label={{$:/language/Buttons/ShowSideBar/Caption}} class="tc-btn-invisible tc-show-sidebar-btn vp-sidebar-toggle">{{$:/core/images/chevron-left}}</$button>
+<$button set="$:/state/sidebar" setTo="yes" tooltip={{$:/language/Buttons/ShowSideBar/Hint}} aria-label={{$:/language/Buttons/ShowSideBar/Caption}} class="tc-btn-invisible tc-show-sidebar-btn btc-sidebar-toggle">{{$:/core/images/chevron-left}}</$button>
 </$list>

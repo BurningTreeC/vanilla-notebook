@@ -3,7 +3,7 @@ tags: $:/tags/TopLeftBar
 list-before: 
 
 \whitespace trim
-<$list filter="[{$:/themes/BurningTreeC/vanilla-paper/options/sidebarside}match[start]]" variable="ignore">
+<$list filter="[{$:/theme}addsuffix[/options/sidebarside]get[text]match[start]]" variable="ignore">
 <$list filter="[[$:/plugins/tiddlywiki/menubar]!is[tiddler]]" variable="ignore">
 {{$:/themes/BurningTreeC/vanilla-paper/sidebar-toggle}}
 </$list>

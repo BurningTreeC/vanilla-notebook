@@ -1,0 +1,2002 @@
+title: $:/themes/BurningTreeC/vanilla-paper/3-surface
+tags: [[$:/tags/Stylesheet]]
+code-body: yes
+
+\rules only filteredtranscludeinline transcludeinline macrodef macrocallinline
+
+/* Hallmark · theme: Paper · genre: editorial · tone: editorial
+ * states: default · hover · focus · active · disabled · loading · error · success
+ * contrast: pass
+ *
+ * ============================================================================
+ * PAPER — BASE
+ * ============================================================================
+ *
+ * A standalone theme. It does NOT depend on vanilla and does not inherit a
+ * single rule from it; vanilla was read as a reference for which class names
+ * TiddlyWiki actually emits, and nothing more.
+ *
+ * Colour discipline
+ * -----------------
+ * There is not one hardcoded colour in this file. Every colour resolves from
+ * `--tpc-*`, the custom properties the core generates from the active palette
+ * in core/stylesheets/custom-properties.tid — which PageStylesheet transcludes
+ * before any theme stylesheet, so they are always in scope. Everything else is
+ * derived from those with color-mix() in OKLCH.
+ *
+ * The practical payoff: this theme re-tints itself correctly under ANY
+ * palette, including ones that did not exist when it was written. Switch to
+ * Nord or Solarized and the rules, shadows and washes all follow.
+ *
+ * The paper, three moves only
+ * ------------------------------
+ *   1. Tiddlers are sheets of paper on a desk — warm ground, cream sheet,
+ *      one soft shadow.
+ *   2. A red margin rule runs down each sheet, the way ruled paper has
+ *      one. Drawn as a pseudo-element with `inset-inline-start`, so it lands
+ *      on the correct side in RTL without a second rule.
+ *   3. The editor is ruled paper. The rules are locked to the editor's own
+ *      line-height and use `background-attachment: local`, so text sits ON
+ *      the lines and the lines scroll with it.
+ *
+ * Restraint is the point. No torn edges, no paper texture, no rotation, no
+ * fake spiral binding.
+ * ============================================================================
+ */
+
+/* ==========================================================================
+** Derived tokens
+** ========================================================================== */
+
+:root {
+
+	--btc-font-body: {{$:/themes/BurningTreeC/vanilla-paper/settings/fontfamily}};
+	--btc-font-ui: {{$:/themes/BurningTreeC/vanilla-paper/settings/uifontfamily}};
+	--btc-font-code: {{$:/themes/BurningTreeC/vanilla-paper/settings/codefontfamily}};
+
+	--btc-size: {{$:/themes/BurningTreeC/vanilla-paper/metrics/fontsize}};
+	--btc-lh: {{$:/themes/BurningTreeC/vanilla-paper/metrics/lineheight}};
+	--vp-body-size: {{$:/themes/BurningTreeC/vanilla-paper/metrics/bodyfontsize}};
+	--vp-body-lh: {{$:/themes/BurningTreeC/vanilla-paper/metrics/bodylineheight}};
+	--vp-margin: {{$:/themes/BurningTreeC/vanilla-paper/metrics/marginrule}};
+
+	/* A 4pt spacing scale */
+	--btc-space-2xs: 4px;
+	--btc-space-xs: 8px;
+	--btc-space-sm: 12px;
+	--btc-space-md: 16px;
+	--btc-space-lg: 24px;
+	--btc-space-xl: 32px;
+	--btc-space-2xl: 48px;
+
+	--btc-radius: 3px;
+	--btc-radius-lg: 6px;
+
+	/*
+	** Distance from the top of the story river to the top of the first
+	** tiddler's title: the river's own gutter, the sheet's hairline border,
+	** then the sheet's padding. The sidebar header reuses it so the site title
+	** lands on exactly the same line. Derived rather than hardcoded, so it
+	** survives a change to the gutter or the sheet padding.
+	*/
+	--vp-title-offset: calc(var(--btc-gutter) + 1px + var(--btc-space-lg));
+
+	/*
+	** Tiddler title size, as a token because two separate elements need it.
+	** The icon span is a SIBLING of the h2, not a child (see
+	** core/ui/ViewTemplate/title.tid) — both sit inside the link. So an icon
+	** sized in `em` resolves against .tc-titlebar's font-size, not the title's,
+	** and ends up at body size next to a 1.75rem heading: small, and sitting
+	** on the wrong optical line. Vanilla avoids this by putting the title size
+	** on .tc-titlebar itself; Paper keeps the size on .tc-title and shares
+	** the value through this token instead.
+	*/
+	--btc-title-size: 1.75rem;
+
+	/* How far the title icon rides above the first line's centre. 0 = exact
+	   centre; larger raises it toward the cap line. */
+	--btc-title-icon-nudge: 0.08em;
+
+	/* Width of the sheet's inline-start gutter on a phone, sized as a tap
+	   target for the fold banner that lives in it. */
+	--btc-fold-gutter: 28px;
+
+	/* Ink, mixed in OKLCH so the steps stay perceptually even on any palette */
+	--btc-ink-soft: color-mix(in oklch, var(--tpc-foreground) 72%, var(--tpc-background));
+	--btc-ink-faint: color-mix(in oklch, var(--tpc-foreground) 45%, var(--tpc-background));
+
+	--btc-rule: color-mix(in oklch, var(--tpc-foreground) 16%, var(--tpc-background));
+	--btc-rule-faint: color-mix(in oklch, var(--tpc-foreground) 9%, var(--tpc-background));
+	--vp-paper-edge: color-mix(in oklch, var(--tpc-foreground) 11%, var(--tpc-background));
+
+	--btc-shadow: color-mix(in srgb, var(--tpc-foreground) 16%, transparent);
+	--btc-shadow-soft: color-mix(in srgb, var(--tpc-foreground) 8%, transparent);
+
+	--vp-accent: var(--tpc-primary);
+	--btc-accent-wash: color-mix(in oklch, var(--tpc-primary) 12%, var(--tpc-background));
+	--btc-accent-edge: color-mix(in oklch, var(--tpc-primary) 40%, var(--tpc-background));
+
+	/* The margin rule borrows the palette's own highlight hue, so it stays
+	   red-family on Vanilla Paper Day and still reads as an accent on palettes
+	   that were never designed with a margin rule in mind. */
+	--vp-margin-rule: color-mix(in oklch, var(--tpc-alert-highlight) 58%, var(--tpc-background));
+
+	--btc-focus: var(--tpc-primary);
+
+	/*
+	** Drag and drop has its own colour, and it is NOT the accent.
+	** `dropzone-background` is a standard palette entry and every palette in
+	** the wild sets it green, including core Vanilla - green-for-drop is the
+	** convention, not a Paper decision. Deriving the drag language from the
+	** accent instead would have this theme fighting whatever palette is loaded,
+	** and would have paired a green fill with a navy rule on Vanilla Paper Day.
+	*/
+	--btc-drop: var(--tpc-dropzone-background);
+
+	/* The active palette's own color-scheme field, which is what the core reads
+	   too (core/modules/editor/engines/framed.js). Palettes that omit it fall
+	   back to `light dark` so form controls still adapt rather than being left
+	   with no scheme at all - an empty value here would make the whole
+	   declaration invalid. */
+	color-scheme: {{{ [{$:/palette}get[color-scheme]] ~[[light dark]] }}};
+	accent-color: var(--tpc-primary);
+}
+
+/* Graceful degradation for engines without color-mix(). Everything stays
+   legible; it just loses the perceptual mixing. */
+@supports not (color: color-mix(in oklch, red, blue)) {
+	:root {
+		--btc-ink-soft: var(--tpc-foreground);
+		--btc-ink-faint: var(--tpc-muted-foreground);
+		--btc-rule: var(--tpc-tiddler-border);
+		--btc-rule-faint: var(--tpc-tiddler-border);
+		--vp-paper-edge: var(--tpc-tiddler-border);
+		--btc-shadow: rgba(0, 0, 0, 0.16);
+		--btc-shadow-soft: rgba(0, 0, 0, 0.08);
+		--btc-accent-wash: var(--tpc-message-background);
+		--btc-accent-edge: var(--tpc-primary);
+		--vp-margin-rule: var(--tpc-alert-highlight);
+	}
+}
+
+/* ==========================================================================
+** The sheet — story river and tiddler frames
+** ========================================================================== */
+
+.tc-story-river {
+	container-type: inline-size;
+	container-name: river;
+}
+
+.tc-tiddler-frame {
+	position: relative;
+
+	/*
+	** Published so descendants can track the sheet instead of re-deriving its
+	** geometry and drifting out of step with it. The unfold banner is the
+	** consumer: it is pinned to the sheet's inner bottom edge, so it needs the
+	** sheet's corner radius, and both change at narrow widths.
+	*/
+	--btc-frame-radius: var(--btc-radius);
+
+	/*
+	** The sheet's inline-start gutter, and it is UNCONDITIONAL.
+	**
+	** It is wider than the other three sides because a paper page has a
+	** margin, and the margin is the point - the red rule is only what marks
+	** it. Switching the rule off leaves the margin there and stops drawing the
+	** line in it, which is how ruled paper without a printed margin behaves;
+	** collapsing the gutter as well would change the measure of the text and
+	** re-flow the whole page for what is meant to be a decorative setting.
+	**
+	** Published as a token because the sticky title strip has to span exactly
+	** the same distance, and two copies of this calculation would drift.
+	*/
+	--vp-sheet-pad-start: calc(var(--vp-margin) + var(--btc-space-lg));
+
+	margin-block-end: var(--btc-space-lg);
+	padding: var(--btc-space-lg);
+	padding-inline-start: var(--vp-sheet-pad-start);
+	background-color: var(--tpc-tiddler-background);
+	border: 1px solid var(--vp-paper-edge);
+	border-radius: var(--btc-radius);
+	box-shadow: 0 1px 2px var(--btc-shadow-soft), 0 6px 18px -10px var(--btc-shadow);
+	transition: box-shadow 180ms var(--btc-ease-out);
+}
+
+.tc-tiddler-frame:focus-within {
+	box-shadow: 0 1px 2px var(--btc-shadow-soft), 0 10px 28px -12px var(--btc-shadow);
+}
+
+/*
+** The margin rule. A pseudo-element rather than a background gradient so that
+** `inset-inline-start` puts it on the correct edge in RTL for free.
+*/
+.vp-margin-rule .tc-tiddler-frame::before {
+	content: "";
+	position: absolute;
+	inset-block: 0;
+	inset-inline-start: var(--vp-margin);
+	inline-size: 1px;
+	background-color: var(--vp-margin-rule);
+	pointer-events: none;
+}
+
+.tc-tiddler-frame.tc-tiddler-edit-frame {
+	background-color: var(--tpc-tiddler-editor-background);
+	border-color: var(--btc-accent-edge);
+}
+
+/*
+** Narrow river: the margin rule costs more than it gives, so it goes - and the
+** sheet's gutter goes with it, because `padding` here is a SHORTHAND that
+** resets the inline-start padding reserving that gutter.
+**
+** That matters beyond the stripe. The fold banner is absolutely positioned at
+** the padding edge, so the moment the gutter collapses it has nowhere to sit
+** and lands on the text. The fix therefore has to fire at exactly this width,
+** not at some separate viewport breakpoint - the two are the same event.
+**
+** So when the fold bar is enabled the sheet slides to the inline start by the
+** story river's own padding and takes that width with it. The sheet's width is
+** auto, so moving the start edge grows it by exactly that amount and the end
+** edge stays put; the reclaimed space pays for a gutter sized as a tap target.
+** Content ends up slightly WIDER than before, not narrower.
+**
+** Gated on .btc-fold-bar: with the fold/unfold bars switched off there is
+** nothing to reserve room for, and the sheet should keep its plain padding.
+*/
+@container river (max-width: 34rem) {
+
+	.tc-tiddler-frame {
+		--vp-sheet-pad-start: var(--btc-space-md);
+		padding: var(--btc-space-md);
+		padding-inline-start: var(--vp-sheet-pad-start);
+	}
+
+	.vp-margin-rule .tc-tiddler-frame::before {
+		display: none;
+	}
+
+	/*
+	** Only the token is restated. `padding-inline-start` above reads it with
+	** var(), and var() resolves against the element's OWN computed value, so
+	** overriding the token here moves the padding with it - one source of
+	** truth for the gutter rather than two that can drift.
+	*/
+	.btc-fold-bar .tc-tiddler-frame {
+		--vp-sheet-pad-start: var(--btc-fold-gutter);
+		margin-inline-start: calc(-0.5 * var(--btc-gutter));
+	}
+}
+
+/* ==========================================================================
+** Typography
+** ========================================================================== */
+
+.tc-tiddler-body {
+	font-family: var(--btc-font-body);
+	font-size: var(--vp-body-size);
+	line-height: var(--vp-body-lh);
+	color: var(--tpc-foreground);
+	margin-block-start: var(--btc-space-md);
+	max-inline-size: 68ch;
+}
+
+:is(.tc-tiddler-body, .tc-tiddler-preview-preview) > * + * {
+	margin-block-start: var(--btc-space-md);
+}
+
+.tc-title {
+	font-family: var(--btc-font-body);
+	font-size: var(--btc-title-size);
+	font-style: normal;
+	font-weight: 600;
+	line-height: 1.2;
+	letter-spacing: -0.011em;
+	color: var(--tpc-tiddler-title-foreground);
+	text-wrap: balance;
+	overflow-wrap: anywhere;
+	min-width: 0;
+}
+
+.tc-subtitle {
+	font-family: var(--btc-font-ui);
+	font-size: 0.8125rem;
+	color: var(--tpc-tiddler-subtitle-foreground);
+	margin-block-start: var(--btc-space-2xs);
+	display: flex;
+	gap: var(--btc-space-2xs);
+	align-items: baseline;
+	flex-wrap: wrap;
+}
+
+:is(.tc-tiddler-body, .tc-tiddler-preview-preview) :is(h1, h2, h3, h4, h5, h6) {
+	font-family: var(--btc-font-body);
+	font-style: normal;
+	font-weight: 600;
+	line-height: 1.25;
+	color: var(--tpc-tiddler-title-foreground);
+	margin-block-start: var(--btc-space-xl);
+	text-wrap: balance;
+	overflow-wrap: anywhere;
+}
+
+:is(.tc-tiddler-body, .tc-tiddler-preview-preview) h1 { font-size: 1.5rem; }
+:is(.tc-tiddler-body, .tc-tiddler-preview-preview) h2 { font-size: 1.3125rem; }
+:is(.tc-tiddler-body, .tc-tiddler-preview-preview) h3 { font-size: 1.125rem; }
+:is(.tc-tiddler-body, .tc-tiddler-preview-preview) h4 { font-size: 1rem; }
+
+:is(.tc-tiddler-body, .tc-tiddler-preview-preview) :is(h5, h6) {
+	font-size: 0.875rem;
+	font-family: var(--btc-font-ui);
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: var(--btc-ink-faint);
+}
+
+/* A drawn rule under section heads, the way a printed page separates them */
+:is(.tc-tiddler-body, .tc-tiddler-preview-preview) h2 {
+	padding-block-end: var(--btc-space-2xs);
+	border-block-end: 1px solid var(--btc-rule);
+}
+
+:is(.tc-tiddler-body, .tc-tiddler-preview-preview) blockquote {
+	margin-inline: 0;
+	padding-inline-start: var(--btc-space-md);
+	border-inline-start: 2px solid var(--vp-margin-rule);
+	color: var(--btc-ink-soft);
+}
+
+.tc-big-quote {
+	font-family: var(--btc-font-body);
+	font-size: 1.25rem;
+	font-style: normal;
+	line-height: 1.45;
+	color: var(--btc-ink-soft);
+}
+
+:is(.tc-tiddler-body, .tc-tiddler-preview-preview) :is(em, i) {
+	font-style: italic;
+}
+
+:is(.tc-tiddler-body, .tc-tiddler-preview-preview) hr {
+	border: none;
+	block-size: 1px;
+	background-color: var(--btc-rule);
+	margin-block: var(--btc-space-xl);
+}
+
+.tc-muted {
+	color: var(--tpc-muted-foreground);
+}
+
+/* ==========================================================================
+** Links
+** ========================================================================== */
+
+.tc-tiddlylink {
+	color: var(--tpc-tiddler-link-foreground);
+	text-decoration: none;
+	text-underline-offset: 0.16em;
+	text-decoration-thickness: 1px;
+	border-radius: 2px;
+	transition: color 120ms var(--btc-ease-out);
+}
+
+:is(.tc-tiddler-body, .tc-tiddler-preview-preview) .tc-tiddlylink {
+	text-decoration: underline;
+	text-decoration-color: var(--btc-accent-edge);
+}
+
+.tc-tiddlylink:hover {
+	text-decoration: underline;
+	text-decoration-color: currentColor;
+}
+
+.tc-tiddlylink-missing {
+	color: var(--tpc-muted-foreground);
+	text-decoration-style: dotted;
+	text-decoration-line: underline;
+}
+
+.tc-tiddlylink-external {
+	color: var(--tpc-external-link-foreground);
+	background-color: var(--tpc-external-link-background);
+}
+
+.tc-tiddlylink-external:visited {
+	color: var(--tpc-external-link-foreground-visited);
+}
+
+/* ==========================================================================
+** Buttons — all eight states
+** ========================================================================== */
+
+.tc-btn-invisible,
+.tc-btn-boxed,
+.tc-btn-rounded,
+.tc-btn-mini,
+.tc-btn-big-green,
+button.tc-btn-invisible {
+	font-family: var(--btc-font-ui);
+	cursor: pointer;
+	transition:
+		background-color 120ms var(--btc-ease-out),
+		color 120ms var(--btc-ease-out),
+		border-color 120ms var(--btc-ease-out),
+		translate 80ms var(--btc-ease-out);
+}
+
+.tc-btn-invisible {
+	background: none;
+	border: none;
+	padding: var(--btc-space-2xs);
+	margin: 0;
+	color: inherit;
+	border-radius: var(--btc-radius);
+	line-height: 1;
+}
+
+.tc-btn-invisible:hover {
+	background-color: var(--btc-rule-faint);
+}
+
+.tc-btn-invisible:active {
+	translate: 0 1px;
+}
+
+.tc-btn-boxed,
+.tc-btn-rounded {
+	font-size: 0.8125rem;
+	padding: var(--btc-space-2xs) var(--btc-space-sm);
+	color: var(--tpc-foreground);
+	background-color: transparent;
+	border: 1px solid var(--btc-rule);
+	border-radius: var(--btc-radius);
+}
+
+.tc-btn-rounded {
+	border-radius: 999px;
+}
+
+.tc-btn-boxed:hover,
+.tc-btn-rounded:hover {
+	background-color: var(--btc-accent-wash);
+	border-color: var(--btc-accent-edge);
+}
+
+.tc-btn-boxed:active,
+.tc-btn-rounded:active {
+	translate: 0 1px;
+}
+
+.tc-btn-big-green,
+.tc-primary-btn {
+	font-size: 0.9375rem;
+	padding: var(--btc-space-xs) var(--btc-space-md);
+	color: var(--tpc-background);
+	background-color: var(--tpc-primary);
+	border: 1px solid transparent;
+	border-radius: var(--btc-radius);
+}
+
+.tc-btn-big-green:hover,
+.tc-primary-btn:hover {
+	background-color: color-mix(in oklch, var(--tpc-primary) 85%, var(--tpc-foreground));
+}
+
+.tc-btn-big-green:active,
+.tc-primary-btn:active {
+	translate: 0 1px;
+}
+
+.tc-btn-mini {
+	font-size: 0.75rem;
+	padding: 0 var(--btc-space-2xs);
+	color: var(--tpc-muted-foreground);
+	background: none;
+	border: 1px solid var(--btc-rule);
+	border-radius: var(--btc-radius);
+}
+
+/* Disabled */
+:is(button, .tc-btn-boxed, .tc-btn-rounded, .tc-btn-big-green, .tc-primary-btn):disabled,
+:is(button, .tc-btn-boxed, .tc-btn-rounded):disabled:hover {
+	opacity: 0.45;
+	cursor: not-allowed;
+	background-color: transparent;
+	border-color: var(--btc-rule);
+	translate: none;
+}
+
+/* Loading / error / success — driven by data-state so any widget can opt in */
+[data-state="loading"] {
+	cursor: progress;
+	color: var(--tpc-muted-foreground);
+}
+
+[data-state="error"] {
+	color: var(--tpc-alert-highlight);
+	border-color: var(--tpc-alert-highlight);
+}
+
+[data-state="success"] {
+	color: var(--tpc-download-background);
+	border-color: var(--tpc-download-background);
+}
+
+/* Toolbar and control glyphs */
+.tc-tiddler-controls button svg,
+.tc-page-controls button svg,
+.tc-topbar button svg {
+	fill: var(--tpc-tiddler-controls-foreground);
+	transition: fill 120ms var(--btc-ease-out);
+}
+
+.tc-tiddler-controls button:hover svg,
+.tc-page-controls button:hover svg {
+	fill: var(--tpc-tiddler-controls-foreground-hover);
+}
+
+.tc-tiddler-controls button.tc-selected svg,
+.tc-page-controls button.tc-selected svg {
+	fill: var(--tpc-tiddler-controls-foreground-selected);
+}
+
+.tc-tiddler-controls {
+	display: flex;
+	gap: var(--btc-space-2xs);
+	align-items: center;
+	float: inline-end;
+}
+
+/*
+** Controls stay hidden until the sheet is engaged — but never hidden from
+** keyboards, which is why :focus-within is in the selector.
+**
+** The hide is scoped to controls INSIDE a tiddler frame, and it has to be.
+** .tc-tiddler-controls is not private to the story river: the core reuses it
+** in TiddlerInfo, and plugins reuse it for their own panels — the tour's close
+** button (plugins/tiddlywiki/tour/tour-panel.tid) and the help panel
+** (plugins/tiddlywiki/help/HelpPanel.tid) among them. Hiding it unscoped meant
+** every one of those was set to opacity 0 with nothing that could ever bring
+** it back, because the reveal below needs a .tc-tiddler-frame ancestor that
+** those panels do not have. The tour's only way out became invisible.
+*/
+.tc-tiddler-frame .tc-tiddler-controls {
+	opacity: 0;
+	transition: opacity 140ms var(--btc-ease-out);
+}
+
+.tc-tiddler-frame:hover .tc-tiddler-controls,
+.tc-tiddler-frame:focus-within .tc-tiddler-controls {
+	opacity: 1;
+}
+
+/* Scoped to match the rule above. A media query adds no specificity of its
+   own, so a bare .tc-tiddler-controls here would lose to the two-class
+   selector and touch devices would keep the hidden controls. */
+@media (hover: none) {
+	.tc-tiddler-frame .tc-tiddler-controls {
+		opacity: 1;
+	}
+}
+
+.tc-dirty-indicator {
+	color: var(--tpc-dirty-indicator);
+}
+
+/* ==========================================================================
+** Tags
+** ========================================================================== */
+
+.tc-tags-wrapper {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--btc-space-2xs);
+	margin-block-start: var(--btc-space-sm);
+}
+
+.tc-tag-label {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--btc-space-2xs);
+	font-family: var(--btc-font-ui);
+	font-size: 0.75rem;
+	line-height: 1.6;
+	padding: 1px var(--btc-space-xs);
+	border-radius: 999px;
+	background-color: var(--tpc-tag-background);
+	color: var(--tpc-tag-foreground);
+
+	/*
+	** `break-spaces` is Vanilla's choice and worth keeping: a multi-word tag
+	** wraps at its spaces, and the spaces survive at the line end so the pill
+	** does not visually lose a word boundary. `overflow-wrap: anywhere` stays
+	** alongside it to break a single unbroken tag that is wider than the
+	** sidebar — the two cover different failures.
+	*/
+	white-space: break-spaces;
+	overflow-wrap: anywhere;
+
+	transition: background-color 120ms var(--btc-ease-out);
+}
+
+/*
+** Tag pills own their hover and pressed states.
+**
+** A pill is a .tc-btn-invisible, so it was picking up that button's grey hover
+** wash, and clicking one opens a dropdown - which re-renders the button, drops
+** :hover for a frame, and flashes the pill back to its resting colour before
+** the pointer is noticed again. Giving hover, active and selected the SAME
+** background removes the difference there is to flash between, and the short
+** transition covers the frame in which the node is replaced.
+*/
+.tc-tag-label:hover,
+.tc-tag-label:active,
+.tc-tag-label.tc-selected,
+.tc-btn-invisible.tc-tag-label:hover {
+	background-color: color-mix(in oklch, var(--tpc-tag-background) 82%, var(--tpc-foreground));
+	color: var(--tpc-tag-foreground);
+}
+
+.tc-untagged-label {
+	background-color: var(--tpc-untagged-background);
+}
+
+.tc-untagged-label:hover,
+.tc-untagged-label:active,
+.tc-btn-invisible.tc-untagged-label:hover {
+	background-color: color-mix(in oklch, var(--tpc-untagged-background) 82%, var(--tpc-foreground));
+}
+
+/*
+** The remove button sits INSIDE the pill, so it has to be pill-sized: the
+** button's own 4px padding and a full-em glyph make it taller than the label
+** it belongs to. Flex centring plus a glyph a shade under the cap height puts
+** it on the same optical line as the text.
+*/
+.tc-remove-tag-button {
+	display: inline-flex;
+	align-items: center;
+	padding: 0;
+	opacity: 0.6;
+}
+
+.tc-remove-tag-button svg {
+	inline-size: 0.85em;
+	block-size: 0.85em;
+}
+
+.tc-remove-tag-button:hover {
+	opacity: 1;
+}
+
+/* ==========================================================================
+** Forms and the ruled editor
+** ========================================================================== */
+
+input,
+textarea,
+select,
+.tc-edit-texteditor {
+	font-family: var(--btc-font-ui);
+	font-size: var(--btc-size);
+	color: var(--tpc-foreground);
+	background-color: var(--tpc-background);
+	border: 1px solid var(--tpc-tiddler-editor-border);
+	border-radius: var(--btc-radius);
+	padding: var(--btc-space-xs);
+	transition: border-color 120ms var(--btc-ease-out), box-shadow 120ms var(--btc-ease-out);
+}
+
+input:hover,
+textarea:hover {
+	border-color: var(--btc-ink-faint);
+}
+
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+	border-color: var(--tpc-primary);
+}
+
+input:disabled,
+textarea:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.tc-tiddler-frame .tc-edit-texteditor {
+	inline-size: 100%;
+	margin-block: var(--btc-space-2xs);
+}
+
+/*
+** `.tc-tiddler-edit-title` is NOT the title input.
+**
+** It is the edit-mode control bar — core/ui/EditTemplate/controls.tid emits
+** `<div class="tc-tiddler-title tc-tiddler-edit-title tc-clearfix">` holding
+** the delete/cancel/done buttons. The title input is a separate element
+** (`input.tc-titlebar.tc-edit-texteditor`, from EditTemplate/title.tid) and is
+** already sized by the .tc-edit-texteditor rule above.
+**
+** It must keep `width: auto`. It also carries `.tc-tiddler-title`, so with
+** sticky titles on it inherits that rule's negative inline margins, which
+** widen it from the sheet's content box out to its padding box. Negative
+** margins only expand a box whose width is auto — give it an explicit
+** `inline-size: 100%` and they merely shift it, leaving it short by exactly
+** the sheet's padding (82px here) on the inline end.
+*/
+.tc-tiddler-edit-title {
+	font-weight: 600;
+}
+
+/*
+** Ruled paper.
+**
+** The rule pitch is bound to the editor's own line-height, so text sits on the
+** lines instead of drifting off them. `background-attachment: local` ties the
+** rules to the content box, so they scroll WITH the text rather than staying
+** pinned to the element.
+*/
+.vp-ruled-editor textarea.tc-edit-texteditor {
+	--vp-edit-lh: 26px;
+	font-family: var(--btc-font-code);
+	line-height: var(--vp-edit-lh);
+	padding-block-start: var(--btc-space-xs);
+	background-color: var(--tpc-tiddler-editor-background);
+	background-image: repeating-linear-gradient(
+		to bottom,
+		transparent 0,
+		transparent calc(var(--vp-edit-lh) - 1px),
+		var(--btc-rule-faint) calc(var(--vp-edit-lh) - 1px),
+		var(--btc-rule-faint) var(--vp-edit-lh)
+	);
+	background-attachment: local;
+	background-position-y: var(--btc-space-xs);
+}
+
+.tc-edit-tags {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--btc-space-2xs);
+	align-items: center;
+	padding: var(--btc-space-2xs);
+	border: 1px solid var(--tpc-tiddler-editor-border);
+	border-radius: var(--btc-radius);
+}
+
+.tc-edit-tags input.tc-edit-texteditor {
+	border: none;
+	background: none;
+	inline-size: auto;
+	flex: 1 1 8rem;
+	min-inline-size: 0;
+}
+
+.tc-edit-fields {
+	inline-size: 100%;
+	border-collapse: collapse;
+	font-size: 0.8125rem;
+}
+
+/*
+** Stripe the FIELD rows specifically, not every tr. The table also contains
+** the "add a new field" row, which is not a .tc-edit-field — striping by
+** position alone colours it as though it were data.
+*/
+.tc-edit-fields > tbody > .tc-edit-field:nth-child(odd) {
+	background-color: var(--tpc-tiddler-editor-fields-odd);
+}
+
+.tc-edit-fields > tbody > .tc-edit-field:nth-child(even) {
+	background-color: var(--tpc-tiddler-editor-fields-even);
+}
+
+.tc-edit-fields :is(table, tr, td) {
+	border: none;
+	padding: var(--btc-space-2xs);
+}
+
+.tc-edit-fields :is(td, th) {
+	padding: var(--btc-space-2xs) var(--btc-space-xs);
+	text-align: start;
+}
+
+.tc-edit-fields.tc-edit-fields-small {
+	margin-block: 0;
+}
+
+.tc-tiddler-frame .tc-edit-fields input.tc-edit-fieldeditor,
+.tc-tiddler-frame .tc-edit-fields textarea.tc-edit-fieldeditor {
+	margin: 0;
+	padding: 2px 3px;
+}
+
+.tc-edit-field-value input {
+	inline-size: 100%;
+}
+
+.tc-edit-field-remove svg {
+	inline-size: 1em;
+	block-size: 1em;
+	fill: var(--tpc-muted-foreground);
+	vertical-align: middle;
+}
+
+/*
+** The "add a new field" row is an INLINE strip: name box, value box, button.
+**
+** This theme sets `.tc-tiddler-frame .tc-edit-texteditor { inline-size: 100% }`
+** for the body editor, and that also catches the add-field name input — which
+** is what breaks the strip apart, putting each control on its own full-width
+** line. Vanilla resets exactly this input back to auto for the same reason.
+*/
+/*
+** Vanilla resets this input to `width: auto` purely to undo the body editor's
+** 100%. `auto` on a text input means the browser's 20-character default, which
+** at this theme's 15px interface size comes out ~230px — wide enough that
+** label + name + arrow + value + button no longer fit one line and the button
+** wraps. An explicit ch width is both the reset and a deliberate size, and it
+** tracks the font rather than assuming a pixel value.
+*/
+.tc-edit-field-add-name-wrapper input.tc-edit-texteditor {
+	inline-size: 14ch;
+}
+
+/*
+** Keep the strip compact. These inputs carry .tc-edit-texteditor, so they pick
+** up the body editor's roomy padding — which is right for writing prose in and
+** wrong here, where label + name + arrow + value + button have to share one
+** line. At the theme's default padding the row lands a few pixels over and the
+** button wraps onto its own line.
+*/
+.tc-edit-field-add input.tc-edit-texteditor,
+.tc-edit-field-add input.tc-edit-fieldeditor {
+	padding: 2px 3px;
+	margin: 0;
+	vertical-align: middle;
+}
+
+.tc-edit-field-add-name-wrapper,
+.tc-edit-field-add-value,
+.tc-edit-field-add-button {
+	vertical-align: middle;
+}
+
+.tc-edit-field-add-value {
+	inline-size: 35%;
+}
+
+.tc-edit-field-add-button {
+	inline-size: 10%;
+}
+
+/* ---- Content-type selector ---- */
+
+.tc-type-selector-dropdown-wrapper {
+	min-inline-size: 24ch;
+}
+
+.tc-type-selector-dropdown-wrapper input.tc-edit-typeeditor {
+	min-inline-size: 20ch;
+}
+
+.tc-edit-type-dropdown a.tc-tiddlylink-missing {
+	font-style: normal;
+}
+
+/*
+** The edit template is a CSS GRID, not a stack.
+**
+** $:/core/ui/EditTemplate/body/default puts `tc-tiddler-editor` on a wrapper
+** together with either `tc-tiddler-preview` or `tc-tiddler-preview-hidden`,
+** then relies on the theme to lay out three named areas. Without the grid the
+** preview simply falls below the editor in source order instead of sitting
+** beside it, and the toolbar loses its span across the top.
+*/
+.tc-tiddler-editor {
+	display: grid;
+}
+
+.tc-tiddler-frame .tc-tiddler-editor.tc-tiddler-preview {
+	grid-template-areas:
+		"toolbar toolbar"
+		"editor preview";
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	grid-template-rows: auto 1fr;
+}
+
+.tc-tiddler-frame .tc-tiddler-editor.tc-tiddler-preview-hidden {
+	grid-template-areas:
+		"toolbar"
+		"editor";
+	grid-template-columns: minmax(0, 1fr);
+	grid-template-rows: auto 1fr;
+}
+
+.tc-tiddler-frame .tc-tiddler-editor.tc-tiddler-preview .tc-editor-toolbar,
+.tc-tiddler-frame .tc-tiddler-editor.tc-tiddler-preview-hidden .tc-editor-toolbar {
+	grid-area: toolbar;
+}
+
+.tc-tiddler-frame .tc-tiddler-editor.tc-tiddler-preview .tc-edit-texteditor,
+.tc-tiddler-frame .tc-tiddler-editor.tc-tiddler-preview-hidden .tc-edit-texteditor,
+.tc-tiddler-frame .tc-tiddler-editor.tc-tiddler-preview canvas.tc-edit-bitmapeditor,
+.tc-tiddler-frame .tc-tiddler-editor.tc-tiddler-preview-hidden canvas.tc-edit-bitmapeditor {
+	grid-area: editor;
+	max-inline-size: 100%;
+}
+
+.tc-tiddler-frame .tc-tiddler-editor.tc-tiddler-preview .tc-tiddler-preview-preview {
+	grid-area: preview;
+	overflow-wrap: anywhere;
+	word-break: normal;
+	border: 1px solid var(--tpc-tiddler-editor-border);
+	border-radius: var(--btc-radius);
+	margin: var(--btc-space-2xs) 0 3px var(--btc-space-2xs);
+	padding: var(--btc-space-xs);
+	background-color: var(--tpc-tiddler-background);
+
+	/*
+	** The preview must be set in the READING face, not the interface face.
+	** The markup does not carry .tc-tiddler-body, so it would otherwise
+	** inherit the sans UI stack and show something that is not what the
+	** tiddler will actually look like — which is the whole job of a preview.
+	*/
+	font-family: var(--btc-font-body);
+	font-size: var(--vp-body-size);
+	line-height: var(--vp-body-lh);
+	color: var(--tpc-foreground);
+}
+
+/* On a narrow river two columns stop being readable, so the preview drops
+   below the editor rather than being squeezed. */
+@container river (max-width: 44rem) {
+
+	.tc-tiddler-frame .tc-tiddler-editor.tc-tiddler-preview {
+		grid-template-areas:
+			"toolbar"
+			"editor"
+			"preview";
+		grid-template-columns: minmax(0, 1fr);
+		grid-template-rows: auto auto 1fr;
+	}
+
+	.tc-tiddler-frame .tc-tiddler-editor.tc-tiddler-preview .tc-tiddler-preview-preview {
+		margin-inline-start: 0;
+	}
+}
+
+/* ---- Editor toolbar ---- */
+
+.tc-editor-toolbar {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--btc-space-2xs);
+	align-items: center;
+	margin-block: var(--btc-space-xs);
+	padding-block-end: var(--btc-space-xs);
+	border-block-end: 1px solid var(--btc-rule);
+}
+
+.tc-editor-toolbar button {
+	vertical-align: middle;
+	color: var(--btc-ink-soft);
+	fill: var(--btc-ink-soft);
+	background-color: transparent;
+	border: 1px solid transparent;
+	border-radius: var(--btc-radius);
+	padding: 3px;
+	cursor: pointer;
+	transition: background-color 120ms var(--btc-ease-out), fill 120ms var(--btc-ease-out);
+}
+
+.tc-editor-toolbar button svg {
+	inline-size: 1.4em;
+	block-size: 1.2em;
+}
+
+.tc-editor-toolbar button:hover {
+	background-color: var(--btc-accent-wash);
+	border-color: var(--btc-accent-edge);
+	color: var(--tpc-foreground);
+	fill: var(--tpc-foreground);
+}
+
+.tc-editor-toolbar button.tc-selected {
+	background-color: var(--tpc-primary);
+	color: var(--tpc-background);
+	fill: var(--tpc-background);
+}
+
+.tc-editor-toolbar button.tc-text-editor-toolbar-item-adjunct {
+	margin-inline-start: 1px;
+	inline-size: 1em;
+	border-radius: 999px;
+}
+
+.tc-editor-toolbar button.tc-text-editor-toolbar-item-start-group {
+	margin-inline-start: var(--btc-space-sm);
+}
+
+.tc-editor-toolbar .tc-drop-down button.tc-btn-mini {
+	padding: 2px var(--btc-space-2xs);
+}
+
+.tc-editor-toolbar .tc-text-editor-toolbar-more button {
+	padding: 3px;
+	inline-size: auto;
+}
+
+.tc-editor-toolbar .tc-search-results {
+	padding: 0;
+}
+
+/* ---- Editor drop zone and image import ---- */
+
+.tc-dropzone-editor.tc-dragover .tc-editor-toolbar::after {
+	content: "";
+	position: absolute;
+	inset-block-start: 0;
+	inset-inline: 0;
+	block-size: 100%;
+	z-index: 10000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	pointer-events: none;
+	opacity: 0.9;
+	background-color: var(--tpc-background);
+	border: 3px dashed var(--btc-drop);
+	border-radius: var(--btc-radius);
+	color: var(--tpc-foreground);
+	font-weight: 600;
+}
+
+.tc-editor-import {
+	background-color: var(--tpc-pre-background);
+	border: 1px solid var(--btc-rule);
+	border-radius: var(--btc-radius);
+	box-shadow: 0 12px 32px -12px var(--btc-shadow);
+	padding: var(--btc-space-sm);
+	inline-size: 96%;
+	text-align: center;
+}
+
+.tc-editor-import img {
+	max-block-size: 500px;
+}
+
+.tc-tiddler-edit-frame em.tc-edit {
+	color: var(--tpc-muted-foreground);
+	font-style: normal;
+}
+
+/* ==========================================================================
+** Sidebar
+** ========================================================================== */
+
+.tc-sidebar-header {
+	padding: var(--btc-space-lg);
+	color: var(--tpc-sidebar-foreground);
+}
+
+/*
+** Sit the site title on the same line as the first tiddler's title.
+**
+** Two things have to be true for this to be exact rather than approximate.
+**
+** First the offsets must match, which --vp-title-offset handles. Second the
+** two headings must share font-size and line-height: baseline position within
+** a line box depends on the font's ascent, which CSS cannot read, so two
+** headings at different sizes cannot be baseline-aligned by arithmetic. Giving
+** them the same type makes aligning their box tops align their baselines
+** exactly, in whatever font the stack resolves to.
+**
+** Desktop only. Below the breakpoint the sidebar sits above the river rather
+** than beside it, so there is no shared line to align to.
+*/
+@media (min-width: {{$:/themes/BurningTreeC/vanilla-paper/metrics/sidebarbreakpoint}}) {
+
+	.tc-sidebar-header {
+		padding-block-start: var(--vp-title-offset);
+	}
+}
+
+.tc-site-title {
+	font-family: var(--btc-font-body);
+	font-size: var(--btc-title-size);
+	font-style: normal;
+	font-weight: 600;
+	line-height: 1.2;
+	letter-spacing: -0.011em;
+	color: var(--tpc-site-title-foreground);
+	text-wrap: balance;
+	overflow-wrap: anywhere;
+}
+
+.tc-sidebar-header .tc-title {
+	font-size: 1.5rem;
+}
+
+.tc-sidebar-header .tc-subtitle {
+	color: var(--tpc-sidebar-foreground);
+	margin-block-end: var(--btc-space-md);
+}
+
+.tc-sidebar-lists .tc-tiddlylink {
+	color: var(--tpc-sidebar-tiddler-link-foreground);
+}
+
+/*
+** The inline-block is for ordinary sidebar links only — it exists so the
+** vertical padding below actually enlarges the hit area, which an inline box
+** would paint but not reserve space for.
+**
+** It must NOT reach .tc-plugin-info. A plugin row is an <a> too, so this
+** selector matches it, and at (0,2,0) it outranks `.tc-plugin-info { display:
+** flex }` at (0,1,0). The row then shrink-wraps to its content instead of
+** filling the sidebar — which is why every plugin row came out a different
+** width. Vanilla never hits this because its sidebar rule sets colour only.
+*/
+.tc-sidebar-lists .tc-tiddlylink:not(.tc-plugin-info) {
+	display: inline-block;
+	padding-block: 1px;
+}
+
+.tc-sidebar-lists .tc-tiddlylink:hover {
+	color: var(--tpc-sidebar-tiddler-link-foreground-hover);
+}
+
+.tc-page-controls {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--btc-space-xs);
+	align-items: center;
+	margin-block: var(--btc-space-md);
+}
+
+.tc-page-controls svg {
+	fill: var(--tpc-sidebar-controls-foreground);
+	inline-size: 1.25em;
+	block-size: 1.25em;
+}
+
+.tc-page-controls button:hover svg {
+	fill: var(--tpc-sidebar-controls-foreground-hover);
+}
+
+.tc-sidebar-search {
+	margin-block: var(--btc-space-md);
+	display: flex;
+	gap: var(--btc-space-2xs);
+	align-items: center;
+}
+
+.tc-sidebar-search input {
+	inline-size: 100%;
+	min-inline-size: 0;
+	background-color: var(--tpc-background);
+}
+
+/* ==========================================================================
+** Tabs
+** ========================================================================== */
+
+.tc-tab-buttons {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 2px;
+	border-block-end: 1px solid var(--tpc-tab-border);
+}
+
+.tc-tab-buttons button {
+	font-family: var(--btc-font-ui);
+	font-size: 0.8125rem;
+	padding: var(--btc-space-2xs) var(--btc-space-sm);
+	color: var(--tpc-tab-foreground);
+	background-color: var(--tpc-tab-background);
+	border: 1px solid var(--tpc-tab-border);
+	border-block-end: none;
+	border-radius: var(--btc-radius) var(--btc-radius) 0 0;
+	cursor: pointer;
+	white-space: nowrap;
+	transition: background-color 120ms var(--btc-ease-out), color 120ms var(--btc-ease-out);
+}
+
+.tc-tab-buttons button:hover {
+	color: var(--tpc-foreground);
+}
+
+.tc-tab-buttons button.tc-tab-selected {
+	color: var(--tpc-tab-foreground-selected);
+	background-color: var(--tpc-tab-background-selected);
+	border-color: var(--tpc-tab-border-selected);
+	box-shadow: inset 0 2px 0 var(--tpc-primary);
+}
+
+.tc-tab-content {
+	padding-block-start: var(--btc-space-md);
+}
+
+.tc-sidebar-lists .tc-tab-buttons button {
+	background-color: var(--tpc-sidebar-tab-background);
+	color: var(--tpc-sidebar-tab-foreground);
+	border-color: var(--tpc-sidebar-tab-border);
+}
+
+/*
+** Both colours, from the same pair.
+**
+** This rule used to set only the background, leaving the text at
+** `tab-foreground-selected` from the rule above - a foreground from one pair on
+** a background from another. Palettes are not obliged to keep those two in
+** step, and several do not: on DarkPhotos the mixed pairing measured 1.21:1,
+** i.e. the label vanished, against 5.25:1 for the palette's own sidebar pair.
+**
+** Not every palette defines a sidebar foreground, so it is asked for directly
+** and the general tab colour is used when it is absent. `colour` would not
+** answer that question - it falls through to a default and always returns
+** something - which is why this reads the palette index.
+*/
+.tc-sidebar-lists .tc-tab-buttons button.tc-tab-selected {
+	color: {{{ [{$:/palette}getindex[sidebar-tab-foreground-selected]!is[blank]then[var(--tpc-sidebar-tab-foreground-selected)]] ~[[var(--tpc-tab-foreground-selected)]] }}};
+	background-color: var(--tpc-sidebar-tab-background-selected);
+	border-color: var(--tpc-sidebar-tab-border-selected);
+}
+
+.tc-tab-divider {
+	border: none;
+	block-size: 1px;
+	background-color: var(--tpc-tab-divider);
+}
+
+/* ==========================================================================
+** Topbar
+** ========================================================================== */
+
+.tc-topbar {
+	position: fixed;
+	z-index: 1200;
+	padding: var(--btc-space-xs);
+}
+
+.tc-topbar-left {
+	inset-block-start: 0;
+	inset-inline-start: 0;
+}
+
+.tc-topbar-right {
+	inset-block-start: 0;
+	inset-inline-end: 0;
+}
+
+.tc-topbar button svg {
+	fill: var(--tpc-sidebar-controls-foreground);
+}
+
+.tc-topbar button:hover svg {
+	fill: var(--tpc-sidebar-controls-foreground-hover);
+}
+
+/* ==========================================================================
+** TiddlyWiki layout utility classes
+**
+** These are functional, not decorative — core markup relies on them, so a
+** standalone theme has to carry them or the UI breaks.
+** ========================================================================== */
+
+.tc-flex { display: flex; }
+.tc-flex-row { flex-direction: row; }
+.tc-flex-column { flex-direction: column; }
+.tc-flex-grow-1 { flex-grow: 1; }
+.tc-flex-grow-2 { flex-grow: 2; }
+
+/*
+** Gap utilities are sized in `em`, not on the 4pt token scale.
+**
+** That looks like an inconsistency and is deliberate. These classes are
+** applied inline by core markup to separate one control from its neighbour —
+** `tc-small-gap-right` on the close button in the Open tab, `tc-tiny-gap-right`
+** beside the search field — so the gap has to scale with whatever text it sits
+** next to. A fixed 4px reads correctly at body size and far too tight beside a
+** title. The token scale governs layout; these govern inline rhythm.
+**
+** The values match Vanilla's, because core markup was authored against them —
+** an element spaced with `tc-small-gap-right` was judged at .5em, not at 4px.
+** My earlier fixed-pixel values were roughly half, which left the sidebar's
+** inline controls visibly cramped.
+*/
+.tc-tiny-gap { margin-inline: 0.25em; }
+.tc-tiny-gap-left { margin-inline-start: 0.25em; }
+.tc-tiny-gap-right { margin-inline-end: 0.25em; }
+.tc-tiny-v-gap-bottom { margin-block-end: 3px; }
+.tc-small-gap { margin-inline: 0.5em; }
+.tc-small-gap-left { margin-inline-start: 0.5em; }
+.tc-small-gap-right { margin-inline-end: 0.5em; }
+.tc-big-gap { margin-inline: 1em; }
+.tc-big-gap-left { margin-inline-start: 1em; }
+.tc-big-gap-right { margin-inline-end: 1em; }
+
+.tc-float-right { float: inline-end; }
+.tc-center { text-align: center; }
+.tc-vertical { display: block; }
+.tc-max-width { inline-size: 100%; }
+.tc-max-width-80 { inline-size: 80%; }
+.tc-word-break { overflow-wrap: anywhere; }
+.tc-first-link-nowrap .tc-tiddlylink:first-child { white-space: nowrap; }
+
+.tc-clearfix::after {
+	content: "";
+	display: table;
+	clear: both;
+}
+
+/*
+** Left inline, deliberately. `display: inline-flex` makes this an atomic inline
+** box, so it can never wrap internally - in the Control Panel's toolbar lists
+** the caption and its description are inside this span, and a long description
+** pushed the whole span onto its own line, leaving the checkbox stranded above
+** it. Vanilla styles only the svg here and leaves the span alone.
+**
+** The icons still line up: the svg rule near the top of this sheet gives them
+** `vertical-align: middle` and a 1em box.
+*/
+.tc-icon-wrapper {
+	display: inline;
+}
+
+.tc-image-button svg {
+	inline-size: 1em;
+	block-size: 1em;
+	vertical-align: middle;
+}
+
+.tc-menu-list-item {
+	display: block;
+}
+
+.tc-menu-list-subitem {
+	padding-inline-start: var(--btc-space-xs);
+}
+
+.tc-unfold-banner,
+.tc-fold-banner {
+	background: none;
+	border: none;
+	cursor: pointer;
+	color: var(--tpc-tiddler-controls-foreground);
+}
+
+.tc-unfold-banner:hover,
+.tc-fold-banner:hover {
+	color: var(--tpc-tiddler-controls-foreground-hover);
+}
+
+/* ==========================================================================
+** Mobile
+**
+** Hard floor: no horizontal scroll, no two-line clickable text, image-bearing
+** tracks use minmax(0, 1fr), display type wraps inside long words.
+** ========================================================================== */
+
+@media (max-width: 480px) {
+
+	/* Edge to edge on a phone. The gutter and the inline-start shift are NOT
+	   here: they belong to the container query that drops the margin rule, so
+	   they stay in step with it. */
+	.tc-tiddler-frame {
+		--btc-frame-radius: 0px;
+		border-radius: 0;
+		border-inline: none;
+	}
+
+	.tc-title {
+		font-size: 1.375rem;
+	}
+
+	.tc-tiddler-body {
+		font-size: 1rem;
+	}
+
+	.tc-modal {
+		inline-size: 100%;
+		border-radius: 0;
+	}
+
+	.tc-tab-buttons {
+		overflow-x: auto;
+		flex-wrap: nowrap;
+		scrollbar-width: none;
+	}
+}
+
+/* Touch targets */
+@media (pointer: coarse) {
+
+	.tc-btn-invisible,
+	.tc-tiddler-controls button,
+	.tc-page-controls button {
+		min-block-size: 32px;
+		min-inline-size: 32px;
+	}
+}
+
+/* ==========================================================================
+** The remaining surfaces — Paper's own decisions
+**
+** These are the gaps the structural pass deliberately skipped. Vanilla's
+** STRUCTURE is followed (what gets a border, what is muted, what is emphasised,
+** what carries a status colour) but every value is Paper's, resolved from
+** the palette. Where Vanilla hardcodes a literal — `green`, `#e0e0e0`, an acid
+** yellow hazard stripe — the signal is kept and the colour comes from a token,
+** so these surfaces re-tint with the palette like the rest of the theme.
+** ========================================================================== */
+
+/* ---- Alerts and help text ---- */
+
+.tc-alert-body > p {
+	margin: 0;
+}
+
+.tc-alert-subtitle {
+	color: var(--tpc-alert-muted-foreground);
+	font-weight: 600;
+	font-size: 0.8em;
+	margin-block-end: var(--btc-space-xs);
+}
+
+.tc-tiddler-help {
+	color: var(--tpc-muted-foreground);
+	margin-block-start: var(--btc-space-md);
+}
+
+.tc-system-title-prefix {
+	color: var(--tpc-muted-foreground);
+}
+
+.tc-menu-list-count {
+	font-weight: 600;
+}
+
+/* ---- Buttons ---- */
+
+.tc-btn-icon svg {
+	inline-size: 1em;
+	block-size: 1em;
+	fill: var(--tpc-muted-foreground);
+}
+
+/* A "fake" button used in documentation to depict a real one, so it should
+   read as the theme's own button rather than a live control. */
+.tc-btn-standard {
+	line-height: 1.8;
+	color: var(--btc-ink-soft);
+	background-color: var(--tpc-tab-background);
+	border: 1px solid var(--btc-rule);
+	border-radius: var(--btc-radius);
+	padding: 2px var(--btc-space-2xs);
+	margin-inline: var(--btc-space-2xs);
+}
+
+/* ---- Images ---- */
+
+.tc-bordered-image {
+	border: 1px solid var(--vp-paper-edge);
+	padding: var(--btc-space-2xs);
+	margin: var(--btc-space-2xs);
+	border-radius: var(--btc-radius);
+}
+
+.tc-fill-background {
+	fill: var(--tpc-background);
+}
+
+.tc-single-tiddler-window img,
+.tc-single-tiddler-window svg,
+.tc-single-tiddler-window embed,
+.tc-single-tiddler-window iframe {
+	max-inline-size: 100%;
+}
+
+/* ---- Control panel and tables ---- */
+
+.tc-control-panel td {
+	padding: var(--btc-space-2xs);
+}
+
+.tc-control-panel table > tbody > tr > td {
+	text-align: start;
+}
+
+.tc-control-panel table,
+.tc-control-panel table input,
+.tc-control-panel table textarea {
+	inline-size: 100%;
+}
+
+.tc-control-panel-setting {
+	border-block-start: 1px solid var(--btc-rule);
+	padding-block-start: var(--btc-space-xs);
+}
+
+.tc-table-no-border,
+.tc-table-no-border th,
+.tc-table-no-border td {
+	border: initial;
+}
+
+.tc-first-col-min-width td:nth-child(1) {
+	inline-size: 1%;
+}
+
+.tc-view-field-value {
+	word-break: break-all;
+}
+
+/* ---- Advanced search, choosers ---- */
+
+/* Full width. Vanilla's 60% leaves the field short of the button beside it and
+   a gap where nothing is; on a narrow sheet it is barely usable. */
+.tc-advanced-search input {
+	inline-size: 100%;
+}
+
+.tc-chooser {
+	border-inline: 1px solid var(--btc-rule);
+}
+
+/* ---- Diff ---- */
+
+.tc-diff-equal {
+	background-color: var(--tpc-diff-equal-background);
+	color: var(--tpc-diff-equal-foreground);
+}
+
+.tc-diff-tiddlers th {
+	text-align: end;
+	background-color: var(--tpc-background);
+	font-weight: normal;
+	font-style: italic;
+}
+
+.tc-diff-tiddlers pre {
+	margin: 0;
+	padding: 0;
+	border: none;
+	background: none;
+}
+
+/* ---- Editor fields ---- */
+
+.tc-edit-field-name {
+	text-align: end;
+}
+
+.tc-edit-field-value input,
+.tc-edit-max-width input,
+.tc-edit-max-width textarea {
+	inline-size: 100%;
+}
+
+.tc-edit-max-width input,
+.tc-edit-max-width textarea {
+	padding: 3px;
+}
+
+.tc-edit-tags-list {
+	margin-block: var(--btc-space-md);
+}
+
+.tc-type-selector .tc-edit-typeeditor {
+	inline-size: auto;
+}
+
+.tc-editor-importpopup {
+	inline-size: 100%;
+	block-size: 100%;
+}
+
+input.tc-palette-manager-colour-input {
+	inline-size: 100%;
+	padding: 0;
+}
+
+/* ---- Global tiddler body (the $:/ inspector panel) ----
+   Vanilla fills this with muted-foreground, which is a mid grey used as a
+   surface. Paper treats it as an inset note instead, matching the theme's
+   other info panels. */
+
+.tc-global-tiddler-body {
+	padding: var(--btc-space-2xs);
+	border: 1px solid var(--btc-rule);
+	border-radius: var(--btc-radius);
+	background-color: var(--tpc-tiddler-info-background);
+}
+
+.tc-global-tiddler-body-details {
+	background-color: var(--tpc-background);
+}
+
+.tc-global-tiddler-body pre {
+	margin: 0;
+	border: 1px solid var(--btc-rule);
+}
+
+.tc-global-tiddler-body-heading {
+	margin: 0 0 var(--btc-space-2xs) 0;
+	font-weight: normal;
+}
+
+.tc-global-tiddler-body-type {
+	margin: 0 0 var(--btc-space-2xs) 0;
+	border-block-end: 1px solid var(--btc-rule);
+}
+
+/* ---- Plugin install buttons ----
+   Vanilla uses the literals green / blue / red / orange. The signal is worth
+   keeping; the colours come from the palette's own status ramp so they stay
+   legible on a dark palette. */
+
+.tc-install-plugin {
+	font-weight: 600;
+	border-radius: var(--btc-radius);
+	padding: 3px var(--btc-space-2xs);
+	color: var(--tpc-background);
+	fill: var(--tpc-background);
+	background-color: var(--tpc-download-background);
+}
+
+.tc-install-plugin.tc-reinstall {
+	background-color: var(--tpc-primary);
+}
+
+.tc-install-plugin.tc-reinstall-downgrade {
+	background-color: var(--tpc-alert-highlight);
+}
+
+.tc-install-plugin.tc-reinstall-upgrade {
+	background-color: var(--tpc-stability-experimental);
+}
+
+/* ---- Plugin info panels ---- */
+
+.tc-plugin-info-dropdown {
+	border: 1px solid var(--btc-rule);
+	background-color: var(--tpc-background);
+	margin-block-start: -8px;
+}
+
+.tc-plugin-info-sub-plugins .tc-plugin-info-dropdown {
+	margin-inline: var(--btc-space-md);
+}
+
+.tc-plugin-info-dropdown-body {
+	padding: var(--btc-space-md) var(--btc-space-md) 0 var(--btc-space-md);
+	background-color: var(--tpc-background);
+}
+
+.tc-plugin-info-dropdown-message {
+	background-color: var(--tpc-message-background);
+	color: var(--tpc-message-foreground);
+	padding: var(--btc-space-xs) var(--btc-space-md);
+	font-weight: 600;
+	font-size: 0.8em;
+}
+
+.tc-plugin-info-sub-plugins {
+	padding: var(--btc-space-xs);
+	margin: 0 var(--btc-space-md) var(--btc-space-md) var(--btc-space-md);
+	background-color: var(--tpc-notification-background);
+	border-radius: var(--btc-radius);
+}
+
+.tc-plugin-info-sub-plugin-indicator {
+	margin: -16px var(--btc-space-md) 0 var(--btc-space-xl);
+}
+
+.tc-plugin-info-sub-plugin-indicator button {
+	color: var(--tpc-background);
+	background-color: var(--tpc-foreground);
+	border: none;
+	border-radius: 999px;
+	padding: 2px 7px;
+	font-size: 0.75em;
+}
+
+/*
+** Disabled plugin. Vanilla draws acid-yellow hazard stripes. The diagonal
+** stripe is a genuinely good "switched off" signal, so it stays — but built
+** from the palette so it reads as disabled rather than as an error, and works
+** on a dark palette where #ff0 on #eee would not.
+*/
+.tc-plugin-info-disabled {
+	background-image: repeating-linear-gradient(
+		45deg,
+		var(--btc-rule-faint) 0 10px,
+		var(--tpc-background) 10px 20px
+	);
+}
+
+.tc-plugin-info-disabled:hover {
+	background-image: repeating-linear-gradient(
+		45deg,
+		var(--btc-rule) 0 10px,
+		var(--tpc-background) 10px 20px
+	);
+}
+
+.tc-network-activity-background {
+	fill: var(--tpc-network-activity-foreground);
+}
+
+/* ---- Tiddler manager ---- */
+
+.tc-manager-control {
+	margin-block: var(--btc-space-xs);
+}
+
+.tc-manager-control select {
+	max-inline-size: 100%;
+}
+
+.tc-manager-icon-editor > button {
+	inline-size: 100%;
+}
+
+.tc-manager-icon-editor > button > svg,
+.tc-manager-icon-editor > button > img {
+	inline-size: 100%;
+	block-size: auto;
+}
+
+.tc-manager-list {
+	inline-size: 100%;
+	border: 1px solid var(--btc-rule);
+	border-block-end: none;
+}
+
+.tc-manager-list-item-heading-selected {
+	font-weight: 600;
+	color: var(--tpc-background);
+	fill: var(--tpc-background);
+	background-color: var(--tpc-foreground);
+}
+
+.tc-manager-list-item-content-item-body {
+	padding-inline: var(--btc-space-xs);
+}
+
+.tc-manager-list-item-content-item-body > pre {
+	margin-block: var(--btc-space-xs);
+	border: none;
+	background: inherit;
+}
+
+.tc-manager-list-item-content-item-body > table {
+	border: none;
+	padding: 0;
+	margin: 0;
+}
+
+.tc-manager-list-item-content-item-body > table td {
+	border: none;
+}
+
+.tc-tag-manager-tag {
+	inline-size: 100%;
+}
+
+/* ---- Test cases ---- */
+
+.tc-test-case-wrapper {
+	border: 1px solid var(--btc-rule);
+	border-radius: var(--btc-radius-lg);
+	background-color: var(--tpc-testcase-accent-level-1);
+}
+
+.tc-test-case-wrapper .tc-test-case-wrapper {
+	background-color: var(--tpc-testcase-accent-level-2);
+}
+
+.tc-test-case-wrapper .tc-test-case-wrapper .tc-test-case-wrapper {
+	background-color: var(--tpc-testcase-accent-level-3);
+}
+
+.tc-test-case-header {
+	font-weight: normal;
+	margin-block: var(--btc-space-xs);
+	padding-inline: var(--btc-space-xs);
+}
+
+.tc-test-case-header > h2 {
+	background-color: var(--tpc-background);
+	border-radius: var(--btc-radius);
+	padding: var(--btc-space-2xs);
+	border: none;
+}
+
+.tc-test-case-narrative {
+	padding: var(--btc-space-xs);
+}
+
+.tc-test-case-result-fail {
+	border: 1px solid var(--btc-rule);
+	background-color: var(--tpc-background);
+	border-radius: var(--btc-radius);
+	margin-inline: var(--btc-space-xs);
+	padding: 0;
+}
+
+.tc-test-case-result-fail-body {
+	padding: var(--btc-space-2xs);
+}
+
+.tc-test-case-result-fail-header {
+	background-color: var(--tpc-diff-delete-background);
+	color: var(--tpc-diff-delete-foreground);
+	border-start-start-radius: var(--btc-radius);
+	border-start-end-radius: var(--btc-radius);
+	padding: var(--btc-space-2xs);
+}
+
+.tc-test-case-result-icon-pass {
+	background-color: var(--tpc-stability-stable);
+}
+
+.tc-test-case-result-icon-fail {
+	background-color: var(--tpc-alert-highlight);
+}
+
+/* ---- Lazy-loading progress bar ---- */
+
+@keyframes vp-loading-progress {
+	0%   { background-position: -150% 0, -150% 0; }
+	66%  { background-position:  250% 0, -150% 0; }
+	100% { background-position:  250% 0,  250% 0; }
+}
+
+.tc-tiddler-lazy-loading {
+	block-size: 4px;
+	inline-size: 100%;
+	background:
+		no-repeat linear-gradient(var(--tpc-background) 0 0),
+		no-repeat linear-gradient(var(--tpc-background) 0 0),
+		var(--tpc-primary);
+	background-size: 60% 100%;
+	animation: vp-loading-progress 3s infinite;
+}
+
+/* ---- Translated-link widget ---- */
+
+.tc-translink {
+	background-color: var(--tpc-pre-background);
+	border: 1px solid var(--tpc-pre-border);
+	padding: 0 3px;
+	border-radius: var(--btc-radius);
+}
+
+div.tc-translink > div {
+	margin: 1em;
+}
+
+div.tc-translink > div > a:first-child > h1 {
+	font-size: 1.2em;
+	font-weight: 600;
+}
+
+span.tc-translink > a:first-child {
+	font-weight: 600;
+}
+
+/* ==========================================================================
+** Reduced motion
+** ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+	*,
+	*::before,
+	*::after {
+		animation-duration: 1ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 150ms !important;
+	}
+
+	/* The focus ring must never be animated, in either mode */
+	:focus-visible {
+		transition: none !important;
+	}
+}
+
+/* ==========================================================================
+** Overrides on the shared structure
+**
+** 2-structure carries the structural rules this theme shares with the rest
+** of the family. What follows is only where THIS theme disagrees with it.
+** Core sorts before every theme name, so these win on an equal-specificity
+** tie without !important.
+** ========================================================================== */
+
+/* ---- Core structural rules — the systematic pass ---- */
+/*
+** Small screens only.
+**
+** Vanilla scopes this to `@media (max-width: <breakpoint>)` — see its comment
+** "Make search dropdown visible on small screens. issue #7003". Dropping the
+** wrapper's positioning lets the search dropdown escape a narrow wrapper and
+** span the collapsed sidebar. Applied at every width it does the opposite
+** favour: on desktop the dropdown then positions against some further
+** ancestor instead of its own wrapper.
+*/
+@media (max-width: {{{ [{$:/themes/BurningTreeC/vanilla-paper/metrics/sidebarbreakpoint}removesuffix[px]subtract[1]addsuffix[px]] ~[{$:/themes/BurningTreeC/vanilla-paper/metrics/sidebarbreakpoint}] }}}) {
+
+	.tc-sidebar-search .tc-block-dropdown-wrapper {
+		position: initial;
+	}
+}
+
+/*
+** Sidebar toggle chevrons.
+**
+** Rotation is a SMALL-SCREEN rule only. Below the breakpoint the sidebar
+** collapses upward, so the chevron should point up/down; at desktop widths it
+** slides along the inline axis and the unrotated glyph is already correct.
+** Applying the rotation everywhere leaves the wide-screen buttons pointing the
+** wrong way.
+*/
+@media (max-width: {{{ [{$:/themes/BurningTreeC/vanilla-paper/metrics/sidebarbreakpoint}removesuffix[px]subtract[1]addsuffix[px]] ~[{$:/themes/BurningTreeC/vanilla-paper/metrics/sidebarbreakpoint}] }}}) {
+
+	/*
+	** Below the breakpoint the sidebar is not beside the river, it is ABOVE it,
+	** so the chevron points up rather than sideways - and the side flip is
+	** switched off, because "which inline edge" means nothing once the panel is
+	** in normal flow.
+	**
+	** Only the two custom properties are set here, never `transform` itself.
+	** This selector is (0,2,1) and the one that composes the transform is
+	** (0,1,1), so writing a second `transform` here would win outright and
+	** silently discard the mirror rather than combining with it.
+	*/
+	.tc-show-sidebar-btn svg.tc-image-chevron-left,
+	.tc-hide-sidebar-btn svg.tc-image-chevron-right {
+		--btc-chevron-rot: -90deg;
+		--btc-chevron-flip: 1;
+	}
+}
+
+/* ---- Deeper surfaces ---- */
+/* ---- Fold / unfold banners --------------------------------------------
+** Vanilla hangs these in the tiddler's left gutter with negative margins.
+** Paper already HAS a gutter with meaning — the margin rule — so the
+** banners are placed inside it and aligned to it. The fold handle becomes a
+** strip along the rule; the unfold banner a hairline across the sheet. */
+
+.tc-fold-banner {
+	position: absolute;
+	inset-block: var(--btc-space-xs);
+	inset-inline-start: 0;
+	inline-size: var(--vp-margin);
+	padding: 0;
+	margin: 0;
+	background: none;
+	border: none;
+	text-align: center;
+	border-radius: var(--btc-radius);
+	transition: background-color 120ms var(--btc-ease-out);
+}
+
+blockquote.tc-big-quote::before {
+	content: open-quote;
+	position: absolute;
+	inset-inline-start: -0.36em;
+	inset-block-start: -0.08em;
+	font-family: var(--btc-font-body);
+	font-size: 4em;
+	line-height: 1;
+	color: var(--vp-margin-rule);
+	pointer-events: none;
+}

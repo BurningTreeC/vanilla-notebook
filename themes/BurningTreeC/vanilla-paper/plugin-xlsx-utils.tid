@@ -17,7 +17,7 @@ code-body: yes
 ** whole editor is a stack of bright pastel blocks and the text on them is
 ** whatever the palette's foreground happens to be - light text on pale pink.
 **
-** The nesting is real information and should stay visible. Paper carries it
+** The nesting is real information and should stay visible. the theme carries it
 ** with DEPTH rather than hue: each level steps a little further from the page
 ** colour, so the hierarchy reads as boxes nested inside boxes, in one palette,
 ** on paper of any darkness. The border on each level does the same.
@@ -29,8 +29,8 @@ code-body: yes
 .tc-import-spec-sheet,
 .tc-import-spec-row,
 .tc-import-spec-field {
-	border-radius: var(--vp-radius);
-	font-family: var(--vp-font-ui);
+	border-radius: var(--btc-radius);
+	font-family: var(--btc-font-ui);
 }
 
 .tc-import-spec-selector {
@@ -69,7 +69,7 @@ code-body: yes
 .tc-import-spec-workbook-controls,
 .tc-import-spec-sheet-controls,
 .tc-import-spec-row-controls {
-	font-family: var(--vp-font-ui);
+	font-family: var(--btc-font-ui);
 	font-size: 0.8125rem;
 }
 
@@ -77,7 +77,7 @@ code-body: yes
 .tc-import-spec-workbook-controls li:not(:last-child),
 .tc-import-spec-sheet-controls li:not(:last-child),
 .tc-import-spec-row-controls li:not(:last-child) {
-	border-inline-end: 1px solid var(--vp-rule-faint);
+	border-inline-end: 1px solid var(--btc-rule-faint);
 }
 
 /* The spec editor is a deeply nested set of fixed-ish panels. On a narrow

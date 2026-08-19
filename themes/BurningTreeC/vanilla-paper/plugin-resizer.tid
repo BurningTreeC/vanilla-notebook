@@ -1,0 +1,353 @@
+title: $:/themes/BurningTreeC/vanilla-paper/plugins/resizer
+tags: [[$:/tags/Stylesheet]]
+code-body: yes
+
+\rules only filteredtranscludeinline transcludeinline macrodef macrocallinline html
+
+<$list filter="[[$:/plugins/BTC/resizer]is[tiddler]]" variable="ignore">
+
+/* ==========================================================================
+** Resizer — placing the grip
+**
+** $:/plugins/BTC/resizer turns a drag into a number. It does not know where
+** the thing being dragged is, and in this family it cannot: the sidebar's
+** position comes out of layout.tid's variables, which are resolved from the
+** active theme at render time.
+**
+** So the work is split three ways, the same way it is for the minimap:
+**
+**   the plugin   the widget, the drag, the constraint arithmetic, the
+**                double-click reset.
+**   this sheet   where the grip sits, in all four combinations of layout
+**                mode and sidebar side, and how it behaves as the sidebar
+**                slides.
+**   each theme   what the grip is made of.
+**
+** The invocation itself is in core's sidebar.tid, which explains what each
+** layout mode drags and why.
+**
+** One thing this sheet deliberately does NOT do is fight the plugin over the
+** story river. The plugin ships a block of Vanilla-shaped geometry — an
+** !important margin-right on the river among it — which would override the
+** margin layout.tid animates and freeze the slide. Core ships
+** $:/config/BTC/resizer/manage-sidebar-layout = no, which switches that block
+** off at source. Overriding it from here instead would have meant restating
+** the entire layout matrix (two modes x two sides x full-width, plus the
+** minimap's contribution to each) at !important, in a second place, where it
+** would drift out of step with layout.tid the first time either changed.
+** ========================================================================== */
+
+/*
+** The grip's thickness. A token because two things need it — the strip itself,
+** and the negative margin that centres the strip ON the boundary rather than
+** beside it — and because a theme may want a different weight of line.
+**
+** The coarse-pointer widening is the plugin's own convention (it does the same
+** for the editor handle); a 6px target is fine for a mouse and not for a
+** finger.
+*/
+html {
+	--btc-resizer-w: 6px;
+}
+
+@media (pointer: coarse) {
+	html {
+		--btc-resizer-w: 14px;
+	}
+}
+
+/*
+** Below the breakpoint there is no sidebar to resize — it becomes a full-width
+** panel — so the grip goes away entirely.
+**
+** The plugin hides it too, but at $:/themes/tiddlywiki/vanilla's breakpoint,
+** which core's compat shim pins at 960px whatever the active theme says. These
+** two rules restate the boundary at the theme's own breakpoint, in both
+** directions, so a theme that moves it takes the grip with it.
+*/
+.tc-sidebar-resizer {
+	display: none;
+}
+
+@media (min-width: {{{ [{$:/theme}addsuffix[/metrics/sidebarbreakpoint]get[text]] }}}) {
+
+	.btc-sidebar-open .tc-sidebar-resizer {
+		display: block;
+	}
+
+	/*
+	** The grip is fixed to the VIEWPORT, not to the sidebar.
+	**
+	** It is rendered as a sibling of .tc-sidebar-scrollable rather than inside
+	** it, and this is what makes that necessary: the sidebar carries
+	** `translate` and `will-change: translate` to do the slide, which makes it
+	** the containing block for any fixed-position descendant, and it clips its
+	** own overflow. A grip on its leading edge, positioned from inside, would
+	** be measured against the wrong box and then clipped away. Fixed to the
+	** viewport it is measured against the viewport, which is the frame every
+	** number below is already expressed in.
+	**
+	** `inset-inline: auto` is not redundant. The plugin positions the grip with
+	** a physical `left`, computed for a wrapper element this family does not
+	** render; clearing both inline insets here means each case below has to
+	** state only the one edge it actually anchors to, and means the physical
+	** value cannot survive into a right-to-left wiki as an offset from the
+	** wrong side.
+	**
+	** --btc-menubar-h and not --btc-story-top: the grip spans the sidebar, and
+	** the sidebar clears the menubar but not the river's own top offset. Same
+	** reasoning as layout.tid's rule for .tc-sidebar-scrollable.
+	*/
+	.btc-sidebar-open .tc-sidebar-resizer {
+		position: fixed;
+		inset-block: var(--btc-menubar-h) 0;
+		inset-inline: auto;
+		inline-size: var(--btc-resizer-w);
+		cursor: ew-resize;
+
+		/*
+		** Above the sidebar, below everything that is meant to float over the
+		** page. The sidebar takes no z-index of its own and comes later in the
+		** document, so without one here it would paint over the grip; dropdowns
+		** are at 1000 and the top bar at 1200, and the grip must stay under
+		** both.
+		*/
+		z-index: 500;
+	}
+
+	/*
+	** Centred on the boundary.
+	**
+	** Each case below anchors the grip to the edge the sidebar meets the river
+	** at, which puts the strip entirely on one side of it. Pulling it back by
+	** half its width on the same side it is anchored from straddles the line
+	** instead — so the cursor change happens where the eye expects it, and
+	** widening the grip grows it symmetrically rather than pushing it off the
+	** seam.
+	**
+	** WHICH side is the anchored one is not the same as which side the sidebar
+	** is on, and conflating the two is how this was wrong the first time. Three
+	** of the four cases below measure from the inline START — fixed-fluid does
+	** it on both sides, because in that mode the seam is the river's outer edge
+	** and the river is measured from the start whichever edge the sidebar took.
+	** Only fluid-fixed with the sidebar on the end measures from the end. So the
+	** start pull is the default and that one case overrides it.
+	*/
+	.btc-sidebar-open .tc-sidebar-resizer {
+		margin-inline-start: calc(var(--btc-resizer-w) / -2);
+	}
+
+	.btc-sidebar-open.btc-layout-fluid-fixed:not(.btc-sidebar-start) .tc-sidebar-resizer {
+		margin-inline-start: 0;
+		margin-inline-end: calc(var(--btc-resizer-w) / -2);
+	}
+
+	/* ---- fluid-fixed ------------------------------------------------------
+	**
+	** The sidebar is a fixed --btc-sidebar-w column pinned to one edge, so the
+	** boundary is exactly that far in — and it MOVES as the sidebar leaves.
+	** Scaling by --btc-open is what makes the grip travel with it on the same
+	** single transition rather than disappearing from one place and reappearing
+	** in another. It is hidden by the time --btc-open reaches 0, but it is
+	** visible for the whole journey.
+	**
+	** The minimap's strip is added on the end side and not on the start side,
+	** because that is where the map is: core's plugin-minimap.tid moves the
+	** sidebar in by the same amount, and the grip has to land on the sidebar's
+	** new edge rather than its old one.
+	*/
+	.btc-sidebar-open.btc-layout-fluid-fixed:not(.btc-sidebar-start) .tc-sidebar-resizer {
+		inset-inline-end: calc(
+			var(--btc-open) * var(--btc-sidebar-w) + var(--btc-minimap-reserve, 0px)
+		);
+	}
+
+	.btc-sidebar-open.btc-layout-fluid-fixed.btc-sidebar-start .tc-sidebar-resizer {
+		inset-inline-start: calc(var(--btc-open) * var(--btc-sidebar-w));
+	}
+
+	/* ---- fixed-fluid ------------------------------------------------------
+	**
+	** Here the RIVER holds the fixed width and the sidebar takes what is left,
+	** so the boundary is the river's outer edge — --btc-story-right — and it
+	** does not move when the sidebar goes. The sidebar slides out from under
+	** it by transform; the seam itself stays where it is. Hence no --btc-open
+	** and no minimap term: the map changes what the sidebar spans, not where
+	** the river ends.
+	**
+	** On the start side the sidebar's own width is stated as
+	** `max(0px, 100vw - --btc-story-right)` (layout.tid explains why it is a
+	** width rather than a pair of insets), so the boundary is that same
+	** expression measured from the start. Restating it rather than deriving it
+	** keeps the two literally identical.
+	*/
+	.btc-sidebar-open.btc-layout-fixed-fluid:not(.btc-sidebar-start) .tc-sidebar-resizer {
+		inset-inline-start: var(--btc-story-right);
+	}
+
+	.btc-sidebar-open.btc-layout-fixed-fluid.btc-sidebar-start .tc-sidebar-resizer {
+		inset-inline-start: max(0px, calc(100vw - var(--btc-story-right)));
+	}
+}
+
+/*
+** During a drag.
+**
+** The plugin drops a transparent full-viewport overlay to keep pointer capture,
+** and puts `tc-resizing` on the body. Two things follow that this family cares
+** about.
+**
+** content-visibility: auto on story frames (layout.tid, "Cost control") makes
+** the browser skip offscreen tiddlers — but in fluid-fixed every frame in the
+** river genuinely reflows on every pointer move, and re-measuring skipped
+** frames as they cross the viewport edge is what makes a drag feel like it is
+** catching. Pinning the intrinsic size for the duration keeps the scroll height
+** stable while the widths change.
+**
+** The second is the hover surface: whatever a theme does on :hover would
+** otherwise flicker off the moment the pointer leaves the six pixels, which is
+** immediately. .tc-resizer-active is the plugin's own class for "being
+** dragged", and every theme sheet styles it alongside :hover for that reason.
+*/
+body.tc-resizing .tc-story-river .tc-tiddler-frame {
+	content-visibility: auto;
+	contain-intrinsic-size: auto 480px;
+}
+
+/*
+** RTL is left alone on purpose, and unlike the minimap it is nearly free here:
+** every rule above is written in logical properties, so the grip lands on the
+** correct edge in a right-to-left wiki by itself. What is NOT handled is the
+** drag direction — `invert` is computed in sidebar.tid from which side the
+** sidebar is on, not from the text direction, so in RTL the pointer and the
+** panel disagree. Fixing that belongs with the invocation, not here.
+*/
+
+/* ---- The editor's preview handle --------------------------------------- */
+
+/*
+** This one the plugin does render itself, from its override of
+** $:/core/ui/EditTemplate/body/default, and it places it too: the template
+** writes a three-column grid-template inline, and the handle takes the middle
+** track through `grid-area: resizer`.
+**
+** Inline styles beat a stylesheet, so that template silently replaces the
+** two-column editor grid each theme sets up in its base.tid. That is the
+** correct outcome and worth stating explicitly, because it is not obvious from
+** either file alone — the theme's grid rules look like they still apply and
+** they do not.
+**
+** All that is left is to stop it being taller than the tracks beside it. The
+** plugin gives it a small asymmetric block margin tuned to Vanilla's editor
+** padding; this family's editors sit flush, so the handle stretches instead.
+*/
+.tc-tiddler-frame .tc-tiddler-editor.tc-tiddler-preview .tc-tiddler-editor-resizer {
+	margin-block: 0;
+	align-self: stretch;
+}
+
+/* ==========================================================================
+** Resizer — Paper
+**
+** Where the grip goes is not here — it is placed once, above, and this half is
+** only about what it is made of. The two live in one file because they answer
+** to one plugin; the banner is the seam between them.
+**
+** In this theme it is a RULE — a ruled line down the page, which is the one
+** kind of mark this theme already makes. Paper draws exactly two: the hairline
+** that is a sheet's edge, and the red margin rule. The seam between the river
+** and the sidebar is an edge, so at rest it is the first of those; while you
+** are working on it, it is the second.
+**
+** That is the whole design, and the restraint is the point. The plugin's
+** default is a grey bar with a rounded pill floating in the middle of it —
+** two objects, neither of which is anything this theme contains. A ruled line
+** is not furniture: it is a mark on the page, and it is already this theme's
+** vocabulary for "this is where something ends".
+** ========================================================================== */
+
+/*
+** The bar itself carries nothing.
+**
+** The plugin fills it with muted-foreground at 0.75 — a six-pixel grey band
+** the length of the page, which on a sheet of paper reads as a smudge. The bar
+** stays as the hit target and the cursor region; the mark is drawn by the
+** pseudo-element below, one pixel wide, so what you see is a line and what you
+** can grab is six pixels of it.
+*/
+.tc-sidebar-resizer,
+.tc-tiddler-editor-resizer {
+	background-color: transparent;
+	opacity: 1;
+}
+
+/*
+** The rule.
+**
+** The plugin centres this pseudo-element on the bar and gives it a 3x40px
+** rounded pill; the pill becomes a full-height hairline. Everything that makes
+** it a pill is turned off explicitly rather than left to chance — a stray
+** radius on a 1px line is invisible until the line thickens on hover, and then
+** it is a lozenge.
+**
+** The colour is a sheet's edge, mixed against the DESK rather than against the
+** sheet. --vp-paper-edge itself is the obvious candidate and it is the wrong
+** one: it is foreground mixed into --tpc-background, which is the colour of a
+** sheet, and this line does not lie on a sheet — it lies on the page between
+** two of them. Drawn in that value it came out two levels off the page
+** background and was invisible, which for the only affordance saying "this
+** edge moves" is a failure and not restraint.
+**
+** So it is the same recipe against the surface it is actually on. Sixteen
+** percent is the point where the line is unmistakably there and still reads as
+** ruled rather than drawn.
+*/
+.tc-sidebar-resizer::before,
+.tc-tiddler-editor-resizer::before {
+	inline-size: 1px;
+	block-size: 100%;
+	border-radius: 0;
+	background: color-mix(in oklch, var(--tpc-foreground) 16%, var(--tpc-page-background));
+	transition:
+		background-color var(--btc-dur) var(--btc-ease),
+		inline-size var(--btc-dur) var(--btc-ease);
+}
+
+/*
+** Under the hand it becomes the margin rule.
+**
+** This theme has exactly one accent and one job for it: the ruled red margin
+** down every sheet. Reaching for it here says the line is live in the same
+** vocabulary the rest of the theme uses, without introducing a second accent
+** or a hover colour that appears nowhere else.
+**
+** Two pixels rather than one. It is the difference between a ruled line and a
+** line you have gone over twice — enough to see, not enough to move anything.
+**
+** .tc-resizer-active is the plugin's class for "being dragged". It is styled
+** with :hover and not after it, because during a drag the pointer is nowhere
+** near the six pixels it started on, and a hover-only rule would drop the
+** highlight the instant the drag became interesting.
+*/
+.tc-sidebar-resizer:hover::before,
+.tc-sidebar-resizer.tc-resizer-active::before,
+.tc-tiddler-editor-resizer:hover::before,
+.tc-tiddler-editor-resizer.tc-resizer-active::before {
+	background: var(--vp-margin-rule);
+	inline-size: 2px;
+}
+
+/*
+** The plugin inverts the bar on hover — bar to primary, pill to
+** muted-foreground. Both halves of that are restated above; this stops the bar
+** half coming back, which would put a coloured band behind the rule.
+*/
+.tc-sidebar-resizer:hover,
+.tc-sidebar-resizer.tc-resizer-active,
+.tc-tiddler-editor-resizer:hover,
+.tc-tiddler-editor-resizer.tc-resizer-active {
+	background-color: transparent;
+	opacity: 1;
+}
+
+</$list>

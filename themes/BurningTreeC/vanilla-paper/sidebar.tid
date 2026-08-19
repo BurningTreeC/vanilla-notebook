@@ -2,27 +2,182 @@ title: $:/core/ui/PageTemplate/sidebar
 tags: $:/tags/PageTemplate
 
 \whitespace trim
+
 \define config-title()
 $:/config/SideBarSegments/Visibility/$(listItem)$
 \end
 
+\function btc.metric(suffix) [{$:/theme}addsuffix[/metrics/]addsuffix<suffix>]
+
+\function btc.story.metrics() [[storyright]] [[storywidth]] [[tiddlerwidth]] :map[{$:/theme}addsuffix[/metrics/]addsuffix<currentTiddler>]
+
+\function btc.resizer.sidebar.min() [[$:/themes/tiddlywiki/vanilla/metrics/sidebarminwidth]get[text]] :else[[350px]]
+
+\function btc.resizer.story.min() [[$:/themes/tiddlywiki/vanilla/metrics/storyminwidth]get[text]] :else[[450px]]
+
+\function btc.resizer.at.end() [{$:/theme}addsuffix[/options/sidebarside]get[text]match[start]then[no]] :else[[yes]]
+
+\function btc.resizer.at.start() [{$:/theme}addsuffix[/options/sidebarside]get[text]match[start]then[yes]] :else[[no]]
+
+\function btc.resizer.minimap.px()
+[[$:/plugins/BurningTreeC/minimap]!is[tiddler]then[0]]
+~[{$:/config/BurningTreeC/minimap/enabled}match[no]then[0]]
+~[{$:/config/BurningTreeC/minimap/width}]
+~[[120]]
+\end
+
+\procedure btc.resizer.throttle.sidebar()
+<$action-setfield $tiddler=<<btc.metric sidebarwidth>> throttle.refresh="yes"/>
+\end
+
+\procedure btc.resizer.throttle.story()
+<$list filter=<<btc.story.metrics>> >
+<$action-setfield $tiddler=<<currentTiddler>> throttle.refresh="yes"/>
+</$list>
+\end
+
+\procedure btc.resizer.reset.sidebar()
+<$action-deletetiddler $tiddler=<<btc.metric sidebarwidth>>/>
+\end
+
+\procedure btc.resizer.reset.story()
+<$action-deletetiddler $filter=<<btc.story.metrics>>/>
+\end
+
+\procedure btc.resizer.sidebar()
 <!--
-Paper theme override of the core sidebar segment.
+The blank lines inside this procedure are load-bearing. With `\whitespace trim`
+in force the parser drops the whitespace between nested widgets, and a widget
+that does not start its own line is parsed inline — so the handle came out
+wrapped in an empty <p>, in the page container's flow, carrying the theme's
+paragraph margin. Separating the nesting with blank lines is what keeps every
+level in block mode.
+-->
+<$list filter="[[$:/plugins/BTC/resizer]is[tiddler]]" variable="ignore">
+
+<$let
+	sidebarMin=<<btc.resizer.sidebar.min>>
+	storyMin=<<btc.resizer.story.min>>
+	minimapPx=<<btc.resizer.minimap.px>>
+	maxSidebar={{{ [[calc(100vw - ]] [<storyMin>] [[ - ]] [<minimapPx>] [[px)]] +[join[]] }}}
+	maxStory={{{ [[calc(100vw - ]] [<sidebarMin>] [[ - ]] [<minimapPx>] [[px)]] +[join[]] }}}
+>
+
+<%if [{$:/theme}addsuffix[/options/sidebarlayout]get[text]match[fluid-fixed]] %>
+
+<$resizer
+	class="tc-sidebar-resizer btc-sidebar-resizer"
+	direction="horizontal"
+	tiddler=<<btc.metric sidebarwidth>>
+	selector=".tc-sidebar-scrollable"
+	unit="px"
+	min=<<sidebarMin>>
+	max=<<maxSidebar>>
+	default="360px"
+	invert=<<btc.resizer.at.end>>
+	onResizeStart=<<btc.resizer.throttle.sidebar>>
+	dblClickActions=<<btc.resizer.reset.sidebar>>
+/>
+
+<%elseif [{$:/theme}addsuffix[/options/sidebarlayout]get[text]match[fixed-fluid]] %>
+
+<$resizer
+	class="tc-sidebar-resizer btc-sidebar-resizer"
+	direction="horizontal"
+	filter={{{ [<btc.story.metrics>] +[join[ ]] }}}
+	unit="px"
+	min=<<storyMin>>
+	max=<<maxStory>>
+	default="800px"
+	invert=<<btc.resizer.at.start>>
+	onResizeStart=<<btc.resizer.throttle.story>>
+	dblClickActions=<<btc.resizer.reset.story>>
+/>
+
+<% endif %>
+
+</$let>
+
+</$list>
+\end
+
+<!--
+the theme theme override of the core sidebar segment.
 
 The core version wraps the sidebar body in `<$reveal ... animate="yes">`, which
 collapses the content's HEIGHT in JavaScript (see
 core/modules/utils/dom/animations/slide.js). That fights a CSS slide: the panel
 would shrink upwards and translate sideways at the same time.
 
-Paper drives sidebar visibility entirely from CSS instead — the page
-container carries `vp-sidebar-open` / `vp-sidebar-closed` (see
+the theme drives sidebar visibility entirely from CSS instead — the page
+container carries `btc-sidebar-open` / `btc-sidebar-closed` (see
 $:/themes/BurningTreeC/vanilla-paper/classfilter) and layout.tid animates a single
-`--vp-open` scalar. So the reveal is dropped here and the segments render
+`--btc-open` scalar. So the reveal is dropped here and the segments render
 unconditionally.
 
 Keep this in sync with $:/core/ui/PageTemplate/sidebar if the core version
-changes. It is otherwise identical.
+changes. It is otherwise identical, apart from the resizer below.
 -->
+
+<!--
+THE RESIZER GRIP
+
+$:/plugins/BTC/resizer used to ship this itself, as its own
+$:/core/ui/PageTemplate/sidebar — until the commit "remove sidebar pagetemplate
+from plugin", which made the grip the LAYOUT's business rather than the widget's.
+That is the right split: the widget knows how to turn a drag into a number, and
+only the layout knows which number. So the invocation lives here, gated on the
+plugin being installed — without it this template renders exactly what it
+rendered before.
+
+Two things differ from the version the plugin used to ship, and both follow from
+this family owning its own layout rather than borrowing Vanilla's.
+
+FIRST, every metric is read off $:/theme rather than out of the
+$:/themes/tiddlywiki/vanilla namespace. Core resolves its geometry from the
+active theme (layout.tid lifts --btc-sidebar-w and friends that way), so writing
+to Vanilla's copy would move nothing at all. The three CONSTRAINT metrics are
+the exception — sidebarminwidth, sidebarmaxwidth and storyminwidth are shipped
+by the resizer plugin itself, in Vanilla's namespace, and they are configuration
+for the drag rather than a description of the theme, so they are read where the
+plugin puts them with a literal fallback in case a future version stops shipping
+them.
+
+SECOND, the two layout modes drag different things:
+
+  fluid-fixed   the sidebar holds the fixed width, so the drag edits
+                sidebarwidth and the river absorbs the change.
+  fixed-fluid   the RIVER holds the fixed width and the sidebar absorbs the
+                change, so the drag edits the three story metrics together.
+                They are one measurement written three times; moving one
+                without the others tears the layout apart.
+
+`invert` turns a pointer delta into a size delta, and the sense depends on which
+edge is being dragged. With the sidebar on the end, dragging toward the start
+makes it wider; on the start edge it makes it narrower. fixed-fluid drags the
+river rather than the sidebar, so on the same edge its sense is the opposite —
+which is why the two use at.end and at.start rather than sharing one function.
+
+The onResizeStart actions set throttle.refresh on whatever is about to be
+written. Each of these metrics is read by a filtered transclusion inside
+layout.tid, so every write re-renders that entire stylesheet — once per pointer
+move without the throttle.
+
+Double-click DELETES the metric instead of writing a default into it. The themes
+ship theirs as shadows, so removing the overlay is what restores the theme's own
+value; writing a hard-coded number would silently pin this theme to
+whatever this file happened to say.
+
+The grip is rendered here, as a sibling of the scrollable rather than inside it,
+and core's plugin-resizer.tid then places it with `position: fixed`. Putting it
+inside the sidebar would not work: .tc-sidebar-scrollable carries `translate` and
+`will-change: translate` for the slide, which makes it the containing block for
+fixed descendants, and it clips its own overflow — so a grip on its leading edge
+would be positioned against the wrong box and then clipped away. The minimap
+plugin learned the same lesson the same way.
+-->
+
+<$transclude $variable="btc.resizer.sidebar" $mode="block"/>
 
 <$scrollable fallthrough="no" class="tc-sidebar-scrollable">
 

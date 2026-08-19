@@ -32,13 +32,13 @@ code-body: yes
 	max-block-size: calc(100vh - 1em);
 	overflow: auto;
 	-webkit-overflow-scrolling: touch;
-	padding: var(--vp-space-md);
-	margin: var(--vp-space-sm);
+	padding: var(--btc-space-md);
+	margin: var(--btc-space-sm);
 	background: var(--tpc-tiddler-background);
 	border: 1px solid var(--vp-paper-edge);
-	border-radius: var(--vp-radius-lg);
-	box-shadow: 0 1px 2px var(--vp-shadow-soft), 0 16px 36px -16px var(--vp-shadow);
-	font-family: var(--vp-font-ui);
+	border-radius: var(--btc-radius-lg);
+	box-shadow: 0 1px 2px var(--btc-shadow-soft), 0 16px 36px -16px var(--btc-shadow);
+	font-family: var(--btc-font-ui);
 	font-size: 0.875rem;
 	z-index: 1000;
 	scrollbar-width: thin;
@@ -53,7 +53,7 @@ code-body: yes
 dl.tc-help-cheatsheet {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-	gap: var(--vp-space-2xs) var(--vp-space-sm);
+	gap: var(--btc-space-2xs) var(--btc-space-sm);
 	align-items: baseline;
 	overflow: visible;
 	margin: 0;
@@ -70,9 +70,9 @@ dl.tc-help-cheatsheet {
 }
 
 .tc-help-cheatsheet > dt {
-	font-family: var(--vp-font-code);
+	font-family: var(--btc-font-code);
 	font-weight: normal;
-	color: var(--vp-ink-soft);
+	color: var(--btc-ink-soft);
 }
 
 .tc-help-cheatsheet > dt > pre {
@@ -100,8 +100,8 @@ dl.tc-help-cheatsheet {
 	}
 
 	.tc-help-cheatsheet > dd {
-		margin-block-end: var(--vp-space-sm);
-		color: var(--vp-ink-soft);
+		margin-block-end: var(--btc-space-sm);
+		color: var(--btc-ink-soft);
 	}
 }
 

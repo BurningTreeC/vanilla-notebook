@@ -34,9 +34,9 @@ code-body: yes
 */
 .markdown a.footnote-ref:target,
 .markdown .footnote-item:target {
-	scroll-margin-top: calc(var(--vp-menubar-h, 0px) + {{{ [{$:/themes/BurningTreeC/vanilla-paper/options/stickytitles}match[yes]then[4.5rem]else[1rem]] }}});
+	scroll-margin-top: calc(var(--btc-menubar-h, 0px) + {{{ [{$:/theme}addsuffix[/options/stickytitles]get[text]match[yes]then[4.5rem]else[1rem]] }}});
 	background-color: color-mix(in oklch, var(--tpc-primary) 14%, transparent);
-	border-radius: var(--vp-radius);
+	border-radius: var(--btc-radius);
 }
 
 /* ---- Footnotes ----
@@ -45,32 +45,32 @@ code-body: yes
 ** interface face so it reads as apparatus rather than as more prose. */
 
 .markdown .footnotes {
-	margin-block-start: var(--vp-space-xl);
-	padding-block-start: var(--vp-space-md);
-	border-block-start: 1px solid var(--vp-rule);
-	font-family: var(--vp-font-ui);
+	margin-block-start: var(--btc-space-xl);
+	padding-block-start: var(--btc-space-md);
+	border-block-start: 1px solid var(--btc-rule);
+	font-family: var(--btc-font-ui);
 	font-size: 0.875rem;
 	line-height: 1.55;
-	color: var(--vp-ink-soft);
+	color: var(--btc-ink-soft);
 }
 
 .markdown ol.footnotes-list {
-	padding-inline-start: var(--vp-space-lg);
+	padding-inline-start: var(--btc-space-lg);
 }
 
 .markdown .footnote-item {
-	margin-block: var(--vp-space-2xs);
+	margin-block: var(--btc-space-2xs);
 }
 
 .markdown .footnote-item p {
-	margin-block: var(--vp-space-2xs);
+	margin-block: var(--btc-space-2xs);
 }
 
 /* The reference marker. Superscript numerals set in the interface face, with
    the link underline suppressed - an underline on a raised numeral reads as a
    smudge more than as a link. */
 .markdown a.footnote-ref {
-	font-family: var(--vp-font-ui);
+	font-family: var(--btc-font-ui);
 	font-size: 0.7em;
 	font-variant-numeric: tabular-nums;
 	color: var(--tpc-tiddler-link-foreground);
@@ -87,7 +87,7 @@ code-body: yes
 	color: var(--tpc-tiddler-link-foreground);
 	font-size: 0.8em;
 	text-decoration: none;
-	margin-inline-start: var(--vp-space-2xs);
+	margin-inline-start: var(--btc-space-2xs);
 }
 
 /* ---- Everything else ---- */
@@ -96,9 +96,9 @@ code-body: yes
    colour, and markdown horizontal rules should be the same one the rest of the
    wiki uses. */
 .markdown hr {
-	margin-block: var(--vp-space-lg);
+	margin-block: var(--btc-space-lg);
 	border: 0;
-	border-block-start: 1px solid var(--vp-rule);
+	border-block-start: 1px solid var(--btc-rule);
 }
 
 /* `mark` is a highlighter on paper, so it gets the accent wash rather than the

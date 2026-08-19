@@ -38,8 +38,8 @@ code-body: yes
 ** which is the one thing the layout must never do.
 */
 .tc-tiddler-body .katex-display {
-	margin-block: var(--vp-space-lg);
-	padding-block: var(--vp-space-2xs);
+	margin-block: var(--btc-space-lg);
+	padding-block: var(--btc-space-2xs);
 	overflow-x: auto;
 	overflow-y: hidden;
 	scrollbar-width: thin;
@@ -48,9 +48,9 @@ code-body: yes
 /* Numbered equations: the tag is chrome, not mathematics, so it takes the
    interface face and a muted ink to stay out of the way of the formula. */
 .tc-tiddler-body .katex-display > .katex > .katex-html > .tag {
-	font-family: var(--vp-font-ui);
+	font-family: var(--btc-font-ui);
 	font-size: 0.8125rem;
-	color: var(--vp-ink-faint);
+	color: var(--btc-ink-faint);
 }
 
 /* KaTeX draws rules - fraction bars, radicals, overlines - as bordered or

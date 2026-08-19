@@ -9,7 +9,7 @@ code-body: yes
 /* ==========================================================================
 ** Comments
 **
-** A comment thread is a margin note that grew up, so Paper sets it as one:
+** A comment thread is a margin note that grew up, so the theme sets it as one:
 ** no boxes, no 2px borders, just an indent rule down the side of each reply
 ** the way a nested quotation is marked in a printed book. The plugin's own
 ** treatment - 2px solid borders and rounded rectangles around every entry -
@@ -20,9 +20,9 @@ code-body: yes
 ** ========================================================================== */
 
 .tc-comments-segment {
-	margin-block-start: var(--vp-space-lg);
-	padding-block-start: var(--vp-space-md);
-	border-block-start: 1px solid var(--vp-rule);
+	margin-block-start: var(--btc-space-lg);
+	padding-block-start: var(--btc-space-md);
+	border-block-start: 1px solid var(--btc-rule);
 }
 
 .tc-is-comment-header {
@@ -30,12 +30,12 @@ code-body: yes
 	border: none;
 	border-radius: 0;
 	background: none;
-	font-family: var(--vp-font-ui);
+	font-family: var(--btc-font-ui);
 	font-size: 0.8125rem;
 	font-weight: 600;
 	letter-spacing: 0.04em;
 	text-transform: uppercase;
-	color: var(--vp-ink-faint);
+	color: var(--btc-ink-faint);
 }
 
 .tc-comment-list {
@@ -46,23 +46,23 @@ code-body: yes
 /* The indent rule. Each level of reply gets one hairline down its inline
    start, so depth is legible without a box. */
 .tc-comment-list .tc-comments {
-	padding-inline-start: var(--vp-space-md);
-	border-inline-start: 1px solid var(--vp-rule-faint);
+	padding-inline-start: var(--btc-space-md);
+	border-inline-start: 1px solid var(--btc-rule-faint);
 }
 
 .tc-comment-entry {
 	position: relative;
-	margin-block: var(--vp-space-sm) 0;
-	padding-inline-start: var(--vp-space-sm);
+	margin-block: var(--btc-space-sm) 0;
+	padding-inline-start: var(--btc-space-sm);
 	border: none;
 	border-radius: 0;
-	border-inline-start: 2px solid var(--vp-rule);
+	border-inline-start: 2px solid var(--btc-rule);
 	background: none;
-	transition: border-color 140ms var(--vp-ease-out);
+	transition: border-color 140ms var(--btc-ease-out);
 }
 
 .tc-comment-entry:hover {
-	border-inline-start-color: var(--vp-accent-edge);
+	border-inline-start-color: var(--btc-accent-edge);
 }
 
 /* Who and when: apparatus, so the interface face and a muted ink. The plugin
@@ -70,8 +70,8 @@ code-body: yes
 .tc-comment-entry-heading {
 	padding: 0;
 	background: none;
-	color: var(--vp-ink-faint);
-	font-family: var(--vp-font-ui);
+	color: var(--btc-ink-faint);
+	font-family: var(--btc-font-ui);
 	font-size: 0.6875rem;
 	font-weight: 600;
 	letter-spacing: 0.04em;
@@ -82,18 +82,18 @@ code-body: yes
    shrunk to 0.8em of whatever the surrounding element happened to be. */
 .tc-comment-entry-body {
 	padding: 0;
-	font-family: var(--vp-font-body);
+	font-family: var(--btc-font-body);
 	font-size: 0.9375rem;
 	line-height: 1.55;
 }
 
 .tc-comment-entry-body textarea {
 	inline-size: 100%;
-	font-family: var(--vp-font-code);
+	font-family: var(--btc-font-code);
 	font-size: 0.9375rem;
 	background-color: var(--tpc-tiddler-editor-background);
 	border: 1px solid var(--tpc-tiddler-editor-border);
-	border-radius: var(--vp-radius);
+	border-radius: var(--btc-radius);
 }
 
 /* The plugin fills the add-comment icon with `download-background`, a colour
@@ -103,7 +103,7 @@ code-body: yes
 	fill: var(--tpc-tiddler-controls-foreground);
 	block-size: 1.5em;
 	inline-size: 1.5em;
-	transition: fill 140ms var(--vp-ease-out);
+	transition: fill 140ms var(--btc-ease-out);
 }
 
 .tc-comment-button button:hover svg {

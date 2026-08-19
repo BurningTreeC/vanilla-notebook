@@ -16,15 +16,15 @@ because later siblings paint on top by default. Counting z-index downwards per
 position reverses that, so each title stays above the tiddlers below it. 100
 steps is the practical ceiling that Vanilla settled on.
 
-The offset is --vp-menubar-h, NOT --vp-story-top.
+The offset is --btc-menubar-h, NOT --btc-story-top.
 
-Those two differ in kind. --vp-story-top is a layout offset: it pushes the
+Those two differ in kind. --btc-story-top is a layout offset: it pushes the
 story river down inside the document, and scrolling consumes it — by the time
 a title is sticking, the storytop gap has already scrolled off the screen.
 Adding it here would hold the title that much too low forever, leaving a band
 of dead space above every stuck title.
 
---vp-menubar-h is the part that is pinned to the VIEWPORT. That is the only
+--btc-menubar-h is the part that is pinned to the VIEWPORT. That is the only
 thing a sticky element has to clear, because it is the only thing still there
 after scrolling. With no menubar the value is 0 and titles stick to the top of
 the page, whatever storytop happens to be.
@@ -38,7 +38,7 @@ the gutter beside it.
 ``
 .tc-tiddler-title {
 	position: sticky;
-	inset-block-start: var(--vp-menubar-h, 0px);
+	inset-block-start: var(--btc-menubar-h, 0px);
 	z-index: 500;
 	background-color: ``<<colour tiddler-background>>``;
 
@@ -56,21 +56,21 @@ the gutter beside it.
 	Negative margins only widen a box whose inline-size is auto. Anything here
 	that sets an explicit width silently turns this back into a shift.
 	*/
-	margin-inline: calc(-1 * var(--vp-sheet-pad-start)) calc(-1 * var(--vp-space-lg));
-	padding-inline: var(--vp-sheet-pad-start) var(--vp-space-lg);
+	margin-inline: calc(-1 * var(--vp-sheet-pad-start)) calc(-1 * var(--btc-space-lg));
+	padding-inline: var(--vp-sheet-pad-start) var(--btc-space-lg);
 	padding-block: 2px;
 }
 
 /*
-A narrow river collapses the sheet to an even --vp-space-md padding and drops
+A narrow river collapses the sheet to an even --btc-space-md padding and drops
 the margin rule (see the `@container river` block in base.tid). The strip has
 to follow that, or it overhangs the sheet by the gutter it no longer has.
 */
 @container river (max-width: 34rem) {
 
 	.tc-tiddler-title {
-		margin-inline: calc(-1 * var(--vp-space-md));
-		padding-inline: var(--vp-space-md);
+		margin-inline: calc(-1 * var(--btc-space-md));
+		padding-inline: var(--btc-space-md);
 	}
 }
 
@@ -100,10 +100,6 @@ containing block for this pseudo-element.
 ``
 <$list filter="[range[100]]">
 `.tc-story-river .tc-tiddler-frame:nth-child(100n+`<$text text=<<currentTiddler>>/>`) {
-	z-index: `<$text text={{{ [[200]subtract<currentTiddler>] }}}/>`;
-}
-
-.tc-story-river .tc-live-reorderable:nth-child(100n+`<$text text=<<currentTiddler>>/>`) .tc-tiddler-frame {
 	z-index: `<$text text={{{ [[200]subtract<currentTiddler>] }}}/>`;
 }
 `

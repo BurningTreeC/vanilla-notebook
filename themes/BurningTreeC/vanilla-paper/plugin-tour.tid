@@ -37,7 +37,7 @@ code-body: yes
 */
 .tc-tour-panel:not(.tc-tour-panel-fullscreen) {
 	inline-size: 310px;
-	max-inline-size: calc(100vw - 2 * var(--vp-space-md));
+	max-inline-size: calc(100vw - 2 * var(--btc-space-md));
 
 	/*
 	** `tour-overlay-background` defaults to a flat #cbfff8 in the plugin's own
@@ -55,9 +55,9 @@ code-body: yes
 	*/
 	background: {{{ [{$:/palette}getindex[tour-overlay-background]!is[blank]] ~[[var(--tpc-tiddler-background)]] }}};
 	border: 1px solid {{{ [{$:/palette}getindex[tour-overlay-border]!is[blank]] ~[[var(--vp-paper-edge)]] }}};
-	border-radius: var(--vp-radius-lg);
-	box-shadow: 0 1px 2px var(--vp-shadow-soft), 0 18px 40px -16px var(--vp-shadow);
-	font-family: var(--vp-font-ui);
+	border-radius: var(--btc-radius-lg);
+	box-shadow: 0 1px 2px var(--btc-shadow-soft), 0 18px 40px -16px var(--btc-shadow);
+	font-family: var(--btc-font-ui);
 }
 
 /* Full screen keeps the plugin's own geometry. Only the background is stated,
@@ -66,7 +66,7 @@ code-body: yes
    is already palette-derived. */
 .tc-tour-panel-fullscreen {
 	background: <<colour tour-fullscreen-background>>;
-	font-family: var(--vp-font-ui);
+	font-family: var(--btc-font-ui);
 }
 
 /*
@@ -81,14 +81,14 @@ code-body: yes
 ** currentColor connects the two, and gives the floating panel a colour too,
 ** which it never had - it was computing to the initial black.
 **
-** The ink is --vp-ink-soft, NOT tiddler-controls-foreground. Toolbar controls
+** The ink is --btc-ink-soft, NOT tiddler-controls-foreground. Toolbar controls
 ** are deliberately faint in this theme because they sit in rows of icons you
 ** discover on hover; measured on the tour panel that colour gives 1.72:1 to
 ** 2.60:1. This close button is the only way out of a full-screen takeover, so
 ** it has to be legible at rest rather than on hover.
 */
 .tc-tour-panel .tc-tour-panel-controls {
-	color: var(--vp-ink-soft);
+	color: var(--btc-ink-soft);
 }
 
 .tc-tour-panel .tc-tour-panel-controls button svg {
@@ -100,7 +100,7 @@ code-body: yes
 }
 
 .tc-tour-panel-fullscreen h1 {
-	font-family: var(--vp-font-body);
+	font-family: var(--btc-font-body);
 	font-weight: 600;
 	letter-spacing: -0.01em;
 	text-wrap: balance;
@@ -112,11 +112,11 @@ code-body: yes
 ** than by three unrelated fills. */
 
 .tc-tour-panel-navigation .tc-btn-big-green {
-	border-radius: var(--vp-radius);
-	font-family: var(--vp-font-ui);
+	border-radius: var(--btc-radius);
+	font-family: var(--btc-font-ui);
 	font-weight: 500;
 	border: 1px solid transparent;
-	transition: background-color 140ms var(--vp-ease-out), border-color 140ms var(--vp-ease-out);
+	transition: background-color 140ms var(--btc-ease-out), border-color 140ms var(--btc-ease-out);
 }
 
 .tc-tour-panel-navigation .tc-btn-big-green.tc-tour-panel-navigation-next {
@@ -138,19 +138,19 @@ code-body: yes
 .tc-tour-panel-navigation .tc-btn-big-green:hover {
 	background: <<colour tour-navigation-buttons-hover-background>>;
 	color: <<colour tour-navigation-buttons-hover-foreground>>;
-	border-color: var(--vp-accent-edge);
+	border-color: var(--btc-accent-edge);
 }
 
 .tc-tour-panel-navigation .tc-btn-big-green:focus-visible {
-	outline: 2px solid var(--vp-focus);
+	outline: 2px solid var(--btc-focus);
 	outline-offset: 2px;
 }
 
 /* ---- Step chooser ---- */
 
 .tc-tour-panel-controls .tc-tour-panel-list-button {
-	border-radius: var(--vp-radius);
-	font-family: var(--vp-font-ui);
+	border-radius: var(--btc-radius);
+	font-family: var(--btc-font-ui);
 }
 
 .tc-tour-panel-controls .tc-tour-panel-list-button.tc-selected,
@@ -161,12 +161,12 @@ code-body: yes
 .tc-tour-panel-controls .tc-popup .tc-drop-down {
 	background: var(--tpc-dropdown-background);
 	border: 1px solid var(--vp-paper-edge);
-	border-radius: var(--vp-radius);
-	box-shadow: 0 1px 2px var(--vp-shadow-soft), 0 10px 28px -12px var(--vp-shadow);
+	border-radius: var(--btc-radius);
+	box-shadow: 0 1px 2px var(--btc-shadow-soft), 0 10px 28px -12px var(--btc-shadow);
 }
 
 .tc-tour-panel-chooser-item {
-	border-block-end: 1px solid var(--vp-rule-faint);
+	border-block-end: 1px solid var(--btc-rule-faint);
 }
 
 .tc-tour-panel-chooser-wrapper button:hover {
@@ -178,36 +178,36 @@ code-body: yes
    only a hairline. */
 .tc-tour-panel .tc-tour-panel-inner .tc-tiddler-frame {
 	box-shadow: none;
-	border: 1px solid var(--vp-rule-faint);
-	border-radius: var(--vp-radius);
+	border: 1px solid var(--btc-rule-faint);
+	border-radius: var(--btc-radius);
 	margin-block-end: 0;
 }
 
 .tc-tour-panel .tc-tour-panel-banner-image,
 .tc-tour-panel-fullscreen .tc-tour-panel-banner-image {
-	border-radius: var(--vp-radius);
+	border-radius: var(--btc-radius);
 }
 
 /* ---- Settings screens ---- */
 
 .tc-tour-settings-tour-step,
 .tc-tour-settings-tour-step-details {
-	border: 1px solid var(--vp-rule-faint);
-	border-radius: var(--vp-radius);
+	border: 1px solid var(--btc-rule-faint);
+	border-radius: var(--btc-radius);
 }
 
 .tc-tour-settings-tour-step-heading {
-	font-family: var(--vp-font-ui);
+	font-family: var(--btc-font-ui);
 	font-weight: 600;
 }
 
 .tc-tour-settings-tour-step-heading-step-number {
-	color: var(--vp-ink-faint);
+	color: var(--btc-ink-faint);
 	font-variant-numeric: tabular-nums;
 }
 
 .tc-tour-settings-tour-details-description {
-	color: var(--vp-ink-soft);
+	color: var(--btc-ink-soft);
 }
 
 .tc-tour-settings-tour-step-launch-button:hover {

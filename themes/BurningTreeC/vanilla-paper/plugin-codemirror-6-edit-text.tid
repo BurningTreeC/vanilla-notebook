@@ -25,38 +25,38 @@ code-body: yes
 html body .tc-editor-codemirror6-simple .cm-editor {
 	background: var(--tpc-tiddler-editor-background);
 	color: var(--tpc-foreground);
-	font-family: var(--vp-font-ui);
+	font-family: var(--btc-font-ui);
 	font-size: inherit;
-	border-radius: var(--vp-radius);
+	border-radius: var(--btc-radius);
 }
 
 /* The title field is set in the theme's display face at title size, and the
    CM6 instance standing in for it has to match or the title visibly changes
    shape the moment you click into it. */
 html body .tc-tiddler-frame .tc-editor-codemirror6-simple .cm-editor {
-	font-family: var(--vp-font-body);
+	font-family: var(--btc-font-body);
 }
 
 html body .tc-tiddler-frame .tc-edit-tags .tc-editor-codemirror6-simple .cm-editor {
-	font-family: var(--vp-font-ui);
+	font-family: var(--btc-font-ui);
 	font-size: 0.875rem;
 }
 
 /* A single-line control gets the theme's focus ring, not CodeMirror's outline
    suppression - these are exactly the fields people tab through. */
 html body .tc-editor-codemirror6-simple .cm-editor.cm-focused {
-	outline: 2px solid var(--vp-focus);
+	outline: 2px solid var(--btc-focus);
 	outline-offset: 1px;
 }
 
 html body .tc-editor-codemirror6-simple .cm-content,
 html body .tc-editor-codemirror6-simple .cm-line {
-	padding-inline: var(--vp-space-2xs);
+	padding-inline: var(--btc-space-2xs);
 	caret-color: var(--tpc-foreground);
 }
 
 html body .tc-editor-codemirror6-simple .cm-placeholder {
-	color: var(--vp-ink-faint);
+	color: var(--btc-ink-faint);
 	font-style: normal;
 }
 
@@ -99,7 +99,7 @@ html body .tc-editor-codemirror6-simple .cm-cursor-primary:not(.cm-fat-cursor) {
    rgba(0,0,0,0.15) which is invisible on a dark palette. */
 html body .tc-editor-codemirror6-simple .cm-editor.cm-readonly {
 	background: color-mix(in oklch, var(--tpc-foreground) 6%, var(--tpc-tiddler-editor-background));
-	color: var(--vp-ink-soft);
+	color: var(--btc-ink-soft);
 }
 
 </$list>

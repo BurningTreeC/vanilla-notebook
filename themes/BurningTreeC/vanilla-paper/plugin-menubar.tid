@@ -49,11 +49,11 @@ code-body: yes
 ** the left in an RTL wiki, where the bar reads the other way.
 */
 nav.tc-menubar ul.tc-menubar-list {
-	padding-inline: var(--vp-space-xs);
+	padding-inline: var(--btc-space-xs);
 	background: <<colour menubar-background>>;
 	box-shadow: none;
-	border-block-end: 1px solid var(--vp-rule);
-	font-family: var(--vp-font-ui);
+	border-block-end: 1px solid var(--btc-rule);
+	font-family: var(--btc-font-ui);
 	backdrop-filter: saturate(1.4) blur(6px);
 }
 
@@ -76,7 +76,7 @@ nav.tc-menubar ul.tc-menubar-list {
 */
 nav.tc-menubar li.tc-menubar-item > a,
 nav.tc-menubar li.tc-menubar-item > button {
-	font-family: var(--vp-font-ui);
+	font-family: var(--btc-font-ui);
 	font-size: 0.875rem;
 }
 
@@ -88,14 +88,14 @@ nav.tc-menubar li.tc-menubar-item > button {
 ** one is not emitted. A wiki that has ever saved its own copy of that tiddler
 ** holds a REAL tiddler, which beats a theme's shadow, and then both appear.
 **
-** base.tid hides any toggle without the .vp-sidebar-toggle marker, but that rule is
+** base.tid hides any toggle without the .btc-sidebar-toggle marker, but that rule is
 ** (0,2,0) and the plugin's `nav.tc-menubar li.tc-menubar-item > button` is
 ** (0,3,3) with `display: inline-block` - so inside the bar it loses. This
 ** selector is (0,5,3) and is scoped to the bar, which is the only place that
 ** conflict arises; the standalone topbar has no competing display rule and the
 ** base.tid rule is enough there.
 */
-.vp-sidebar-start nav.tc-menubar li.tc-menubar-item > :is(a, button):is(.tc-hide-sidebar-btn, .tc-show-sidebar-btn):not(.vp-sidebar-toggle) {
+.btc-sidebar-start nav.tc-menubar li.tc-menubar-item > :is(a, button):is(.tc-hide-sidebar-btn, .tc-show-sidebar-btn):not(.btc-sidebar-toggle) {
 	display: none;
 }
 
@@ -137,10 +137,10 @@ nav.tc-menubar .tc-drop-down {
 	border: 1px solid var(--vp-paper-edge);
 	border-start-start-radius: 0;
 	border-start-end-radius: 0;
-	border-end-start-radius: var(--vp-radius);
-	border-end-end-radius: var(--vp-radius);
-	box-shadow: 0 1px 2px var(--vp-shadow-soft), 0 10px 28px -12px var(--vp-shadow);
-	font-family: var(--vp-font-ui);
+	border-end-start-radius: var(--btc-radius);
+	border-end-end-radius: var(--btc-radius);
+	box-shadow: 0 1px 2px var(--btc-shadow-soft), 0 10px 28px -12px var(--btc-shadow);
+	font-family: var(--btc-font-ui);
 }
 
 nav.tc-menubar .tc-drop-down a {
@@ -148,17 +148,17 @@ nav.tc-menubar .tc-drop-down a {
 }
 
 nav.tc-menubar .tc-drop-down ol {
-	padding-inline-start: var(--vp-space-lg);
+	padding-inline-start: var(--btc-space-lg);
 }
 
 nav.tc-menubar .tc-drop-down .tc-table-of-contents button,
 nav.tc-menubar .tc-drop-down .tc-menubar-dropdown-sidebar button {
-	font-family: var(--vp-font-ui);
+	font-family: var(--btc-font-ui);
 	color: var(--tpc-foreground);
 }
 
 nav.tc-menubar .tc-more-sidebar > .tc-tab-set > .tc-tab-buttons > button {
-	font-family: var(--vp-font-ui);
+	font-family: var(--btc-font-ui);
 	font-size: 0.8125rem;
 }
 

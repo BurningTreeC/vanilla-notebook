@@ -34,11 +34,11 @@ code-body: yes
 }
 
 .tc-consent-banner {
-	padding: var(--vp-space-lg);
+	padding: var(--btc-space-lg);
 	background: <<colour consent-banner-background>>;
 	color: <<colour consent-banner-foreground>>;
-	box-shadow: 0 0 40px -8px var(--vp-shadow);
-	font-family: var(--vp-font-ui);
+	box-shadow: 0 0 40px -8px var(--btc-shadow);
+	font-family: var(--btc-font-ui);
 	line-height: 1.55;
 }
 
@@ -51,7 +51,7 @@ code-body: yes
 }
 
 .tc-consent-banner hr {
-	margin-block: var(--vp-space-lg);
+	margin-block: var(--btc-space-lg);
 	block-size: 1px;
 	border: 0;
 	background: <<colour consent-banner-hr-background>>;
@@ -64,20 +64,20 @@ code-body: yes
 ** change of fill and border, which is what hover is supposed to signal. */
 
 .tc-consent-button {
-	margin-block-start: var(--vp-space-md);
+	margin-block-start: var(--btc-space-md);
 	padding: 0.75em 1.5em;
 	border: 1px solid <<colour consent-banner-button-border>>;
-	border-radius: var(--vp-radius);
+	border-radius: var(--btc-radius);
 	color: <<colour consent-banner-button-foreground>>;
 	background: <<colour consent-banner-button-background>>;
-	font-family: var(--vp-font-ui);
+	font-family: var(--btc-font-ui);
 	font-weight: 600;
 	cursor: pointer;
-	transition: background-color 140ms var(--vp-ease-out), border-color 140ms var(--vp-ease-out);
+	transition: background-color 140ms var(--btc-ease-out), border-color 140ms var(--btc-ease-out);
 }
 
 .tc-consent-banner .tc-consent-button {
-	margin-inline-end: var(--vp-space-md);
+	margin-inline-end: var(--btc-space-md);
 }
 
 .tc-consent-button:hover {
@@ -110,18 +110,18 @@ code-body: yes
 	display: inline-block;
 	overflow: hidden;
 	max-inline-size: 100%;
-	color: var(--vp-ink-soft);
+	color: var(--btc-ink-soft);
 	background: var(--tpc-tiddler-editor-background);
-	border: 1px dashed var(--vp-rule);
-	border-radius: var(--vp-radius);
+	border: 1px dashed var(--btc-rule);
+	border-radius: var(--btc-radius);
 	box-shadow: none;
-	font-family: var(--vp-font-ui);
+	font-family: var(--btc-font-ui);
 	font-size: 0.875rem;
 	text-align: center;
 }
 
 .tc-blocked-embedded-content-inner-inner hr {
-	background: var(--vp-rule);
+	background: var(--btc-rule);
 	block-size: 1px;
 	inline-size: 80%;
 	border: none;

@@ -2,6 +2,6 @@ title: $:/core/ui/TopBar/menu
 tags: $:/tags/TopRightBar
 
 \whitespace trim
-<$list filter="[{$:/themes/BurningTreeC/vanilla-paper/options/sidebarside}!match[start]]" variable="ignore">
+<$list filter="[{$:/theme}addsuffix[/options/sidebarside]get[text]!match[start]]" variable="ignore">
 {{$:/themes/BurningTreeC/vanilla-paper/sidebar-toggle}}
 </$list>

@@ -21,9 +21,9 @@ code-body: yes
 ** ========================================================================== */
 
 .tc-drop-down .tc-qrcode-drop-down {
-	padding: var(--vp-space-sm);
+	padding: var(--btc-space-sm);
 	background: #ffffff;
-	border-radius: var(--vp-radius);
+	border-radius: var(--btc-radius);
 	line-height: 0;
 }
 

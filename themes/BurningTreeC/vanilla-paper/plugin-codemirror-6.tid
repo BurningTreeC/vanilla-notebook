@@ -99,7 +99,7 @@ code-body: yes
 
 .tc-editor-codemirror6 {
 	border: 1px solid var(--tpc-tiddler-editor-border);
-	border-radius: var(--vp-radius);
+	border-radius: var(--btc-radius);
 	background: var(--tpc-tiddler-editor-background);
 }
 
@@ -110,12 +110,12 @@ code-body: yes
 ** changes in Theme Tweaks. Pointed back at the theme's own tokens.
 */
 .tc-editor-codemirror6 .cm-editor {
-	font-family: var(--vp-font-code);
+	font-family: var(--btc-font-code);
 	font-size: var(--vp-body-size);
 }
 
 .tc-editor-codemirror6 .cm-content {
-	padding: var(--vp-space-sm);
+	padding: var(--btc-space-sm);
 }
 
 /* The gutter is the sheet's margin, so it takes the editor's own paper rather
@@ -123,8 +123,8 @@ code-body: yes
    different colour and makes the gutter read as a separate panel. */
 .tc-editor-codemirror6 .cm-gutters {
 	background: var(--tpc-tiddler-editor-background);
-	border-inline-end: 1px solid var(--vp-rule-faint);
-	color: var(--vp-ink-faint);
+	border-inline-end: 1px solid var(--btc-rule-faint);
+	color: var(--btc-ink-faint);
 }
 
 .tc-editor-codemirror6 .cm-lineNumbers .cm-gutterElement {
@@ -168,17 +168,17 @@ code-body: yes
 .tc-editor-codemirror6 .cm-panels {
 	background: var(--tpc-tiddler-background);
 	color: var(--tpc-foreground);
-	font-family: var(--vp-font-ui);
+	font-family: var(--btc-font-ui);
 	font-size: 0.875rem;
-	border-color: var(--vp-rule);
+	border-color: var(--btc-rule);
 }
 
 .tc-editor-codemirror6 .cm-panels.cm-panels-top {
-	border-block-end: 1px solid var(--vp-rule);
+	border-block-end: 1px solid var(--btc-rule);
 }
 
 .tc-editor-codemirror6 .cm-panels.cm-panels-bottom {
-	border-block-start: 1px solid var(--vp-rule);
+	border-block-start: 1px solid var(--btc-rule);
 }
 
 .tc-editor-codemirror6 .cm-panel input[type="text"],
@@ -186,28 +186,28 @@ code-body: yes
 	background: var(--tpc-tiddler-editor-background);
 	color: var(--tpc-foreground);
 	border: 1px solid var(--tpc-tiddler-editor-border);
-	border-radius: var(--vp-radius);
-	font-family: var(--vp-font-code);
+	border-radius: var(--btc-radius);
+	font-family: var(--btc-font-code);
 }
 
 .tc-editor-codemirror6 .cm-panel input[type="text"]:focus-visible,
 .tc-editor-codemirror6 .cm-textfield:focus-visible {
-	outline: 2px solid var(--vp-focus);
+	outline: 2px solid var(--btc-focus);
 	outline-offset: 1px;
 }
 
 .tc-editor-codemirror6 .cm-button {
 	background: var(--tpc-button-background, transparent);
 	color: var(--tpc-foreground);
-	border: 1px solid var(--vp-rule);
-	border-radius: var(--vp-radius);
-	font-family: var(--vp-font-ui);
+	border: 1px solid var(--btc-rule);
+	border-radius: var(--btc-radius);
+	font-family: var(--btc-font-ui);
 	background-image: none;
 }
 
 .tc-editor-codemirror6 .cm-button:hover {
 	background: color-mix(in oklch, var(--tpc-primary) 10%, transparent);
-	border-color: var(--vp-accent-edge);
+	border-color: var(--btc-accent-edge);
 }
 
 /* ---- Autocomplete and tooltips ---- */
@@ -217,9 +217,9 @@ code-body: yes
 	background: var(--tpc-dropdown-background);
 	color: var(--tpc-foreground);
 	border: 1px solid var(--vp-paper-edge);
-	border-radius: var(--vp-radius);
-	box-shadow: 0 1px 2px var(--vp-shadow-soft), 0 10px 26px -12px var(--vp-shadow);
-	font-family: var(--vp-font-ui);
+	border-radius: var(--btc-radius);
+	box-shadow: 0 1px 2px var(--btc-shadow-soft), 0 10px 26px -12px var(--btc-shadow);
+	font-family: var(--btc-font-ui);
 }
 
 .cm-tooltip-autocomplete > ul > li[aria-selected] {
@@ -255,10 +255,10 @@ code-body: yes
 
 .tc-editor-codemirror6 .cm-foldPlaceholder {
 	background: var(--tpc-pre-background);
-	border: 1px solid var(--vp-rule-faint);
-	border-radius: var(--vp-radius);
-	color: var(--vp-ink-faint);
-	font-family: var(--vp-font-code);
+	border: 1px solid var(--btc-rule-faint);
+	border-radius: var(--btc-radius);
+	color: var(--btc-ink-faint);
+	font-family: var(--btc-font-code);
 }
 
 /*
@@ -296,8 +296,8 @@ code-body: yes
 ** here: a strip of chrome above the paper, in the interface face. */
 
 .tc-editor-codemirror6-wrapper .tc-editor-toolbar {
-	font-family: var(--vp-font-ui);
-	gap: var(--vp-space-2xs);
+	font-family: var(--btc-font-ui);
+	gap: var(--btc-space-2xs);
 }
 
 /* ---- Ruled paper ----
@@ -332,16 +332,16 @@ code-body: yes
 }
 
 .vp-ruled-editor .tc-editor-codemirror6 .cm-content {
-	padding-block-start: var(--vp-space-xs);
+	padding-block-start: var(--btc-space-xs);
 	background-image: repeating-linear-gradient(
 		to bottom,
 		transparent 0,
 		transparent calc(var(--vp-edit-lh) - 1px),
-		var(--vp-rule-faint) calc(var(--vp-edit-lh) - 1px),
-		var(--vp-rule-faint) var(--vp-edit-lh)
+		var(--btc-rule-faint) calc(var(--vp-edit-lh) - 1px),
+		var(--btc-rule-faint) var(--vp-edit-lh)
 	);
 	background-origin: padding-box;
-	background-position-y: var(--vp-space-xs);
+	background-position-y: var(--btc-space-xs);
 }
 
 /* The gutter keeps solid paper so the line numbers do not sit on the ruling. */
@@ -366,7 +366,7 @@ code-body: yes
 **
 ** The plugin sets --tv-menubar-height itself from JS, in
 ** files/editor/startup/menubar-height.js, so its own panel offsets keep
-** working and agree with the theme's measured --vp-menubar-h.
+** working and agree with the theme's measured --btc-menubar-h.
 */
 
 </$list>
