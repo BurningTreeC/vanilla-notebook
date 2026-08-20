@@ -9,7 +9,31 @@ $:/config/SideBarSegments/Visibility/$(listItem)$
 
 \function btc.metric(suffix) [{$:/theme}addsuffix[/metrics/]addsuffix<suffix>]
 
-\function btc.story.metrics() [[storyright]] [[storywidth]] [[tiddlerwidth]] :map[{$:/theme}addsuffix[/metrics/]addsuffix<currentTiddler>]
+<!--
+The three metrics that describe the river, as full titles in the active theme's
+namespace. fixed-fluid drags all three together — they are one measurement
+written three times, and moving one without the others tears the layout apart.
+
+TWO things about this line are load-bearing.
+
+The ORDER is. The resizer measures its target element at drag start and uses
+that measurement as the starting value for the FIRST tiddler in the list,
+falling back to the stored text for the rest. The element it measures below is
+.tc-story-river, and the river's rendered width IS storywidth — layout.tid sets
+`inline-size: var(--btc-story-w)` from it. So storywidth has to come first. With
+storyright first the drag started from the river's width and wrote it into a
+metric that means "where the river ENDS", which is the same number only while
+storyleft is 0.
+
+And it must be CALLED as `[btc.story.metrics[]]`, never as `<<btc.story.metrics>>`
+or `[<btc.story.metrics>]`. A \function referenced as a variable yields only its
+FIRST result — so both of those quietly return storywidth alone, and every one
+of the three call sites below silently degraded to operating on one metric. That
+is what broke the fixed-fluid drag: the widget was handed a one-title filter, so
+the two remaining metrics never moved and the river never changed width.
+-->
+
+\function btc.story.metrics() [[storywidth]] [[storyright]] [[tiddlerwidth]] :map[{$:/theme}addsuffix[/metrics/]addsuffix<currentTiddler>]
 
 \function btc.resizer.sidebar.min() [[$:/themes/tiddlywiki/vanilla/metrics/sidebarminwidth]get[text]] :else[[350px]]
 
@@ -31,7 +55,7 @@ $:/config/SideBarSegments/Visibility/$(listItem)$
 \end
 
 \procedure btc.resizer.throttle.story()
-<$list filter=<<btc.story.metrics>> >
+<$list filter="[btc.story.metrics[]]">
 <$action-setfield $tiddler=<<currentTiddler>> throttle.refresh="yes"/>
 </$list>
 \end
@@ -41,7 +65,7 @@ $:/config/SideBarSegments/Visibility/$(listItem)$
 \end
 
 \procedure btc.resizer.reset.story()
-<$action-deletetiddler $filter=<<btc.story.metrics>>/>
+<$action-deletetiddler $filter="[btc.story.metrics[]]"/>
 \end
 
 \procedure btc.resizer.sidebar()
@@ -84,7 +108,8 @@ level in block mode.
 <$resizer
 	class="tc-sidebar-resizer btc-sidebar-resizer"
 	direction="horizontal"
-	filter={{{ [<btc.story.metrics>] +[join[ ]] }}}
+	filter={{{ [btc.story.metrics[]] +[join[ ]] }}}
+	selector=".tc-story-river"
 	unit="px"
 	min=<<storyMin>>
 	max=<<maxStory>>
@@ -157,6 +182,22 @@ edge is being dragged. With the sidebar on the end, dragging toward the start
 makes it wider; on the start edge it makes it narrower. fixed-fluid drags the
 river rather than the sidebar, so on the same edge its sense is the opposite —
 which is why the two use at.end and at.start rather than sharing one function.
+
+`selector` names the element the drag is anchored to, and BOTH modes need one
+even though only fluid-fixed writes to an element's own width. The widget takes
+the target's border box at pointerdown for two things: the fixed edge the new
+size is measured from, and the starting value for the first tiddler in the list.
+Left unset it falls back to the handle's previousElementSibling — and the grip
+is rendered at the page template as a sibling of the topbar, so that fallback
+resolved to a 39-pixel <span> in the top right corner. fluid-fixed named
+.tc-sidebar-scrollable from the start; fixed-fluid did not, and the whole drag
+was computed against that span: every pointer move wrote storyright straight to
+its 450px floor and the river never moved at all.
+
+The element for fixed-fluid is .tc-story-river, because the river is the thing
+whose width the three metrics describe. Its rendered width IS storywidth — hence
+the ordering in btc.story.metrics above, which is what makes the measured number
+land in the metric it actually measures.
 
 The onResizeStart actions set throttle.refresh on whatever is about to be
 written. Each of these metrics is read by a filtered transclusion inside
