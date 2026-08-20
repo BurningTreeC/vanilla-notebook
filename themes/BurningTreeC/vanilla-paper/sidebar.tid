@@ -10,11 +10,23 @@ $:/config/SideBarSegments/Visibility/$(listItem)$
 \function btc.metric(suffix) [{$:/theme}addsuffix[/metrics/]addsuffix<suffix>]
 
 <!--
-The three metrics that describe the river, as full titles in the active theme's
-namespace. fixed-fluid drags all three together — they are one measurement
-written three times, and moving one without the others tears the layout apart.
+The metrics a fixed-fluid drag moves, as full titles in the active theme's
+namespace. Two of them, and they move as one: storywidth is how wide the river
+is and storyright is where it ends, so with a non-zero storyleft they are
+different numbers describing the same edge. Writing one without the other puts
+the sidebar somewhere the river does not stop.
 
-TWO things about this line are load-bearing.
+tiddlerwidth is NOT one of them, and leaving it out is the point rather than an
+oversight. It is a cap, not a share of the river: layout.tid gives a frame
+`inline-size: 100%; max-inline-size: var(--btc-tiddler-w)` in both modes, so a
+tiddler already grows with the river only until it reaches the width the user
+asked for, and already shrinks below that when the river gets narrower than it.
+Dragging it too would mean a river you widened came back with wider tiddlers
+you never asked for — and, worse, a number the user had deliberately set
+overwritten by a gesture aimed at something else. The CSS gets this right for
+free; the drag only has to stay out of its way.
+
+TWO things about the line below are load-bearing.
 
 The ORDER is. The resizer measures its target element at drag start and uses
 that measurement as the starting value for the FIRST tiddler in the list,
@@ -30,10 +42,10 @@ or `[<btc.story.metrics>]`. A \function referenced as a variable yields only its
 FIRST result — so both of those quietly return storywidth alone, and every one
 of the three call sites below silently degraded to operating on one metric. That
 is what broke the fixed-fluid drag: the widget was handed a one-title filter, so
-the two remaining metrics never moved and the river never changed width.
+storyright never moved and the sidebar never left the seam it started on.
 -->
 
-\function btc.story.metrics() [[storywidth]] [[storyright]] [[tiddlerwidth]] :map[{$:/theme}addsuffix[/metrics/]addsuffix<currentTiddler>]
+\function btc.story.metrics() [[storywidth]] [[storyright]] :map[{$:/theme}addsuffix[/metrics/]addsuffix<currentTiddler>]
 
 \function btc.resizer.sidebar.min() [[$:/themes/tiddlywiki/vanilla/metrics/sidebarminwidth]get[text]] :else[[350px]]
 
@@ -173,9 +185,10 @@ SECOND, the two layout modes drag different things:
   fluid-fixed   the sidebar holds the fixed width, so the drag edits
                 sidebarwidth and the river absorbs the change.
   fixed-fluid   the RIVER holds the fixed width and the sidebar absorbs the
-                change, so the drag edits the three story metrics together.
-                They are one measurement written three times; moving one
-                without the others tears the layout apart.
+                change, so the drag edits storywidth and storyright together.
+                They are one edge described twice; moving one without the
+                other tears the layout apart. tiddlerwidth stays out of it —
+                see btc.story.metrics above.
 
 `invert` turns a pointer delta into a size delta, and the sense depends on which
 edge is being dragged. With the sidebar on the end, dragging toward the start

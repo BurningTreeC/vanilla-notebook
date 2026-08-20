@@ -346,8 +346,36 @@ html[dir="rtl"] {
 		will-change: translate;
 	}
 
+	/*
+	** The same cap as fluid-fixed above, and for the same reason: tiddlerwidth
+	** is what the user asked a tiddler to be, and the mode they happen to be in
+	** is no reason to ignore it. This rule used to be `inline-size: 100%` alone,
+	** which silently made the setting dead in fixed-fluid — ThemeTweaks still
+	** offered the field, editing it did nothing, and every tiddler was as wide
+	** as the river whatever the number said.
+	**
+	** The pair reads as one behaviour: grow with the river up to tiddlerwidth,
+	** then stop; shrink with it below that. `inline-size: 100%` is measured
+	** against the river's CONTENT box, so the gutter is already subtracted and
+	** a frame can never overhang the river however narrow it gets. Which is
+	** also why the defaults look unchanged: storywidth 800 less two 40px
+	** gutters is exactly the 720 tiddlerwidth ships with, so the cap only
+	** starts to bite once someone moves one of them.
+	**
+	** This is what the resizer leans on. sidebar.tid drags storywidth and
+	** storyright and deliberately leaves tiddlerwidth alone; widening the
+	** river then widens the river and not the tiddlers, and narrowing it past
+	** the cap takes the tiddlers down with it — without a drag ever writing to
+	** the metric, so a width the user chose survives being dragged over.
+	**
+	** margin-inline: auto centres what the cap leaves over. Without it a capped
+	** frame sits against the river's leading edge and the slack all collects on
+	** one side.
+	*/
 	.btc-layout-fixed-fluid .tc-tiddler-frame {
 		inline-size: 100%;
+		max-inline-size: var(--btc-tiddler-w);
+		margin-inline: auto;
 	}
 
 	/* ---- Full-width option ----------------------------------------------
