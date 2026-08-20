@@ -2,7 +2,7 @@
 	"title": "$:/themes/BurningTreeC/vanilla-paper",
 	"name": "Vanilla Paper",
 	"author": "Simon Huber",
-	"version": "0.6.0",
+	"version": "0.7.0",
 	"core-version": ">=5.3.0",
 	"plugin-type": "theme",
 	"description": "An editorial theme - cream paper, warm ink, a sliding sidebar",

@@ -424,6 +424,51 @@ a.tc-list-item-selected svg {
 	position: relative;
 }
 
+/*
+** The Open tab's rows are a control plus a title, and they must read as one
+** line that wraps, not as two stacked things.
+**
+** $:/core/ui/SideBar/Open builds each row as
+**
+**     .tc-sidebar-tab-open-item > .tc-droppable > div > button + a
+**
+** and the theme gives sidebar links `display: inline-block` so their vertical
+** padding actually reserves a hit area (see the surface sheet). That is right
+** for a bare link and wrong here: an inline-block is an atomic box, so a title
+** too long for the space left beside the close button cannot break — it moves
+** to the next line whole, leaving the button stranded on a line of its own.
+**
+** Flex fixes it at the row rather than by weakening the link: the button keeps
+** its size, the title takes the rest and wraps inside it.
+**
+** min-inline-size: 0 is not optional. A flex item's automatic minimum size is
+** its content, so without it the title refuses to shrink below its longest
+** unbroken run and pushes out of the sidebar instead of wrapping — the same
+** bug in a different direction.
+**
+** overflow-wrap covers the case min-inline-size cannot: a title that is one
+** long word with nowhere to break.
+**
+** align-items keeps the button on the FIRST line. The default stretch would
+** make it as tall as the whole wrapped title and centre nothing; baseline
+** would hang it off the last text baseline of a box that contains only an
+** icon, which puts it below the line it belongs to.
+*/
+.tc-sidebar-tab-open-item > .tc-droppable > div:not(.tc-droppable-placeholder) {
+	display: flex;
+	align-items: flex-start;
+}
+
+.tc-sidebar-tab-open-item > .tc-droppable > div:not(.tc-droppable-placeholder) > button {
+	flex: none;
+}
+
+.tc-sidebar-tab-open-item > .tc-droppable > div:not(.tc-droppable-placeholder) > .tc-tiddlylink {
+	flex: 1 1 auto;
+	min-inline-size: 0;
+	overflow-wrap: anywhere;
+}
+
 .tc-sidebar-tab-open .tc-btn-invisible.tc-btn-mini svg {
 	font-size: 0.7em;
 }
