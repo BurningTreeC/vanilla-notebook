@@ -441,31 +441,49 @@ a.tc-list-item-selected svg {
 ** Flex fixes it at the row rather than by weakening the link: the button keeps
 ** its size, the title takes the rest and wraps inside it.
 **
-** min-inline-size: 0 is not optional. A flex item's automatic minimum size is
-** its content, so without it the title refuses to shrink below its longest
-** unbroken run and pushes out of the sidebar instead of wrapping — the same
-** bug in a different direction.
+** Getting the button onto the same OPTICAL line as the first row of text then
+** needs three things, and each of them is a trap:
 **
-** overflow-wrap covers the case min-inline-size cannot: a title that is one
-** long word with nowhere to break.
+**   - `align-items: baseline` is the obvious answer and is 2.8px low. The
+**     button's only content is an icon with `vertical-align: middle`, so the
+**     baseline it offers is its line box's, and that does not coincide with
+**     the centre of the text beside it.
 **
-** align-items keeps the button on the FIRST line. The default stretch would
-** make it as tall as the whole wrapped title and centre nothing; baseline
-** would hang it off the last text baseline of a box that contains only an
-** icon, which puts it below the line it belongs to.
+**   - so the button is instead made exactly one line tall and its icon centred
+**     in it. That needs `line-height: inherit` FIRST: the button carries its
+**     own 12px line-height against the row's 24px, and `1lh` resolves against
+**     the element's own, so without it `block-size: 1lh` sizes the button to
+**     half a line and nothing moves.
+**
+**   - the link's 1px vertical padding would then offset the text half a pixel
+**     from the button. Rather than encode that number here, the padding moves
+**     to the row, where it does the same job for both children at once.
+**
+** min-inline-size: 0 is not optional either. A flex item's automatic minimum
+** size is its content, so without it the title refuses to shrink below its
+** longest unbroken run and pushes out of the sidebar instead of wrapping — the
+** same bug in a different direction. overflow-wrap covers what that cannot: a
+** title that is one long word with nowhere to break.
 */
 .tc-sidebar-tab-open-item > .tc-droppable > div:not(.tc-droppable-placeholder) {
 	display: flex;
 	align-items: flex-start;
+	padding-block: 1px;
 }
 
 .tc-sidebar-tab-open-item > .tc-droppable > div:not(.tc-droppable-placeholder) > button {
 	flex: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	line-height: inherit;
+	block-size: 1lh;
 }
 
 .tc-sidebar-tab-open-item > .tc-droppable > div:not(.tc-droppable-placeholder) > .tc-tiddlylink {
 	flex: 1 1 auto;
 	min-inline-size: 0;
+	padding-block: 0;
 	overflow-wrap: anywhere;
 }
 
